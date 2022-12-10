@@ -33,7 +33,7 @@ define('G5_DEBUG', false);
 // DB에 테이블 생성 시 테이블의 기본 스토리지 엔진을 설정할 수 있습니다.
 // InnoDB 또는 MyISAM 으로 설정 가능합니다.
 // 빈값으로 두면 DB 버전이나 호스팅사 정책의 기본값에 따라 설정됩니다.
-define('G5_DB_ENGINE', '');
+define('G5_DB_ENGINE', 'MyISAM');
 
 // Set Database table default Charset
 // utf8, utf8mb4 등 지정 가능 기본값은 utf8, 설치전에 utf8mb4 으로 수정 시 모든 테이블에 이모지 입력이 가능합니다.
