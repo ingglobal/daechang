@@ -310,7 +310,7 @@ function form01_submit(f) {
         return false;
     }
 
-    return true;
+    return false;
 }
 
 </script>

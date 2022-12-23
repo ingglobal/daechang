@@ -13,12 +13,12 @@ include_once ('./_head.php');
 </style>
 
 <form name="form01" id="form01" action="./<?=$g5['file_name']?>_update.php" onsubmit="return form01_submit(this);" method="post" enctype="multipart/form-data" autocomplete="off">
-<input type="hidden" name="w" value="<?php echo $w ?>">
+<input type="hidden" name="w" value="w">
 <input type="hidden" name="token" value="">
 
 <div class="local_desc01 local_desc" style="display:no ne;">
     <p>각 부서에서 관리하는 엑셀 문서를 해당 위치에 업로드해 주세요. 다른 위치에 입력하시면 혼란이 발생할 수 있습니다.</p>
-    <p><span style="color:red;">기존 정보가 존재하는 경우 수정</span>되므로 주의해 주시기 바랍니다.</p>
+    <p><span style="color:darkorange;">기존 정보가 존재하는 경우 변경</span>됩니다. 주의해 주시기 바랍니다.</p>
 </div>
 
 <div class="tbl_frm01 tbl_wrap">

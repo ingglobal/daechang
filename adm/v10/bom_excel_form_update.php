@@ -8,9 +8,7 @@ if(!$member['mb_manager_yn']) {
 
 $demo = 0;  // 데모모드 = 1
 
-$mms_array = array('HJ-MH-061'=>58,'HJ-MH-017'=>58,'HJ-MH-060'=>59,'HJ-MH-071'=>60,'HJ-MH-075'=>61);
-
-require_once G5_LIB_PATH.'/PhpSpreadsheet/vendor/autoload.php'; 
+require_once G5_LIB_PATH.'/PhpSpreadsheet19/vendor/autoload.php'; 
 use PhpOffice\PhpSpreadsheet\Spreadsheet; 
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 

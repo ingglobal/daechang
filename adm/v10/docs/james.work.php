@@ -615,3 +615,19 @@ james:~/GGv2Dev/recipes $
 .
 
 
+// PhpSpreadsheet 설치하는 방법
+https://teserre.tistory.com/19
+
+composer 먼저 설치해야 함
+참고: https://www.lesstif.com/php-and-laravel/php-composer-23757293.html
+
+/lib/PhpSpreadsheet 디렉토리 만들고
+권한을 707로 만들어 주고
+
+composer require phpoffice/phpspreadsheet
+
+이렇게 하니까 됩니다.
+
+
+sudo systemctl restart php7.4-fpm
+

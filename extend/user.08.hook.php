@@ -81,6 +81,21 @@ function u_member_login_check(){
 	// send_kosmo_log();
 }
 
+// 그누보드 5.5.8.1.2 업데이트 이후 토큰에러나는 스크립트 오류 문제 전역에 설정
+add_event('tail_sub','g5_admin_csrf_token_key_global');
+function g5_admin_csrf_token_key_global(){
+
+$var = function_exists('admin_csrf_token_key') ? admin_csrf_token_key() : '';
+$script = <<< _SCRIPT_
+<script>var g5_admin_csrf_token_key = '{$var}';</script>
+_SCRIPT_;
+
+add_javascript($script, 1);
+
+//echo $script;
+}
+
+
 // // 메일 발송이 잘 안 되서 메일을 다음쪽으로 설정함
 // add_replace("mail_options", "u_mail_options", G5_HOOK_DEFAULT_PRIORITY, 10);
 // function u_mail_options($mail, $fname, $fmail, $to, $subject, $content, $type, $file, $cc, $bcc){
