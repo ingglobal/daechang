@@ -642,3 +642,70 @@ sdk/test/python > 이게 됩니다.
 
 
 
+curl -s -o /dev/null -w "%{http_code}" http://daechang.epcs.co.kr
+curl -s -o /dev/null -w "%{http_code}" https://toe.kr
+
+curl --output /dev/null --silent --write-out %{http_code} http://daechang.epcs.co.kr
+
+엑셀 등록 10분 후 에러
+504 Gateway Time-out
+
+systemctl restart php7.4-fpm.service
+php7.4-fpm 재시작하면 바로 502나옴
+502 Bad Gateway
+
+cron 설정을 해 줘야 합니다.
+자동으로 재작하도록..
+
+
+* * * * * root /home/user/dovecot_restart
+
+
+#!/bin/bash
+STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://daechang.epcs.co.kr)
+
+if [ $STATUS -eq 502 ]; then
+  /etc/init.d/php7.4-fpm restart
+elif [ $STATUS -ne 200 ]; then
+  /etc/init.d/nginx restart
+fi
+
+
+cc5b95
+f08abe
+
+
+대시보드
+monitor
+monitor-dashboard
+
+수주/출하
+truck-outline
+truck
+
+생산/재고
+basket-fill
+cart-arrow-down
+stack-overflow
+human-baby-changing-table
+
+설비관리
+factory
+
+정비관리
+wrench
+
+통계보고
+chart-line
+chart-histogram
+chart-pie
+
+기준정보
+folder-search-outline
+feature-search-outline
+
+환경설정
+cogs
+cog-box
+cog-transfer-outline
+

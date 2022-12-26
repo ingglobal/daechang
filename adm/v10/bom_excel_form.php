@@ -7,7 +7,9 @@ auth_check($auth[$sub_menu],'w');
 
 
 $g5['title'] = 'BOM 엑셀관리';
-include_once ('./_head.php');
+include_once('./_top_menu_bom.php');
+include_once('./_head.php');
+echo $g5['container_sub_title'];
 ?>
 <style>
 </style>
@@ -17,8 +19,9 @@ include_once ('./_head.php');
 <input type="hidden" name="token" value="">
 
 <div class="local_desc01 local_desc" style="display:no ne;">
-    <p>각 부서에서 관리하는 엑셀 문서를 해당 위치에 업로드해 주세요. 다른 위치에 입력하시면 혼란이 발생할 수 있습니다.</p>
-    <p><span style="color:darkorange;">기존 정보가 존재하는 경우 덮어쓰기 변경</span>됩니다. 주의해 주시기 바랍니다.</p>
+    <p>엑셀 등록 시 시간이 5분 이상(또는 더 많이) 걸리는 경우는 등록이 불가능한 경우입니다. (참조 파일로 복잡하게 얽혀 있거나 파일 크기가 너무 큰 경우입니다.)</p>
+    <p><span style="color:darkorange;">참조가 없는 단순 파일</span>로 등록하시거나 <span style="color:darkorange;">파일 크기를 나누어서</span>등록해 주시기 바랍니다.</p>
+    <p>엑셀등록 안 될 때 새 문서를 만드는 방법은 동영상을 참고하세요. <a href="https://youtu.be/fu3zsiemJPc" target="_blank">[바로가기]</a></p>
 </div>
 
 <div class="tbl_frm01 tbl_wrap">
@@ -32,7 +35,7 @@ include_once ('./_head.php');
 	<tr>
         <th scope="row">엑셀종류</th>
         <td>
-            <?=help('엑셀을 선택하세요.')?>
+            <?=help('엑셀 종류를 선택하세요. 다른 파일을 선택하시면 <span style="color:darkorange;">덮어쓰기</span>되므로 주의하세요.')?>
             <select name="excel_type">
                 <option value="">엑셀 선택</option>
                 <option value="01">대창공업 ITEM LIST_REV1(22.12.22)-개발이범희GJ_REV6.xlxs</option>

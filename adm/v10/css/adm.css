@@ -112,26 +112,28 @@ input::-o-input-placeholder,textarea::-o-input-placeholder{color:#bbbbbb;}
 #gnb .on .btn_op.menu-500{background:url(../img/menu-6.png) 50% 50% no-repeat #162037}
 #gnb .gnb_li .btn_op.menu-900{background:url(../img/menu-4-1.png) 50% 50% no-repeat #040816 }
 #gnb .on .btn_op.menu-900{background:url(../img/menu-4.png) 50% 50% no-repeat #162037}
-#gnb .gnb_li .btn_op.menu-910{background:url(../svg/file-settings_20_00b894.svg) 50% 50% no-repeat #040816 }
-#gnb .on .btn_op.menu-910{background:url(../svg/file-settings_20_55efc4.svg) 50% 50% no-repeat #162037}
-#gnb .gnb_li .btn_op.menu-915{background:url(../svg/dashboard_20_cc5b95.svg) 50% 50% no-repeat #040816 }
-#gnb .on .btn_op.menu-915{background:url(../svg/dashboard_20_f08abe.svg) 50% 50% no-repeat #162037}
+#gnb .gnb_li .btn_op.menu-910{background:url(../svg/cogs_21_cc5b95.svg) 50% 50% no-repeat #040816 }
+#gnb .on .btn_op.menu-910{background:url(../svg/cogs_21_f08abe.svg) 50% 50% no-repeat #162037}
+#gnb .gnb_li .btn_op.menu-915{background:url(../svg/monitor_21_cc5b95.svg) 50% 50% no-repeat #040816 }
+#gnb .on .btn_op.menu-915{background:url(../svg/monitor_21_f08abe.svg) 50% 50% no-repeat #162037}
 #gnb .gnb_li .btn_op.menu-917{background:url(../svg/scroll_20_cc5b95.svg) 50% 50% no-repeat #040816 }
 #gnb .on .btn_op.menu-917{background:url(../svg/scroll_20_f08abe.svg) 50% 50% no-repeat #162037}
+#gnb .gnb_li .btn_op.menu-918{background:url(../svg/truck-outline_21_cc5b95.svg) 50% 50% no-repeat #040816 }
+#gnb .on .btn_op.menu-918{background:url(../svg/truck-outline_21_f08abe.svg) 50% 50% no-repeat #162037}
 #gnb .gnb_li .btn_op.menu-919{background:url(../img/menu-950-1.png) 50% 50% no-repeat #040816 }
 #gnb .on .btn_op.menu-919{background:url(../img/menu-950.png) 50% 50% no-repeat #162037}
 #gnb .gnb_li .btn_op.menu-920{background:url(../svg/slider_22_cc5b95.svg) 50% 50% no-repeat #040816 }
 #gnb .on .btn_op.menu-920{background:url(../svg/slider_22_f08abe.svg) 50% 50% no-repeat #162037}
+#gnb .gnb_li .btn_op.menu-922{background:url(../svg/basket-fill_21_cc5b95.svg) 50% 50% no-repeat #040816 }
+#gnb .on .btn_op.menu-922{background:url(../svg/basket-fill_21_f08abe.svg) 50% 50% no-repeat #162037}
 #gnb .gnb_li .btn_op.menu-925{background:url(../svg/factory_21_cc5b95.svg) 50% 50% no-repeat #040816 }
 #gnb .on .btn_op.menu-925{background:url(../svg/factory_21_f08abe.svg) 50% 50% no-repeat #162037}
 #gnb .gnb_li .btn_op.menu-930{background:url(../svg/wrench_22_cc5b95.svg) 50% 50% no-repeat #040816 }
 #gnb .on .btn_op.menu-930{background:url(../svg/wrench_22_f08abe.svg) 50% 50% no-repeat #162037}
 #gnb .gnb_li .btn_op.menu-935{background:url(../svg/line-chart_21_cc5b95.svg) 50% 50% no-repeat #040816 }
 #gnb .on .btn_op.menu-935{background:url(../svg/line-chart_21_f08abe.svg) 50% 50% no-repeat #162037}
-#gnb .gnb_li .btn_op.menu-937{background:url(../svg/process-on-vm_21_cc5b95.svg) 50% 50% no-repeat #040816 }
-#gnb .on .btn_op.menu-937{background:url(../svg/process-on-vm_21_f08abe.svg) 50% 50% no-repeat #162037}
-#gnb .gnb_li .btn_op.menu-940{background:url(../svg/success-standard_21_cc5b95.svg) 50% 50% no-repeat #040816 }
-#gnb .on .btn_op.menu-940{background:url(../svg/success-standard_21_f08abe.svg) 50% 50% no-repeat #162037}
+#gnb .gnb_li .btn_op.menu-940{background:url(../svg/feature-search-outline_21_cc5b95.svg) 50% 50% no-repeat #040816 }
+#gnb .on .btn_op.menu-940{background:url(../svg/feature-search-outline_21_f08abe.svg) 50% 50% no-repeat #162037}
 #gnb .gnb_li .btn_op.menu-945{background:url(../img/menu-960-1.png) 50% 50% no-repeat #040816 }
 #gnb .on .btn_op.menu-945{background:url(../img/menu-960.png) 50% 50% no-repeat #162037}
 #gnb .gnb_li .btn_op.menu-955{background:url(../img/menu-960-1.png) 50% 50% no-repeat #040816 }
