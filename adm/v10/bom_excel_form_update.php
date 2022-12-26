@@ -36,8 +36,8 @@ for ($i = 0; $i < $sheetCount; $i++) {
     // print_r2($sheetData);
     $allData[$i] = $sheetData;
 }
-print_r3($allData[0]);
-print_r3(sizeof($allData));
+print_r2($allData[0]);
+print_r2(sizeof($allData));
 exit;
 
 

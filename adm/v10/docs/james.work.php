@@ -628,6 +628,17 @@ composer require phpoffice/phpspreadsheet
 
 이렇게 하니까 됩니다.
 
-
 sudo systemctl restart php7.4-fpm
+
+
+====================================================
+AWS IoT Core workshop for beginners (Korean)
+====================================================
+https://catalog.us-east-1.prod.workshops.aws/workshops/f87a7c7a-0af8-416a-80ee-7c25c5789307/ko-KR
+
+sdk/test/Python > 이거 안 되요. 대소문자 구분합니다.
+sdk/test/python > 이게 됩니다.
+
+
+
 

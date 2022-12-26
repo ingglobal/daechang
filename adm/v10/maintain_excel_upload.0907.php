@@ -162,7 +162,7 @@ function trm_idx_update($str) {
 }
 }
 
-require_once G5_LIB_PATH.'/PhpSpreadsheet/vendor/autoload.php'; 
+require_once G5_LIB_PATH.'/PhpSpreadsheet19/vendor/autoload.php'; 
 use PhpOffice\PhpSpreadsheet\Spreadsheet; 
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 

@@ -18,7 +18,7 @@ include_once ('./_head.php');
 
 <div class="local_desc01 local_desc" style="display:no ne;">
     <p>각 부서에서 관리하는 엑셀 문서를 해당 위치에 업로드해 주세요. 다른 위치에 입력하시면 혼란이 발생할 수 있습니다.</p>
-    <p><span style="color:darkorange;">기존 정보가 존재하는 경우 변경</span>됩니다. 주의해 주시기 바랍니다.</p>
+    <p><span style="color:darkorange;">기존 정보가 존재하는 경우 덮어쓰기 변경</span>됩니다. 주의해 주시기 바랍니다.</p>
 </div>
 
 <div class="tbl_frm01 tbl_wrap">
