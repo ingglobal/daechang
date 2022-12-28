@@ -1,6 +1,90 @@
 <?php
 if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 
+// bom_item 정보 입력
+if(!function_exists('update_bom_item')){
+function update_bom_item($row) {
+    global $g5;
+
+    $list = $row; unset($row);
+
+    $sql_common = " bom_idx = '".$list['bom_idx']."',
+                    bom_idx_child = '".$list['bom_idx_child']."',
+                    bit_count = '".$list['bit_count']."',
+                    bit_num = '".$list['bit_num']."',
+                    bit_reply = '".$list['bit_reply']."',
+                    bit_update_dt = '".G5_TIME_YMDHIS."'
+    ";
+
+    $sql = "SELECT *
+                FROM {$g5['bom_item_table']}
+            WHERE bit_idx = '".$list['bit_idx']."'
+    ";
+    $bit = sql_fetch($sql,1);
+    if(!$bit['bit_idx'] || !$list['bit_idx']) {
+        $sql = " INSERT INTO {$g5['bom_item_table']} SET
+                    {$sql_common}
+                    , bit_reg_dt = '".G5_TIME_YMDHIS."'
+        ";
+        sql_query($sql,1);
+        $bit_idx = sql_insert_id();
+    }
+    else {
+        $sql = "UPDATE {$g5['bom_item_table']} SET
+                    {$sql_common}
+                WHERE bit_idx = '".$bit['bit_idx']."'
+        ";
+        sql_query($sql,1);
+        $bit_idx = $bit['bit_idx'];
+    }
+//	echo $sql.'<br>';
+
+    return $bit_idx;
+}
+}
+
+
+// 게시판 reply 생성 함수
+// 초기값 정의
+//$g5['bit']['num'] = array();
+//$g5['bit']['reply'] = array();
+//$g5['bit_num'] = 0;
+if(!function_exists('get_num_reply')){
+function get_num_reply($idx, $parent, $depth) {
+    global $g5;
+
+    // parent=0이면 num--
+    if(!$parent)
+        $g5['bit_num']--;
+
+    // reply 코드 앞부분은 부모코드
+    $reply_char1 = $g5['bit']['reply'][$parent];
+
+    // 부모코드로 시작 & 한단계 높은(정규식 regexp="/^정규식.$/") 배열들 전부 추출
+    // reply 코드 뒷부분은 같은 단계의 맨 끝값을 추출해서 나중에 +1 코드로 만들어야 함
+    foreach($g5['bit']['reply'] as $key=>$val) if(preg_match('/^'.$reply_char1.'.$/', $val)) {
+        //echo $key.'='.$val.'<br>';
+        //echo $g5['bit']['num'][$key].'<>'.$g5['bit_num'].'<br>';
+        // 같은 wr_num 그룹안에서만 찾아야 함
+        if( $g5['bit']['num'][$key]==$g5['bit_num'] ) {
+            $reply_last = $val;
+        }
+    }
+    // 같은 단계값이 없으면 초기값, 있으면 마지막 한문자값+1
+    if (!$reply_last)
+        $reply_char2 = 'A';
+    else
+        $reply_char2 = chr(ord( substr($reply_last,-1) ) + 1);
+
+    $g5['bit']['num'][$idx] = $g5['bit_num'];
+    $g5['bit']['reply'][$idx] = ($depth) ? $reply_char1.$reply_char2 : '';
+
+    return array($g5['bit']['num'][$idx], $g5['bit']['reply'][$idx]);
+
+}
+}
+
+
 // Get the pressure and temperature arrays for specific machine. 
 if(!function_exists('get_graph_array')){
 function get_graph_array($arr) {

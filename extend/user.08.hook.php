@@ -84,15 +84,12 @@ function u_member_login_check(){
 // 그누보드 5.5.8.1.2 업데이트 이후 토큰에러나는 스크립트 오류 문제 전역에 설정
 add_event('tail_sub','g5_admin_csrf_token_key_global');
 function g5_admin_csrf_token_key_global(){
-
-$var = function_exists('admin_csrf_token_key') ? admin_csrf_token_key() : '';
-$script = <<< _SCRIPT_
+    $var = function_exists('admin_csrf_token_key') ? admin_csrf_token_key() : '';
+    $script = <<< _SCRIPT_
 <script>var g5_admin_csrf_token_key = '{$var}';</script>
 _SCRIPT_;
-
-add_javascript($script, 1);
-
-//echo $script;
+    add_javascript($script, 1);
+    //echo $script;
 }
 
 

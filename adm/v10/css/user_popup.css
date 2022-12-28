@@ -1,7 +1,7 @@
 @charset "utf-8";
 /* 팝업창을 위한 별도 설정입니다. */
 
-body {background: #fff;}
+body {background: #040816;}
 .new_win {padding-bottom:40px;}
 .new_win .btn_fixed_top {position:absolute;top: 9px;}
 .new_win .local_sch {margin-left: 0;}

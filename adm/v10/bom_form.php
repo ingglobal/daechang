@@ -139,7 +139,7 @@ input[type="file"]::after{display:block;content:'파일선택\A(드래그앤드�
         $ar['width'] = '100%';
         $ar['value'] = ${$pre}[$ar['id']];
         $ar['required'] = 'required';
-        $ar['help'] = '제품명 or 자재명';
+        $ar['placeholder'] = '제품명 or 자재명';
         echo create_td_input($ar);
         unset($ar);
         ?>
@@ -155,7 +155,12 @@ input[type="file"]::after{display:block;content:'파일선택\A(드래그앤드�
 		</td>
     </tr>
 	<tr>
-		<th scope="row">카테고리</th>
+        <th scope="row">품번 (P/NO)</th>
+        <td>
+            <input type="text" name="bom_part_no" value="<?php echo ${$pre}['bom_part_no'] ?>" id="bom_part_no" required class="frm_input required" style="width:150px;" onkeyup="javascript:chk_Code(this)">
+            <span id="sp_notice"></span>
+        </td>
+		<th scope="row">분류</th>
 		<td>
             <?php
             $csql = " SELECT bct_id,bct_name FROM {$g5['bom_category_table']} WHERE com_idx = '{$_SESSION['ss_com_idx']}' AND LENGTH(bct_id) = 2 ORDER BY bct_order, bct_id ";
@@ -180,11 +185,6 @@ input[type="file"]::after{display:block;content:'파일선택\A(드래그앤드�
             }
             ?>
 		</td>
-        <th scope="row">제품코드(P/NO)</th>
-        <td>
-            <input type="text" name="bom_part_no" value="<?php echo ${$pre}['bom_part_no'] ?>" id="bom_part_no" required class="frm_input required" style="width:150px;" onkeyup="javascript:chk_Code(this)">
-            <span id="sp_notice"></span>
-        </td>
     </tr>
     <?php
     $ar['id'] = 'bom_memo';
@@ -217,10 +217,8 @@ input[type="file"]::after{display:block;content:'파일선택\A(드래그앤드�
 
 <script>
 $(function() {
-    //코드형식에 맞는지 확인
+    // 코드중복 체크
     chk_Code(document.getElementById('bom_part_no'));
-
-
 
     $("input[name$=_date]").datepicker({ changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd", showButtonPanel: true, yearRange: "c-99:c+99" });
 
@@ -252,65 +250,51 @@ function chk_Number(object){
 }
 
 function chk_Code(object){
-    var ex = /[\{\}\[\]\/?.,;:|\)*~`!^\+┼<>@\#$%&\'\"\\\(\=ㄱ-ㅎㅏ-ㅣ가-힣]*/g;
-    var hx = /[A-Z0-9-_]{3,20}/;
-    //var pt = /^[^-_][a-zA-Z0-9]+[-_]?[a-zA-Z0-9]+[-_]?[a-zA-Z0-9]+[^-_]$/;
-    //var hx = /^[^-_][a-zA-Z0-9]+[-][a-zA-Z0-9]+[-][a-zA-Z0-9]+[^-_]$/; //한국수지만의 패턴
-    object.value = object.value.replace(ex,"");//-_제외한 특수문자,한글입력 불가
-    var str = object.value; 
-    
-    if(hx.test(str)){
-        var bom_idx = '<?=${$pre."_idx"}?>';
-        var com_chk_url = './ajax/bom_part_no_overlap_chk.php';
-        var st = $.trim(str.toUpperCase());
-        var msg = '등록 가능한 코드입니다.';
-        object.value = st;
-        document.getElementById('sp_notice').textContent = msg;
-        $('#sp_notice').removeClass('sp_error');
-        //디비에 bom_part_no가 존재하는지 확인하고 존재하면 에러를 발생
-        //console.log(st);
-        $.ajax({
-            type : 'POST',
-            url : com_chk_url,
-            dataType : 'text',
-            data : {'bom_idx' : bom_idx,'bom_part_no' : st},
-            success : function(res){
-                //console.log(res);
-                if(res == 'ok'){
-                    document.getElementById('sp_notice').textContent = '등록 가능한 코드입니다.';
-                    $('#sp_notice').removeClass('sp_error');
-                }
-                else if(res == 'overlap'){
-                    document.getElementById('sp_notice').textContent = '이미 등록된 코드입니다.';
-                    $('#sp_notice').removeClass('sp_error');
-                    $('#sp_notice').addClass('sp_error');
-                }
-                else if(res == 'same'){
-                    document.getElementById('sp_notice').textContent = '제품코드 설정완료';
-                    $('#sp_notice').removeClass('sp_error');
-                }
-            },
-            error : function(xmlReq){
-                alert('Status: ' + xmlReq.status + ' \n\rstatusText: ' + xmlReq.statusText + ' \n\rresponseText: ' + xmlReq.responseText);
+    var bom_idx = '<?=${$pre."_idx"}?>';
+    var com_chk_url = './ajax/bom_part_no_overlap_chk.php';
+    var st = $.trim(str.toUpperCase());
+    var msg = '등록 가능한 코드입니다.';
+    object.value = st;
+    document.getElementById('sp_notice').textContent = msg;
+    $('#sp_notice').removeClass('sp_error');
+    //디비에 bom_part_no가 존재하는지 확인하고 존재하면 에러를 발생
+    //console.log(st);
+    $.ajax({
+        type : 'POST',
+        url : com_chk_url,
+        dataType : 'text',
+        data : {'bom_idx' : bom_idx,'bom_part_no' : st},
+        success : function(res){
+            //console.log(res);
+            if(res == 'ok'){
+                document.getElementById('sp_notice').textContent = '등록 가능한 코드입니다.';
+                $('#sp_notice').removeClass('sp_error');
             }
-        });
-    }
-    else {
-        document.getElementById('sp_notice').textContent = '코드규칙에 맞지않습니다.';
-        $('#sp_notice').removeClass('sp_error');
-        $('#sp_notice').addClass('sp_error');
-    }
+            else if(res == 'overlap'){
+                document.getElementById('sp_notice').textContent = '이미 등록된 코드입니다.';
+                $('#sp_notice').removeClass('sp_error');
+                $('#sp_notice').addClass('sp_error');
+            }
+            else if(res == 'same'){
+                document.getElementById('sp_notice').textContent = '품번 설정완료';
+                $('#sp_notice').removeClass('sp_error');
+            }
+        },
+        error : function(xmlReq){
+            alert('Status: ' + xmlReq.status + ' \n\rstatusText: ' + xmlReq.statusText + ' \n\rresponseText: ' + xmlReq.responseText);
+        }
+    });
 }
 
 function form01_submit(f) {
 
     if($('#sp_notice').hasClass('sp_error')){
-        alert('올바른 제품코드를 입력해 주세요.');
+        alert('올바른 품번를 입력해 주세요.');
         $('input[name="bom_part_no"]').focus();
         return false;
     }
 
-    return false;
+    return true;
 }
 
 </script>

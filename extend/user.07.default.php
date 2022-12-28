@@ -120,6 +120,8 @@ $seconds_text = array(
     ,"1"=>'초단위'
 );
 
+// BOM구성 표시
+$g5['set_bom_type_displays'] = explode(',', preg_replace("/\s+/", "", $g5['setting']['set_bom_type_display']));
 
 
 

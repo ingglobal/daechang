@@ -23,10 +23,10 @@ font-family: 'Noto Sans KR', sans-serif;
 }
 ::-webkit-scrollbar-thumb:window-inactive{background:#888888;}
 
-body {font-family: 'Noto Sans KR', sans-serif;background: #040816 !important;font-size:1em;color:#e1e1e1;}
+body {font-family: 'Noto Sans KR', sans-serif;background: #040816;font-size:0.91em;color:#e1e1e1;}
 h1, h2, h3, h4, h5, h6 {font-family: 'Noto Sans KR', sans-serif;}
-input, button {font-family: 'Noto Sans KR', sans-serif;font-size:0.83em;}
-textarea, select {font-family: 'Noto Sans KR', sans-serif;font-size:0.83em;}
+input, button {font-family: 'Noto Sans KR', sans-serif;}
+textarea, select {font-family: 'Noto Sans KR', sans-serif;}
 select{background-color:#2a3241 !important;color:#aaa;border:1px solid #2a3241;}
 .required{background: url(../../img/wrest.png) top right no-repeat #2a3241 !important}
 input[type="text"],input[type="url"],input[type="password"],input[type="email"],textarea{background:#313a48 !important;color:#bbb !important;border:1px solid #4e596e !important;}
@@ -209,26 +209,25 @@ input::-o-input-placeholder,textarea::-o-input-placeholder{color:#bbbbbb;}
 }
 
 /*버튼관련*/
-.btn{height: 34px;line-height: 34px;border-radius:5px;}
-a.btn{border-radius:5px;font-weight:normal;height: 30px !important;line-height:30px;font-size:0.9em;}
+.btn{height: 34px;line-height: 34px;}
+a.btn{font-weight:normal;font-size:0.9em;}
 .btn_01, a.btn_01{background:#0891D1 !important;color:efefef !important;}
 a.btn_01:link, a.btn_01:link,a.btn_01:visited, a.btn_01:visited{color:#fff !important;}
 .btn_01:hover, a.btn_01:hover {background:#0891D1;}
-.btn_02, a.btn_02{background:#095D9D;font-size:0.8em;}
+.btn_02, a.btn_02{background:#095D9D;font-size:0.9em;}
 .btn_ov01 .ov_txt{background:#1e2531;border-radius:0;font-weight: normal;}
 .btn_ov01 .ov_num{background:#000204;color:#fff;border-radius:0;font-weight: normal;padding:0 10px 0 5px;}
 a.btn_ov02, a.ov_listall{border-radius:0;}
-.td_mng a.btn, .td_mng a{border-radius:0;}
 .anchor a{background:#242F4B;border:1px solid #2f3a67;}
 a.btn_frmline{background:#095D9D;border-radius:0;height:30px;line-height:30px;}
-.btn_frmline{background:#095D9D;border-radius:0;height:26px;line-height:26px;}
+.btn_frmline{background:#095D9D;height:30px;font-size:.9em;}
 .btn_submit{background:#095D9D;color: #efefef !important;}
 .btn_submit:hover {background-color:#122958 !important;}
 a.ov_listall {background: #1e2531;}
 a.ov_listall:hover {background: #5b6b8a;}
 #container_title a.ov_listall {font-weight:normal;border: solid 1px #4d4d4d;}
-.btn_03, a.btn_03 {background: #560015;font-size:0.8em;color:#ccc;}
-.btn_04, a.btn_04 {background: #6e034a;color:#fff !important;line-height:30px !important;}
+.btn_03, a.btn_03 {background: #354667;font-size:0.9em;color:#ccc;}
+.btn_04, a.btn_04 {background: #354667;color:#fff !important;line-height:30px !important;}
 .btn_confirm{text-align:center;}
 .btn_confirm .btn_submit{color:#fff !important;height:34px;line-height:34px;}
 a.btn_cancel{background:#43535C;border:1px solid #434343;}
@@ -238,6 +237,7 @@ a.btn_cancel{background:#43535C;border:1px solid #434343;}
 #tnb li{margin-left:5px;}
 .tnb_com_select{border:1px solid #354667;}
 .tnb_mes{border:1px solid #354667;}
+.td_mng a.btn {height:25px;line-height:25px;}
 
 ul#bwgs_tab{border-bottom:1px solid #777;}
 ul#bwgs_tab:after{display:block;visibility:hidden;clear:both;content:"";}
@@ -341,7 +341,7 @@ td.td_grpset{border-left:1px solid #4b5465;}
 .adm_color_ul .adm_color_li .adm_coupon{color:#017b01;}
 
 /* 설명문구 테두리 부분 */
-.local_desc01 {background:#0c162a;border:1px solid #354667;font-size:0.8em;padding:10px 10px;}
+.local_desc01 {background:#0c162a;border:1px solid #354667;font-size:0.9em;padding:10px 10px;}
 .local_desc02{background:#0c162a;border:1px solid #354667;}
 
 .top_inf{}

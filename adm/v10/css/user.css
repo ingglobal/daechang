@@ -97,7 +97,7 @@ label[for^=set_] input[type=radio] {margin-right:2px;}
 
 /* 팝업 */
 .td_mb_name_saler,.td_ct_status {white-space: nowrap;}
-.btn_b10 {background: #43535C;color: #fff !important;font-weight:normal !important;height: 26px !important;line-height: 26px !important;}
+.btn_b10 {background: #43535C;color: #fff !important;font-weight:normal !important;}
 .btn_h38 {height: 38px !important;line-height: 38px !important;}
 
 /* 목록 홀짝 배경색 */
@@ -159,7 +159,7 @@ input[type=file] {padding-top: 5px;padding-left: 5px;height: 29px;line-height: 1
 
 #modal01 table ol {padding-right: 5px;text-indent: -20px;padding-left: 20px;font-size:0.9em;}
 #modal01 form {overflow:hidden;}
-input[type=file][name=file_excel] {width:100%;font-size:0.8em;border:solid 1px #444d61;height:40px;line-height:28px;}
+input[type=file][name=file_excel] {width:100%;font-size:0.9em;border:solid 1px #444d61;height:40px;line-height:28px;}
 
 /* 알람예지관련 */
 .cod_type_text_p, .cod_type_text_p2 {color:darkorange;}

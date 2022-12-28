@@ -1,4 +1,6 @@
 <?php
+// header('Content-Encoding: none;');
+
 $sub_menu = "940120";
 include_once('./_common.php');
 
@@ -6,7 +8,10 @@ if(!$member['mb_manager_yn']) {
     alert('메뉴에 접근 권한이 없습니다.');
 }
 
-$demo = 0;  // 데모모드 = 1
+$demo = 1;  // 데모모드 = 1
+
+// print_r2($_REQUEST);
+// exit;
 
 require_once G5_LIB_PATH.'/PhpSpreadsheet19/vendor/autoload.php'; 
 use PhpOffice\PhpSpreadsheet\Spreadsheet; 
@@ -36,10 +41,9 @@ for ($i = 0; $i < $sheetCount; $i++) {
     // print_r2($sheetData);
     $allData[$i] = $sheetData;
 }
-print_r2($allData[0]);
-print_r2(sizeof($allData));
-exit;
-
+// print_r3($allData[0]);
+// print_r3(sizeof($allData));
+// exit;
 
 
 
@@ -60,64 +64,19 @@ include_once ('./_tail.php');
 
 <?php
 $countgap = 10; // 몇건씩 보낼지 설정
-$sleepsec = 200;  // 백만분의 몇초간 쉴지 설정
-$maxscreen = 200; // 몇건씩 화면에 보여줄건지?
+$sleepsec = 10000;  // 백만분의 몇초간 쉴지 설정, default=200
+$maxscreen = 30; // 몇건씩 화면에 보여줄건지?
 
 flush();
 ob_flush();
 
-// 시트를 돌면서 배열로 먼저 생성해 두고 나중에 사용
-for ($x=0;$x<sizeof($allData);$x++) {
-    // print_r3($x);
-    // print_r3(sizeof($allData[$x]));
-    // print_r3($allData[$x]);
-    for($i=0;$i<=sizeof($allData[$x]);$i++) {
-        // print_r3($allData[$x][$i]);
-        // 초기화
-        unset($arr);
-        unset($list);
-        // 한 라인씩 $list 숫자 배열로 변경!!
-        if(is_array($allData[$x][$i])) {
-            foreach($allData[$x][$i] as $k1=>$v1) {
-                // print_r3($k1.'='.$v1);
-                $list[] = trim($v1);
-            }
-        }
-        // print_r3($list);
-        $arr['machine_no'] = $list[0];
-        $arr['machine_name'] = $list[1];
-        $arr['mnt_date'] = $list[2];
-        $arr['alarm_no'] = $list[13];
-        $arr['alarm_name'] = $list[14];
-        $arr['alarm_code'] = $list[15];
-        // print_r3($arr);
-
-        // 조건에 맞는 해당 라인만 추출
-        if( preg_match("/[-0-9A-Z]/",$arr['machine_no'])
-            && preg_match("/[가-힝]/",$arr['machine_name'])
-            && preg_match("/[-0-9]/",$arr['mnt_date'])
-            && preg_match("/[0-9A-Z]/",$arr['alarm_code']) )
-        {
-            // print_r3($arr);
-
-            // 배열생성
-            $alarm_arr[$arr['machine_no']][$arr['alarm_no']] = $arr['alarm_code'];
-
-        }
-        else {continue;}
-
-    }
-}
-// print_r3($alarm_arr);
-
-
-// print_r3($allData);
 $idx = 0;
-
+// ==============================================================================
+// 첫번째 시트
 for($i=0;$i<=sizeof($allData[0]);$i++) {
     // print_r3($allData[0][$i]);
-	if($demo) {
-        if($i>4) {break;}
+    if($demo) {
+        if($i>10) {break;}
     }
 
     // 초기화
@@ -131,39 +90,37 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
         }
     }
     // print_r3($list);
-    $arr['machine_no'] = $list[0];
-    $arr['machine_name'] = $list[1];
-    $arr['mnt_date'] = $list[2];
-    $arr['mnt_reason'] = $list[3];    // 사유
-    $arr['mnt_content'] = $list[4];
-    $arr['mnt_part'] = $list[5];    // 고장부위
-    $arr['mnt_name'] = $list[6];
-    // $arr['mnt_start_time'] = $list[7];
-    $arr['mnt_start_time'] = '23:40';
-    // $arr['mnt_end_time'] = $list[8];
-    $arr['mnt_end_time'] = '00:40';
-    $arr['mnt_minutes'] = $list[9];
-    $arr['mnt_company'] = $list[10];
+    $arr['no'] = $list[0];
+    $arr['ship_to'] = $list[1];
+    $arr['car_type'] = $list[2];
+    $arr['level1'] = $list[3];
+    $arr['level2'] = $list[4];
+    $arr['level3'] = $list[5];
+    $arr['level4'] = $list[6];
+    $arr['level5'] = $list[7];
+    $arr['level6'] = $list[8];
+    $arr['level7'] = $list[9];
+    $arr['level8'] = $list[10];
+    $arr['level9'] = $list[11];
+    $arr['level10'] = $list[12];
+    $arr['level11'] = $list[13];
+    $arr['level12'] = $list[14];
+    $arr['spec'] = $list[15];
+    $arr['image'] = $list[16];
+    $arr['part_no'] = $list[17];
+    $arr['part_name'] = $list[18];
+    $arr['us'] = $list[19];
+    $arr['com_name'] = $list[20];
+    $arr['remark'] = $list[21];
     // print_r3($arr);
 
     // 조건에 맞는 해당 라인만 추출
-    if( preg_match("/[-0-9A-Z]/",$arr['machine_no'])
-        && preg_match("/[가-힝]/",$arr['machine_name'])
-        && preg_match("/[-0-9]/",$arr['mnt_date']) )
+    if( preg_match("/[0-9]/",$arr['no'])
+        && preg_match("/[-0-9A-Z]/",$arr['part_no'])
+        && $arr['part_name']
+        && preg_match("/[0-9]/",$arr['us']) )
     {
         // print_r3($arr);
-
-        // 제목, 내용
-        $arr['mnt_content_arr'] = explode("=>",$arr['mnt_content']);
-        // print_r3(sizeof($arr['mnt_content_arr']));
-        // print_r3($arr['mnt_content_arr']);
-        $arr['mnt_content_new'] = $arr['mnt_content_arr'][sizeof($arr['mnt_content_arr'])-1];
-        for($j=0;$j<=sizeof($arr['mnt_content_arr'])-2;$j++) {
-            // print_r3($arr['mnt_content_arr'][$j]);
-            $arr['mnt_subject_arr'][] = $arr['mnt_content_arr'][$j];
-        }
-        $arr['mnt_content'] = $arr['mnt_content_new'];
-        $arr['mnt_subject'] = implode(" => ",$arr['mnt_subject_arr']);
 
         // 데이터 입력&수정&삭제
         $db_idx = func_db_update($arr);
@@ -174,9 +131,9 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
 
 
     // 메시지 보임
-    if($arr['mnt_subject']) {
+    if($arr['no']) {
         echo "<script> document.all.cont.innerHTML += '".$idx
-                .". ".$arr['mnt_subject']." [".$arr['mnt_part']."]: ".$arr['mnt_content']
+                .". ".$arr['car_type']." [".$arr['part_no']."]: ".$arr['part_name']
                 ." ----------->> 완료<br>'; </script>\n";
     }
 

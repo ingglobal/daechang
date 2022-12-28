@@ -6,6 +6,7 @@ if(!function_exists('func_db_update')){
 function func_db_update($arr) {
     global $g5,$demo,$mms_array;
 
+    return false;
     // print_r3($arr);
     // print_r3($mms_array);
     // print_r3($mms_array[$arr['machine_no']]);

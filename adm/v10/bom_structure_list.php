@@ -11,10 +11,8 @@ $sql_common = " FROM {$g5['bom_table']} AS bom
                         AND bct.com_idx = '".$_SESSION['ss_com_idx']."'
                     LEFT JOIN {$g5['company_table']} AS com ON com.com_idx = bom.com_idx_customer
 "; 
-
 $where = array();
 $where[] = " bom_status NOT IN ('delete','trash') AND bom.com_idx = '".$_SESSION['ss_com_idx']."' AND bom_type NOT IN('product') ";// 디폴트 검색조건
-
 //echo $g5['file_name'];
 
 // 카테고리 검색
@@ -72,7 +70,7 @@ $g5['title'] = '제품(자재)리스트 ('.number_format($total_count).')';
 include_once('./_head.sub.php');
 ?>
 <style>
-.scp_frame {padding:10px;background:#f1f1f1}
+.scp_frame {padding:10px;background:#040816;}
 .new_frame_con {margin-top:10px;}
 .td_bom_name
 ,.td_bom_part_no
@@ -90,7 +88,9 @@ include_once('./_head.sub.php');
 
     <div id="div_search">
         <select name="sfl" id="sfl">
+            <option value="part_no"<?php echo get_selected($_GET['sfl'], "part_no"); ?>>품번</option>
             <option value="bom_name"<?php echo get_selected($_GET['sfl'], "bom_name"); ?>>품명</option>
+            <option value="com_name"<?php echo get_selected($_GET['sfl'], "com_name"); ?>>거래처</option>
             <option value="com_idx_customer"<?php echo get_selected($_GET['sfl'], "com_idx_customer"); ?>>거래처번호</option>
             <option value="bom_maker"<?php echo get_selected($_GET['sfl'], "bom_maker"); ?>>메이커</option>
             <option value="bom_memo"<?php echo get_selected($_GET['sfl'], "bom_idx"); ?>>메모</option>
@@ -107,7 +107,7 @@ include_once('./_head.sub.php');
         <thead>
         <tr>
             <th scope="col"><?php echo subject_sort_link('bom_name') ?>품명</a></th>
-            <th scope="col">파트넘버</th>
+            <th scope="col">품번</th>
             <th scope="col">거래처</th>
             <th scope="col">단가</th>
             <th scope="col">타입</th>
@@ -122,7 +122,7 @@ include_once('./_head.sub.php');
         ?>
         <tr class="<?php echo $bg; ?>" tr_id="<?php echo $row['bom_idx'] ?>">
             <td class="td_bom_name"><?=$row['bom_name']?></td><!-- 품명 -->
-            <td class="td_bom_part_no"><?=$row['bom_part_no']?></td><!-- 파트넘버 -->
+            <td class="td_bom_part_no"><?=$row['bom_part_no']?></td><!-- 품번 -->
             <td class="td_com_name"><?=$row['com_name']?></td><!-- 거래처 -->
             <td class="td_bom_price"><?=number_format($row['bom_price'])?></td><!-- 단가 -->
             <td class="td_bom_type"><?=$g5['set_bom_type_value'][$row['bom_type']]?></td>

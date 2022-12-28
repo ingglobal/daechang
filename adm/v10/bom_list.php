@@ -44,7 +44,7 @@ if ($stx != "") {
 }
 
 // 타입
-$ser_bom_type = $ser_bom_type ?: 'product';
+$ser_bom_type = $ser_bom_type ?: 'all';
 if($ser_bom_type!='all') {  // all 인 경우는 조건이 필요없음
     $where[] = " bom_type = '".trim($ser_bom_type)."' ";
 }
@@ -76,6 +76,22 @@ $sql = "SELECT *
 // print_r3($sql);
 $result = sql_query($sql,1);
 
+// 완제품
+$sql = " SELECT COUNT(*) as cnt FROM {$g5['bom_table']} WHERE bom_status NOT IN ('delete','trash') AND bom_type = 'product' ";
+$row = sql_fetch($sql);
+$product_count = $row['cnt'];
+
+// 반제품
+$sql = " SELECT COUNT(*) as cnt FROM {$g5['bom_table']} WHERE bom_status NOT IN ('delete','trash') AND bom_type = 'half' ";
+$row = sql_fetch($sql);
+$half_count = $row['cnt'];
+
+// 자재
+$sql = " SELECT COUNT(*) as cnt FROM {$g5['bom_table']} WHERE bom_status NOT IN ('delete','trash') AND bom_type = 'material' ";
+$row = sql_fetch($sql);
+$material_count = $row['cnt'];
+
+
 $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목록</a>';
 $qstr .= '&sca='.$sca.'&ser_bom_type='.$ser_bom_type; // 추가로 확장해서 넘겨야 할 변수들
 ?>
@@ -98,23 +114,33 @@ $qstr .= '&sca='.$sca.'&ser_bom_type='.$ser_bom_type; // 추가로 확장해서 
     display: unset;
     margin: -8px 0 0 -8px;
 }
+.btn_number {padding:1px 5px 2px;margin-right:10px;font-size:0.7em;color:white;background-color:#354667}
 </style>
 
 <div class="local_ov01 local_ov">
     <?php echo $listall ?>
-    <span class="btn_ov01"><span class="ov_txt">총 </span><span class="ov_num"> <?php echo number_format($total_count) ?>건 </span></span>
+    <span class="btn_ov01"><span class="ov_txt">검색 </span><span class="ov_num"> <?php echo number_format($total_count) ?>건 </span></span>
+    <a href="?<?='ser_bom_type=product'?>" class="btn_ov01" style="margin-left:20px;">
+        <span class="ov_txt">완제품 </span><span class="ov_num"><?php echo number_format($product_count) ?></span>
+    </a>
+    <a href="?<?='ser_bom_type=half'?>" class="btn_ov01">
+        <span class="ov_txt">반제품 </span><span class="ov_num"><?php echo number_format($half_count) ?></span>
+    </a>
+    <a href="?<?='ser_bom_type=material'?>" class="btn_ov01">
+        <span class="ov_txt">자재 </span><span class="ov_num"><?php echo number_format($material_count) ?></span>
+    </a>
 </div>
 
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get">
 <select name="ser_bom_type" id="ser_bom_type">
-    <option value="all">전체타입</option>
+    <option value="all">전체</option>
     <?=$g5['set_bom_type_options']?>
 </select>
 <script>$('select[name="ser_bom_type"]').val('<?=$ser_bom_type?>');</script>
 
 <label for="sfl" class="sound_only">검색대상</label>
 <select name="sfl" id="sfl">
-    <option value="bom_part_no"<?php echo get_selected($_GET['sfl'], "bom_part_no"); ?>>P/NO</option>
+    <option value="bom_part_no"<?php echo get_selected($_GET['sfl'], "bom_part_no"); ?>>품번</option>
     <option value="bom_name"<?php echo get_selected($_GET['sfl'], "bom_name"); ?>>품명</option>
     <option value="com_idx_customer"<?php echo get_selected($_GET['sfl'], "com_idx_customer"); ?>>거래처번호</option>
     <option value="bom_maker"<?php echo get_selected($_GET['sfl'], "bom_maker"); ?>>메이커</option>
@@ -128,9 +154,9 @@ $qstr .= '&sca='.$sca.'&ser_bom_type='.$ser_bom_type; // 추가로 확장해서 
 </form>
 
 <div class="local_desc01 local_desc" style="display:none;">
-    <p>새로운 고객을 등록</p>
+    <p>리스트 디폴트는 완성품입니다. 전체제품 목록을 확인하시려면 제품타입을 [전체]로 설정하시고 검색하세요.</p>
+    <p>가격이 변경될 미래 날짜를 지정해 두면 해당 날짜부터 변경될 가격이 적용됩니다.</p>
 </div>
-
 
 <form name="form01" id="form01" action="./bom_list_update.php" onsubmit="return form01_submit(this);" method="post">
 <input type="hidden" name="sst" value="<?php echo $sst ?>">
@@ -150,7 +176,7 @@ $qstr .= '&sca='.$sca.'&ser_bom_type='.$ser_bom_type; // 추가로 확장해서 
             <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
         </th>
         <th scope="col"><?php echo subject_sort_link('bom_name') ?>품명</a></th>
-        <th scope="col">파트넘버</th>
+        <th scope="col">품번</th>
         <th scope="col">카테고리</th>
         <th scope="col">타입</th>
         <th scope="col">관리</th>
@@ -187,14 +213,15 @@ $qstr .= '&sca='.$sca.'&ser_bom_type='.$ser_bom_type; // 추가로 확장해서 
             for ($j=0; $row1=sql_fetch_array($rs1); $j++) {
                 // print_r2($row1);
                 $len = strlen($row1['bit_reply']);
-                for ($k=0; $k<$len; $k++) { $row1['nbsp'] .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; } // 들여쓰기공백
+                $row1['len'] = '<span class="btn_number">'.($len+2).'</span>';
+                for ($k=0; $k<$len; $k++) { $row1['nbsp'] .= '&nbsp;&nbsp;&nbsp;&nbsp;'; } // 들여쓰기공백
                 $row['parts_list'][] = '<div class="div_part">
-                                            <span class="span_bom_name">'.$row1['nbsp'].$row1['bom_name'].'</span>
+                                            <span class="span_bom_name">'.$row1['len'].$row1['nbsp'].$row1['bom_name'].'</span>
                                             <span class="span_bom_part_no">'.$row1['bom_part_no'].'</span>
                                             <span class="span_com_name">'.$row1['com_name'].'</span>
                                             <span class="span_bom_price"><b>'.number_format($row1['bom_price']).'</b>원</span>
                                             <span class="span_bit_count"><b>'.$row1['bit_count'].'</b>개</span>
-                                            <span class="span_bom_edit"><a href="./bom_form.php?w=u&bom_idx='.$row1['bom_idx_child'].'" target="_blank">수정</a></span>
+                                            <span class="span_bom_edit"><a href="./bom_form.php?w=u&bom_idx='.$row1['bom_idx_child'].'" target="_blank"><i class="fa fa-external-link"></i></a></span>
                                         </div>';
                 // 재료비합계
                 $row['bom_price_material'] += $row1['bom_price']*$row1['bit_count'];
@@ -228,21 +255,18 @@ $qstr .= '&sca='.$sca.'&ser_bom_type='.$ser_bom_type; // 추가로 확장해서 
         <td class="td_bom_part_no">
             <input type="hidden" name="bom_part_no[<?php echo $i ?>]" value="<?php echo $row['bom_part_no'] ?>">
             <?=$row['bom_part_no']?>
-        </td><!-- 파트넘버 -->
+        </td><!-- 품번 -->
         <td class="td_bct_name"><?=$row['bct_name_tree']?></td><!-- 카테고리 -->
         <td class="td_bom_type"><?=$g5['set_bom_type_value'][$row['bom_type']]?></td><!-- 타입 -->
         <td class="td_mng">
-            <?php ;//(($row['bom_type']!='material')?$s_bom:'')?><!-- 자재가 아닌 경우만 BOM 버튼 -->
+            <?=(($row['bom_type']!='material')?$s_bom:'')?><!-- 자재가 아닌 경우만 BOM 버튼 -->
 			<?=$s_mod?>
 		</td>
     </tr>
     <tr class="<?php echo $bg; ?>" tr_id="<?=$row['bom_idx']?>" style="display:<?=(!in_array($row['bom_type'],$g5['set_bom_type_displays']))?'none':''?>">
         <td>
         </td>
-        <td class="td_bom_items_title">
-            자재 (구성품)
-        </td>
-        <td class="td_bom_items" colspan="4">
+        <td class="td_bom_items" colspan="5">
             <?php
             if(is_array($row['parts_list'])) {
                 echo implode(" ",$row['parts_list']);

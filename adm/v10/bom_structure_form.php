@@ -37,17 +37,17 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_USER_ADMIN_CSS_URL.'/nestable.
 ?>
 <style>
 .tbl_frm01:after {display:block;visibility:hidden;clear:both;content:'';}
-.div_wrapper {display:inline-block;background:#f1f1f1;width:49.5%;}
+.div_wrapper {display:inline-block;background:#1e2531;width:49.5%;}
 .dd {min-width: 100%;}
-.div_title {background:#ffffff;padding:15px;}
-.div_title .bom_title {color:#5a59a1;font-weight:bold;}
+.div_title {background:#1e2531;padding:15px;border-bottom: 1px solid #040816;}
+.div_title .bom_title {color:#00ffe7;}
 .bom_detail:before {content:"(";margin-left:10px;}
 .bom_detail:after {content:")";}
 #del-item {margin-top:-6px;}
 #nestable3 {padding:10px 20px;min-height:616px;}
 .div_bom_list {min-height:600px;padding:10px 20px;}
-#frame_bom_list {width:100%;height:600px;background:#f1f1f1;}
-.empty_table {background:#f1f1f1;}
+#frame_bom_list {width:100%;height:600px;background:#1e2531;}
+.empty_table {background:#1e2531;color: #818181;}
 </style>
 
 <form name="form01" id="form01" action="./<?=$g5['file_name']?>_update.php" onsubmit="return form01_submit(this);" method="post" autocomplete="off">

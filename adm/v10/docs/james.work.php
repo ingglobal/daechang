@@ -1,3 +1,4 @@
+<?php
 greengrass 참고메뉴얼
 
 
@@ -708,4 +709,337 @@ feature-search-outline
 cogs
 cog-box
 cog-transfer-outline
+
+====================================================
+AWS IoT 서비스 잘 활용하는 방법 알아보기
+https://catalog.us-east-1.prod.workshops.aws/workshops/cdb1fb2e-9345-4c47-9831-026dad5870e6/ko-KR
+====================================================
+
+colud9은 서울 리전에서는 t2를 만들수가 없다.
+t3로 워크샵을 진행해야 합니다.
+
+
+13. 파티션 용량을 증설합니다. 이후 파티션 용량이 증설 되었는 지 확인합니다.
+// T3, M5 인스턴스 명령어
+sudo growpart /dev/nvme0n1 1
+
+// 확인합니다.
+lsblk
+
+14. 반영할 디스크 타입을 확인합니다.
+blkid
+그냥 이 명령어만 해도 되네!!
+
+# ext2, ext3, ext4
+sudo resize2fs /dev/nvme0n1p1
+
+
+// iotThing-Policy
+--------------
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iot:Publish",
+        "iot:Receive"
+      ],
+      "Resource": [
+        "arn:aws:iot:ap-northeast-2:215907354426:topic/sdk/test/java",
+        "arn:aws:iot:ap-northeast-2:215907354426:topic/sdk/test/python",
+        "arn:aws:iot:ap-northeast-2:215907354426:topic/sdk/test/js"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iot:Subscribe"
+      ],
+      "Resource": [
+        "arn:aws:iot:ap-northeast-2:215907354426:topicfilter/sdk/test/java",
+        "arn:aws:iot:ap-northeast-2:215907354426:topicfilter/sdk/test/python",
+        "arn:aws:iot:ap-northeast-2:215907354426:topicfilter/sdk/test/js"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iot:Connect"
+      ],
+      "Resource": [
+        "arn:aws:iot:ap-northeast-2:215907354426:client/sdk-java",
+        "arn:aws:iot:ap-northeast-2:215907354426:client/basicPubSub",
+        "arn:aws:iot:ap-northeast-2:215907354426:client/sdk-nodejs-*"
+      ]
+    }
+  ]
+}
+----------------
+
+python 버전 에러
+awsiotsdk requires Python '>=3.7' but the running Python is 3.6.9
+
+james:~/environment $ python --version
+Python 2.7.17
+
+// let's find whereis python
+james:~/environment $ whereis python
+python: /usr/bin/python3.6m-config /usr/bin/python3.6 /usr/bin/python3.6-config /usr/bin/python2.7-config /usr/bin/python /usr/bin/python2.7 /usr/bin/python3.6m /usr/lib/python3.8 /usr/lib/python3.7 /usr/lib/python3.6 /usr/lib/python2.7 /etc/python3.6 /etc/python /etc/python2.7 /usr/local/lib/python3.6 /usr/local/lib/python2.7 /usr/include/python3.6 /usr/include/python2.7 /usr/include/python3.6m /usr/share/python /usr/share/man/man1/python.1.gz
+
+$ ls -l /usr/bin/python*
+// 여기에 다 있구만.. 그런데 3.7 이상이 없구만. 3.8을 깔아줍시다.
+// 3.9까지 필요없구요. 쉽게 설치하게 그냥 3.8만 하셔요.
+https://rottk.tistory.com/entry/Ubuntu-Python3-%EC%B5%9C%EC%8B%A0-%EB%B2%84%EC%A0%84-%EC%84%A4%EC%B9%98%ED%95%98%EA%B8%B0
+
+
+$ sudo apt install python3.8
+// 3.8이 들어왔는지 확인
+$ ls -l /usr/bin/python*
+
+// soft link를 걸어주고 
+$ sudo ln -s -f /usr/bin/python3.8 /usr/bin/python3
+$ sudo ln -s -f /usr/bin/python3.8 /usr/bin/python
+
+// alias도 걸어주자.
+~/.bashrc 또는 ~/.bash_aliases 파일에 아래의 내용을 추가합니다.
+
+alias python=python3
+alias pip=pip3
+
+// 버전을 다시 확인해 보자.
+Administrator:~/environment $ python --version
+Python 3.8.0
+
+
+// ./start.sh 에서 미리 깔린 것들 제거하고 다시 해 줘야 함
+$ sudo rm -rf aws-iot-device-sdk-python
+
+// 또 에러..
+FileNotFoundError: [Errno 2] No such file or directory: 'root-CA.crt'
+
+$ wget https://pki.goog/roots.pem
+$ sudo mv roots.pem root-CA.crt
+$ ./start.sh
+// 휴~~ 이제 되는 거 같구만!!
+
+curl https://www.amazontrust.com/repository/AmazonRootCA1.pem > root-CA.crt
+
+
+
+// MQTT test client 대문자로 하면 안 되요.
+sdk/test/Python
+sdk/test/python
+(start.sh 파일을 보면.. --topic sdk/test/python 이렇게 딱~~되어 있어요.)
+
+
+// 소스 수정을 하려면 git 에서 소스를 받아야 해요.
+Administrator:~/environment $ git clone https://github.com/JinHyun-Park/aws-iot-device-sdk-python.git
+
+
+// start.sh 파일이 달라요. (메뉴얼이 v2가 아니네요.)
+.................................................
+#!/usr/bin/env bash
+# stop script on error
+set -e
+
+# Check to see if root CA file exists, download if not
+if [ ! -f ./root-CA.crt ]; then
+  printf "\nDownloading AWS IoT Root CA certificate from AWS...\n"
+  curl https://www.amazontrust.com/repository/AmazonRootCA1.pem > root-CA.crt
+fi
+
+# Check to see if AWS Device SDK for Python exists, download if not
+if [ ! -d ./aws-iot-device-sdk-python ]; then
+  printf "\nCloning the AWS SDK...\n"
+  git clone https://github.com/JinHyun-Park/aws-iot-device-sdk-python.git
+fi
+
+# Check to see if AWS Device SDK for Python is already installed, install if not
+if ! python3 -c "import AWSIoTPythonSDK" &> /dev/null; then
+  printf "\nInstalling AWS SDK...\n"
+  pushd aws-iot-device-sdk-python
+  pip install AWSIoTPythonSDK
+  result=$?
+  if [ $result -ne 0 ]; then
+    printf "\nERROR: Failed to install SDK.\n"
+    exit $result
+  fi
+fi
+
+# run pub/sub sample app using certificates downloaded in package
+printf "\nRunning pub/sub sample application...\n"
+python aws-iot-device-sdk-python/samples/basicPubSub/basicPubSub.py -e a2fp0dsf5tehz0-ats.iot.ap-northeast-2.amazonaws.com -r root-CA.crt -c iotThing.cert.pem -k iotThing.private.key
+.................................................
+
+
+
+
+
+# Certificate based mutual authentication
+python aws-iot-device-sdk-python/samples/basicPubSub/basicPubSub.py -e a2fp0dsf5tehz0-ats.iot.ap-northeast-2.amazonaws.com -r root-CA.crt -c iotThing.cert.pem -k iotThing.private.key
+python3 aws-iot-device-sdk-python-v2/samples/pubsub.py --endpoint a2fp0dsf5tehz0-ats.iot.ap-northeast-2.amazonaws.com --ca_file root-CA.crt --cert iotThing.cert.pem --key iotThing.private.key --client_id basicPubSub --topic sdk/test/python --count 0
+
+# MQTT over WebSocket
+python basicPubSub.py -e <endpoint> -r <rootCAFilePath> -w
+# Customize client id and topic
+python basicPubSub.py -e <endpoint> -r <rootCAFilePath> -c <certFilePath> -k <privateKeyFilePath> -id <clientId> -t <topic>
+# Customize the message
+python basicPubSub.py -e <endpoint> -r <rootCAFilePath> -c <certFilePath> -k <privateKeyFilePath> -id <clientId> -t <topic> -M <message>
+# Customize the port number
+python basicPubSub.py -e <endpoint> -r <rootCAFilePath> -c <certFilePath> -k <privateKeyFilePath> -p <portNumber>
+# change the run mode to subscribe or publish only (see python basicPubSub.py -h for the available options)
+python basicPubSub.py -e <endpoint> -r <rootCAFilePath> -c <certFilePath> -k <privateKeyFilePath> -m <mode>
+
+
+// 생성한 rule을 policy(정책)에 추가해 주어야 동작하지.
+"arn:aws:iot:ap-northeast-2:215907354426:topic/$aws/rules/iotRulesKinesis/*"
+
+"arn:aws:iot:ap-northeast-2:215907354426:topicfilter/$aws/rules/iotRulesKinesis/*"
+
+
+// 소스 부분도 변경이 필요하네요. topic 주소가 바뀌었네요. v2 에서 변경 사항을 반영을 해 주어야 해요. (주석 부분 참고하세요.)
+// /aws-iot-device-sdk-python/samples/basicPubSub/rulePubSub.py 
+---------------
+'''
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+ '''
+
+from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
+import logging
+import time
+import argparse
+import json
+from datetime import datetime
+
+AllowedActions = ['both', 'publish', 'subscribe']
+
+# Custom MQTT message callback
+def customCallback(client, userdata, message):
+    print("Received a new message: ")
+    print(message.payload)
+    print("from topic: ")
+    print(message.topic)
+    print("--------------\n\n")
+
+
+# Read in command-line parameters
+parser = argparse.ArgumentParser()
+parser.add_argument("-e", "--endpoint", action="store", required=True, dest="host", help="Your AWS IoT custom endpoint")
+parser.add_argument("-r", "--rootCA", action="store", required=True, dest="rootCAPath", help="Root CA file path")
+parser.add_argument("-c", "--cert", action="store", dest="certificatePath", help="Certificate file path")
+parser.add_argument("-k", "--key", action="store", dest="privateKeyPath", help="Private key file path")
+parser.add_argument("-p", "--port", action="store", dest="port", type=int, help="Port number override")
+parser.add_argument("-w", "--websocket", action="store_true", dest="useWebsocket", default=False,
+                    help="Use MQTT over WebSocket")
+parser.add_argument("-id", "--clientId", action="store", dest="clientId", default="iotThing",
+                    help="Targeted client id")
+# parser.add_argument("-t", "--topic", action="store", dest="topic", default="$aws/rules/iotThingRule/iot/ledLight1", help="Targeted topic")
+parser.add_argument("-t", "--topic", action="store", dest="topic", default="$aws/rules/iotRulesKinesis/iot/ledLight1", help="Targeted topic")
+parser.add_argument("-m", "--mode", action="store", dest="mode", default="publish",
+                    help="Operation modes: %s"%str(AllowedActions))
+parser.add_argument("-M", "--message", action="store", dest="message", default="Hello World!",
+                    help="Message to publish")
+
+args = parser.parse_args()
+host = args.host
+rootCAPath = args.rootCAPath
+certificatePath = args.certificatePath
+privateKeyPath = args.privateKeyPath
+port = args.port
+useWebsocket = args.useWebsocket
+clientId = args.clientId
+topic = args.topic
+
+if args.mode not in AllowedActions:
+    parser.error("Unknown --mode option %s. Must be one of %s" % (args.mode, str(AllowedActions)))
+    exit(2)
+
+if args.useWebsocket and args.certificatePath and args.privateKeyPath:
+    parser.error("X.509 cert authentication and WebSocket are mutual exclusive. Please pick one.")
+    exit(2)
+
+if not args.useWebsocket and (not args.certificatePath or not args.privateKeyPath):
+    parser.error("Missing credentials for authentication.")
+    exit(2)
+
+# Port defaults
+if args.useWebsocket and not args.port:  # When no port override for WebSocket, default to 443
+    port = 443
+if not args.useWebsocket and not args.port:  # When no port override for non-WebSocket, default to 8883
+    port = 8883
+
+# Configure logging
+logger = logging.getLogger("AWSIoTPythonSDK.core")
+logger.setLevel(logging.DEBUG)
+streamHandler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+streamHandler.setFormatter(formatter)
+logger.addHandler(streamHandler)
+
+# Init AWSIoTMQTTClient
+myAWSIoTMQTTClient = None
+if useWebsocket:
+    myAWSIoTMQTTClient = AWSIoTMQTTClient(clientId, useWebsocket=True)
+    myAWSIoTMQTTClient.configureEndpoint(host, port)
+    myAWSIoTMQTTClient.configureCredentials(rootCAPath)
+else:
+    myAWSIoTMQTTClient = AWSIoTMQTTClient(clientId)
+    myAWSIoTMQTTClient.configureEndpoint(host, port)
+    myAWSIoTMQTTClient.configureCredentials(rootCAPath, privateKeyPath, certificatePath)
+
+# AWSIoTMQTTClient connection configuration
+myAWSIoTMQTTClient.configureAutoReconnectBackoffTime(1, 32, 20)
+myAWSIoTMQTTClient.configureOfflinePublishQueueing(-1)  # Infinite offline Publish queueing
+myAWSIoTMQTTClient.configureDrainingFrequency(2)  # Draining: 2 Hz
+myAWSIoTMQTTClient.configureConnectDisconnectTimeout(10)  # 10 sec
+myAWSIoTMQTTClient.configureMQTTOperationTimeout(5)  # 5 sec
+
+# Connect and subscribe to AWS IoT
+myAWSIoTMQTTClient.connect()
+if args.mode == 'both' or args.mode == 'subscribe':
+    myAWSIoTMQTTClient.subscribe(topic, 1, customCallback)
+time.sleep(2)
+
+state = 0 # Use for later
+# Publish to the same topic in a loop forever
+loopCount = 0
+while True:
+    if args.mode == 'both' or args.mode == 'publish':
+        timeStamp = time.mktime(datetime.today().timetuple())
+        message = {}
+        message['DeviceId'] = 1234
+        message['Time'] = int(timeStamp)
+        message['State'] = state
+        messageJson = json.dumps(message)
+        myAWSIoTMQTTClient.publish(topic, messageJson, 1)
+        if args.mode == 'publish':
+            print('Published topic %s: %s\n' % (topic, messageJson))
+        loopCount += 1
+    time.sleep(1)
+---------------
+
+
+
+
+
+
+echo '--------------------------------------------------1<br>';
+지울 때
+EC2 > volume 도 지우세요.
+S3 > iotworkshop-s3-220402 지워주세요. (PUT-S3-zPBIg)
+
 
