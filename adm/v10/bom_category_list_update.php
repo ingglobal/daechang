@@ -9,14 +9,14 @@ auth_check_menu($auth, $sub_menu, "w");
 check_admin_token();
 
 if ($_POST['act_button2'] == "일괄수정") {
-    $post_bct_id_count = (isset($_POST['bct_id']) && is_array($_POST['bct_id'])) ? count($_POST['bct_id']) : 0;
+    $post_bct_idx_count = (isset($_POST['bct_idx']) && is_array($_POST['bct_idx'])) ? count($_POST['bct_idx']) : 0;
 
-    for ($i=0; $i<$post_bct_id_count; $i++)
+    for ($i=0; $i<$post_bct_idx_count; $i++)
     {
         $sql = " update {$g5['bom_category_table']}
                     set bct_name    = '".$_POST['bct_name'][$i]."',
                         bct_order   = '".sql_real_escape_string(strip_tags($_POST['bct_order'][$i]))."'
-                where bct_id = '".sql_real_escape_string($_POST['bct_id'][$i])."'
+                where bct_idx = '".sql_real_escape_string($_POST['bct_idx'][$i])."'
                     AND com_idx = '".$_SESSION['ss_com_idx']."'
         ";
         sql_query($sql,1);
@@ -55,7 +55,7 @@ if ($_POST['act_button'] == "분류환경변수설정반영") {
             $value = trim($value);
             
             $ist_sql = " INSERT INTO {$g5['bom_category_table']} SET
-                bct_id = '{$cd1}'
+                bct_idx = '{$cd1}'
                 ,com_idx = '{$_SESSION['ss_com_idx']}'
                 ,bct_name = '{$key}'
                 ,bct_desc = '{$value}'
@@ -74,7 +74,7 @@ if ($_POST['act_button'] == "분류환경변수설정반영") {
                     $value = trim($value);
 
                     $ist_sql = " INSERT INTO {$g5['bom_category_table']} SET
-                        bct_id = '{$cd2}'
+                        bct_idx = '{$cd2}'
                         ,com_idx = '{$_SESSION['ss_com_idx']}'
                         ,bct_name = '{$key}'
                         ,bct_desc = '{$value}'
@@ -94,7 +94,7 @@ if ($_POST['act_button'] == "분류환경변수설정반영") {
                             //echo $cd3.'-'.$key.'-'.$value."<br>";
 
                             $ist_sql = " INSERT INTO {$g5['bom_category_table']} SET
-                                bct_id = '{$cd3}'
+                                bct_idx = '{$cd3}'
                                 ,com_idx = '{$_SESSION['ss_com_idx']}'
                                 ,bct_name = '{$key}'
                                 ,bct_desc = '{$value}'
@@ -113,7 +113,7 @@ if ($_POST['act_button'] == "분류환경변수설정반영") {
                                     $value = trim($value);
                                     
                                     $ist_sql = " INSERT INTO {$g5['bom_category_table']} SET
-                                        bct_id = '{$cd4}'
+                                        bct_idx = '{$cd4}'
                                         ,com_idx = '{$_SESSION['ss_com_idx']}'
                                         ,bct_name = '{$key}'
                                         ,bct_desc = '{$value}'

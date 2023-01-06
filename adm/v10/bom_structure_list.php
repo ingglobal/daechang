@@ -7,7 +7,7 @@ if($member['mb_level']<4)
 	alert_close('접근할 수 없는 메뉴입니다.');
 
 $sql_common = " FROM {$g5['bom_table']} AS bom
-                    LEFT JOIN {$g5['bom_category_table']} AS bct ON bct.bct_id = bom.bct_id
+                    LEFT JOIN {$g5['bom_category_table']} AS bct ON bct.bct_idx = bom.bct_id
                         AND bct.com_idx = '".$_SESSION['ss_com_idx']."'
                     LEFT JOIN {$g5['company_table']} AS com ON com.com_idx = bom.com_idx_customer
 "; 
@@ -23,7 +23,7 @@ if ($sca != "") {
 // 검색어 설정
 if ($stx != "") {
     switch ($sfl) {
-		case ( $sfl == 'bct_id' ) :
+		case ( $sfl == 'bct_idx' ) :
 			$where[] = " {$sfl} LIKE '".trim($stx)."%' ";
             break;
 		case ( $sfl == 'bom_part_no' ) :

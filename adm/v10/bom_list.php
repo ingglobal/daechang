@@ -11,7 +11,7 @@ echo $g5['container_sub_title'];
 
 
 $sql_common = " FROM {$g5['bom_table']} AS bom
-                    LEFT JOIN {$g5['bom_category_table']} AS bct ON bct.bct_id = bom.bct_id
+                    LEFT JOIN {$g5['bom_category_table']} AS bct ON bct.bct_idx = bom.bct_idx
                         AND bct.com_idx = '".$_SESSION['ss_com_idx']."'
                     LEFT JOIN {$g5['company_table']} AS com ON com.com_idx = bom.com_idx_customer
 "; 
@@ -21,13 +21,13 @@ $where[] = " bom_status NOT IN ('delete','trash') AND bom.com_idx = '".$_SESSION
 
 // 카테고리 검색
 if ($sca != "") {
-    $where[] = " bom.bct_id LIKE '".trim($sca)."%' ";
+    $where[] = " bom.bct_idx LIKE '".trim($sca)."%' ";
 }
 
 // 검색어 설정
 if ($stx != "") {
     switch ($sfl) {
-		case ( $sfl == 'bct_id' ) :
+		case ( $sfl == 'bct_idx' ) :
 			$where[] = " {$sfl} LIKE '".trim($stx)."%' ";
             break;
 		case ( $sfl == 'bom_part_no' ) :
@@ -189,10 +189,10 @@ $qstr .= '&sca='.$sca.'&ser_bom_type='.$ser_bom_type; // 추가로 확장해서 
     for ($i=0; $row=sql_fetch_array($result); $i++) {
         //print_r2($row);
         if($row['bct_name']){
-            $cat_tree = category_tree_array($row['bct_id']);
+            $cat_tree = category_tree_array($row['bct_idx']);
             $row['bct_name_tree'] = '';
             for($k=0;$k<count($cat_tree);$k++){
-                $cat_str = sql_fetch(" SELECT bct_name FROM {$g5['bom_category_table']} WHERE bct_id = '{$cat_tree[$k]}' ");
+                $cat_str = sql_fetch(" SELECT bct_name FROM {$g5['bom_category_table']} WHERE bct_idx = '{$cat_tree[$k]}' ");
                 $row['bct_name_tree'] .= ($k == 0) ? $cat_str['bct_name'] : ' > '.$cat_str['bct_name'];
             }
         }

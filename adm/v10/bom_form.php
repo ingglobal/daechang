@@ -163,22 +163,22 @@ input[type="file"]::after{display:block;content:'파일선택\A(드래그앤드�
 		<th scope="row">분류</th>
 		<td>
             <?php
-            $csql = " SELECT bct_id,bct_name FROM {$g5['bom_category_table']} WHERE com_idx = '{$_SESSION['ss_com_idx']}' AND LENGTH(bct_id) = 2 ORDER BY bct_order, bct_id ";
+            $csql = " SELECT bct_idx,bct_name FROM {$g5['bom_category_table']} WHERE com_idx = '{$_SESSION['ss_com_idx']}' AND LENGTH(bct_id) = 2 ORDER BY bct_order, bct_id ";
             // echo $csql;
             $cresult = sql_query($csql,1);
             if($cresult->num_rows){
-                echo '<select name="bct_id" id="bct_id" class="frm_input">'.PHP_EOL;
+                echo '<select name="bct_idx" id="bct_idx" class="frm_input">'.PHP_EOL;
                     echo '<option value="">카테고리 선택</option>'.PHP_EOL;
                     for($i=0;$row=sql_fetch_array($cresult);$i++){
                     ?>
-                    <option value="<?=$row['bct_id']?>"><?=$row['bct_name']?></option>
+                    <option value="<?=$row['bct_idx']?>"><?=$row['bct_name']?></option>
                     <?php
                     }
                 echo '</select>'.PHP_EOL;
                 if($w == 'u'){
                 ?>
                 <script>
-                $('#bct_id').val('<?=${$pre}['bct_id']?>');
+                $('#bct_id').val('<?=${$pre}['bct_idx']?>');
                 </script>
                 <?php
                 }

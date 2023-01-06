@@ -3,7 +3,7 @@ $sub_menu = "940120";
 include_once('./_common.php');
 auth_check_menu($auth, $sub_menu, "w");
 
-$bct_id = isset($_GET['bct_id']) ? preg_replace('/[^0-9a-z]/i', '', $_GET['bct_id']) : '';
+$bct_idx = isset($_GET['bct_idx']) ? preg_replace('/[^0-9a-z]/i', '', $_GET['bct_idx']) : '';
 $bct = array(
 'bct_name'=>'',
 'bct_order'=>'',
@@ -13,15 +13,15 @@ $sql_common = " FROM {$g5['bom_category_table']} ";
 
 if ($w == "")
 {
-    $len = strlen($bct_id);
+    $len = strlen($bct_idx);
     if ($len == 10)
         alert("분류를 더 이상 추가할 수 없습니다.\\n\\n5단계 분류까지만 가능합니다.");
 
     $len2 = $len + 1;
 
-    $sql = "SELECT MAX(SUBSTRING(bct_id,$len2,2)) as max_subid
+    $sql = "SELECT MAX(SUBSTRING(bct_idx,$len2,2)) as max_subid
             FROM {$g5['bom_category_table']}
-            WHERE SUBSTRING(bct_id,1,$len) = '$bct_id' AND com_idx = '".$_SESSION['ss_com_idx']."'
+            WHERE SUBSTRING(bct_idx,1,$len) = '$bct_idx' AND com_idx = '".$_SESSION['ss_com_idx']."'
     ";
     $row = sql_fetch($sql);
 
@@ -35,13 +35,13 @@ if ($w == "")
     }
     $subid = base_convert($subid, 10, 36);
     $subid = substr("00" . $subid, -2);
-    $subid = $bct_id . $subid;
+    $subid = $bct_idx . $subid;
 
     $sublen = strlen($subid);
 
-    if ($bct_id) // 2단계이상 분류
+    if ($bct_idx) // 2단계이상 분류
     {
-        $sql = " select * from {$g5['bom_category_table']} where bct_id = '$bct_id' ";
+        $sql = " select * from {$g5['bom_category_table']} where bct_idx = '$bct_idx' ";
         $bct = sql_fetch($sql);
         $html_title = $bct['bct_name'] . " 하위분류추가";
         $bct['bct_name'] = "";
@@ -53,9 +53,9 @@ if ($w == "")
 }
 else if ($w == "u")
 {
-    $sql = " select * from {$g5['bom_category_table']} where bct_id = '$bct_id' ";
+    $sql = " select * from {$g5['bom_category_table']} where bct_idx = '$bct_idx' ";
     $bct = sql_fetch($sql);
-    if (! (isset($bct['bct_id']) && $bct['bct_id']))
+    if (! (isset($bct['bct_idx']) && $bct['bct_idx']))
         alert("자료가 없습니다.");
 
     $html_title = $bct['bct_name'] . " 수정";
@@ -65,7 +65,7 @@ else if ($w == "u")
     $flesql = " SELECT * FROM {$g5['file_table']}
         WHERE fle_db_table = 'bom_category'
         AND fle_type IN ('file1','file2','file3','file4','file5','file6')
-        AND fle_db_id = '{$bct_id}' ORDER BY fle_reg_dt,fle_idx ";
+        AND fle_db_id = '{$bct_idx}' ORDER BY fle_reg_dt,fle_idx ";
     $fle_rs = sql_query($flesql,1);
 
     $row['cat_file1'] = array();//1번째 파일그룹
@@ -130,17 +130,17 @@ input[type="file"]::after{display:block;content:'파일선택\A(드래그앤드�
         </colgroup>
         <tbody>
         <tr>
-            <th scope="row"><label for="bct_id">분류코드</label></th>
+            <th scope="row"><label for="bct_idx">분류코드</label></th>
             <td>
             <?php if ($w == "") { ?>
                 <?php echo help("자동으로 보여지는 분류코드를 사용하시길 권해드리지만 직접 입력한 값으로도 사용할 수 있습니다.\n분류코드는 나중에 수정이 되지 않으므로 신중하게 결정하여 사용하십시오.\n\n분류코드는 2자리씩 10자리를 사용하여 5단계를 표현할 수 있습니다.\n0~z까지 입력이 가능하며 한 분류당 최대 1296가지를 표현할 수 있습니다.\n그러므로 총 3656158440062976가지의 분류를 사용할 수 있습니다."); ?>
-                <input type="text" name="bct_id" value="<?php echo $subid; ?>" id="bct_id" required class="required frm_input" size="<?php echo $sublen; ?>" maxlength="<?php echo $sublen; ?>">
-                <!-- <?php if ($default['de_code_dup_use']) { ?><a href="javascript:;" onclick="codedupcheck(document.getElementById('bct_id').value)">코드 중복검사</a><?php } ?> -->
+                <input type="text" name="bct_idx" value="<?php echo $subid; ?>" id="bct_idx" required class="required frm_input" size="<?php echo $sublen; ?>" maxlength="<?php echo $sublen; ?>">
+                <!-- <?php if ($default['de_code_dup_use']) { ?><a href="javascript:;" onclick="codedupcheck(document.getElementById('bct_idx').value)">코드 중복검사</a><?php } ?> -->
             <?php } else { ?>
-                <input type="hidden" name="bct_id" value="<?php echo $bct['bct_id']; ?>">
-                <span class="frm_bct_id"><?php echo $bct['bct_id']; ?></span>
-                <a href="./bom_category_form.php?bct_id=<?php echo $bct_id; ?>&amp;<?php echo $qstr; ?>" class="btn_frmline">하위분류 추가</a>
-                <a href="./bom_list.php?sca=<?php echo $bct['bct_id']; ?>" class="btn_frmline">BOM리스트</a>
+                <input type="hidden" name="bct_idx" value="<?php echo $bct['bct_idx']; ?>">
+                <span class="frm_bct_id"><?php echo $bct['bct_idx']; ?></span>
+                <a href="./bom_category_form.php?bct_id=<?php echo $bct_idx; ?>&amp;<?php echo $qstr; ?>" class="btn_frmline">하위분류 추가</a>
+                <a href="./bom_list.php?sca=<?php echo $bct['bct_idx']; ?>" class="btn_frmline">BOM리스트</a>
             <?php } ?>
             </td>
         </tr>
@@ -289,10 +289,10 @@ function form01_check(f)
     if (f.w.value == "") {
         var error = "";
         $.ajax({
-            url: "./ajax/ajax.bct_id.php",
+            url: "./ajax/ajax.bct_idx.php",
             type: "POST",
             data: {
-                "bct_id": f.bct_id.value
+                "bct_idx": f.bct_idx.value
             },
             dataType: "json",
             async: false,

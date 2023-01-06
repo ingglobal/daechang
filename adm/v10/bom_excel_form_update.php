@@ -7,6 +7,9 @@ include_once('./_common.php');
 if(!$member['mb_manager_yn']) {
     alert('메뉴에 접근 권한이 없습니다.');
 }
+if(!$excel_type) {
+    alert('엑셀 종류를 선택하세요.');
+}
 
 $demo = 1;  // 데모모드 = 1
 
@@ -67,6 +70,11 @@ $countgap = 10; // 몇건씩 보낼지 설정
 $sleepsec = 10000;  // 백만분의 몇초간 쉴지 설정, default=200
 $maxscreen = 30; // 몇건씩 화면에 보여줄건지?
 
+// 초기값 정의 (외부 함수들에서 사용)
+$g5['bit']['num'] = array();
+$g5['bit']['reply'] = array();
+$g5['bit_num'] = 0;
+
 flush();
 ob_flush();
 
@@ -76,7 +84,7 @@ $idx = 0;
 for($i=0;$i<=sizeof($allData[0]);$i++) {
     // print_r3($allData[0][$i]);
     if($demo) {
-        if($i>10) {break;}
+        if($i>170) {break;}
     }
 
     // 초기화
@@ -91,8 +99,8 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     }
     // print_r3($list);
     $arr['no'] = $list[0];
-    $arr['ship_to'] = $list[1];
-    $arr['car_type'] = $list[2];
+    $arr['cst_name_customer'] = $list[1]; // 고객사
+    $arr['bct_name'] = $list[2];    // 차종
     $arr['level1'] = $list[3];
     $arr['level2'] = $list[4];
     $arr['level3'] = $list[5];
@@ -105,27 +113,78 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     $arr['level10'] = $list[12];
     $arr['level11'] = $list[13];
     $arr['level12'] = $list[14];
-    $arr['spec'] = $list[15];
+    $arr['bom_std'] = $list[15];        // 사양
     $arr['image'] = $list[16];
-    $arr['part_no'] = $list[17];
-    $arr['part_name'] = $list[18];
-    $arr['us'] = $list[19];
-    $arr['com_name'] = $list[20];
+    $arr['bom_part_no'] = $list[17];    // 품범
+    $arr['bom_name'] = $list[18];  // 품명
+    $arr['bit_count'] = $list[19];      // 구성품수
+    $arr['cst_name_provider'] = $list[20];  // 공급처
     $arr['remark'] = $list[21];
     // print_r3($arr);
 
     // 조건에 맞는 해당 라인만 추출
     if( preg_match("/[0-9]/",$arr['no'])
-        && preg_match("/[-0-9A-Z]/",$arr['part_no'])
-        && $arr['part_name']
-        && preg_match("/[0-9]/",$arr['us']) )
+        && preg_match("/[-0-9A-Z]/",$arr['bom_part_no'])
+        && $arr['bom_name']
+        && preg_match("/[0-9]/",$arr['bit_count']) )
     {
         // print_r3($arr);
+        // 완성품이 바뀌면 초기화
+        if($arr['level1'] == 1) {
+            // 초기값 정의 (외부 함수들에서 사용할 global 변수)
+            $g5['bit']['num'] = array();
+            $g5['bit']['reply'] = array();
+            $g5['bit_num'] = 0;
+        }
 
-        // 데이터 입력&수정&삭제
-        $db_idx = func_db_update($arr);
+        // 대창공업 ITEM LIST_REV1(22.12.22)-개발이범희GJ_REV6.xlxs
+        if($excel_type=='01') {
 
-        $idx++;
+            // 납품처(고객사) 디비 생성
+            $ar['table']  = 'g5_1_customer';
+            $ar['cst_name']  = $arr['cst_name_customer'];
+            $ar['cst_type']  = 'customer';
+            $arr['cst_idx_'.$ar['cst_type']] = update_db($ar);
+            unset($ar);
+
+            // 카테고리 디비 생성
+            $ar['table']  = 'g5_1_bom_category';
+            $ar['com_idx']  = $_SESSION['ss_com_idx'];
+            $ar['bct_name']  = $arr['bct_name'];
+            $arr['bct_idx'] = update_db($ar);
+            unset($ar);
+
+            // 공급처(거래처) 디비 생성
+            $ar['table']  = 'g5_1_customer';
+            $ar['cst_name']  = $arr['cst_name_provider'];
+            $ar['cst_type']  = 'provider';
+            $arr['cst_idx_'.$ar['cst_type']] = update_db($ar);
+            unset($ar);
+
+            // bom 생성
+            $ar['table']  = 'g5_1_bom';
+            $ar['bom_part_no'] = $arr['bom_part_no'];
+            $ar['bom_name'] = $arr['bom_name'];
+            $arr['bom_idx'] = update_db($ar);
+            unset($ar);
+
+            $item['parent_id'] = $parent_id;
+            $list = array();
+            $list = $item;
+            unset($list['children']);   // 서브까지 다 보이면 복잡해서 숨김
+            $list['reply'] = get_num_reply($list['id'], $list['parent_id'], $list['depth']);
+            $list['bit_num'] = $list['reply'][0];
+            $list['bit_reply'] = $list['reply'][1];
+            $list['bom_idx'] = $_POST['bom_idx'];   // 넘겨받은 bom_idx
+            unset($list['reply']);
+            $list['bit_idx'] = update_bom_item($list);
+            $g5['bit_idxs'][] = $list['bit_idx'];   // 삭제를 위한 배열
+            // print_r2($list);
+            //print_r2($g5['bit']['num']);    // 공통 배열 변수
+            //print_r2($g5['bit']['reply']);    // 공통 배열 변수
+        }
+
+        $idx++; 
     }
     else {continue;}
 
@@ -133,7 +192,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     // 메시지 보임
     if($arr['no']) {
         echo "<script> document.all.cont.innerHTML += '".$idx
-                .". ".$arr['car_type']." [".$arr['part_no']."]: ".$arr['part_name']
+                .". ".$arr['bct_name']." [".$arr['bom_part_no']."]: ".$arr['bom_name']
                 ." ----------->> 완료<br>'; </script>\n";
     }
 

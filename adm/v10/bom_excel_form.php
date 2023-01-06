@@ -36,11 +36,12 @@ echo $g5['container_sub_title'];
         <th scope="row">엑셀종류</th>
         <td>
             <?=help('엑셀 종류를 선택하세요. 다른 파일을 선택하시면 <span style="color:darkorange;">덮어쓰기</span>되므로 주의하세요.')?>
-            <select name="excel_type">
+            <select name="excel_type" id="excel_type">
                 <option value="">엑셀 선택</option>
                 <option value="01">대창공업 ITEM LIST_REV1(22.12.22)-개발이범희GJ_REV6.xlxs</option>
                 <option value="02">대창공업</option>
             </select>
+            <script>$('#excel_type').val('01')</script>
         </td>
     </tr>
 	<tr>

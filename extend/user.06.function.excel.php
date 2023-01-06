@@ -2,6 +2,105 @@
 if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 
 // 업데이트 함수
+if(!function_exists('update_excel')){
+function update_excel($excel_type, $arr) {
+    global $g5,$demo;
+
+    if(!$excel_type) {
+        return false;
+    }
+    return false;
+    // print_r3($arr);
+
+    // 대창공업 ITEM LIST_REV1(22.12.22)-개발이범희GJ_REV6.xlxs
+    if($excel_type=='01') {
+
+        // existing check of bom record
+        $sql = "SELECT bom_idx
+                FROM {$g5['bom_table']}
+                WHERE bom_part_no = '".$arr['bom_part_no']."'
+        ";
+        $bom = sql_fetch($sql,1);
+
+
+        $item['parent_id'] = $parent_id;
+        $list = array();
+        $list = $item;
+        unset($list['children']);   // 서브까지 다 보이면 복잡해서 숨김
+        $list['reply'] = get_num_reply($list['id'], $list['parent_id'], $list['depth']);
+        $list['bit_num'] = $list['reply'][0];
+        $list['bit_reply'] = $list['reply'][1];
+        $list['bom_idx'] = $_POST['bom_idx'];   // 넘겨받은 bom_idx
+        unset($list['reply']);
+        $list['bit_idx'] = update_bom_item($list);
+        $g5['bit_idxs'][] = $list['bit_idx'];   // 삭제를 위한 배열
+        // print_r2($list);
+        //print_r2($g5['bit']['num']);    // 공통 배열 변수
+        //print_r2($g5['bit']['reply']);    // 공통 배열 변수
+
+        $sql_common = " com_idx = '13'
+                , mms_idx = '".$arr['mms_idx']."'
+                , trm_idx_maintain = '".$trm_idx."'
+                , mb_id = '".$arr['mb_id']."'
+                , mnt_name = '".$arr['mnt_name']."'
+                , mnt_db_table = 'code'
+                , mnt_db_idx = '".$cod['cod_idx']."'
+                , mnt_db_code = '".$cod['cod_code']."'
+                , mnt_date = '".$arr['mnt_date']."'
+                , mnt_start_dt = '".$arr['mnt_start_dt']."'
+                , mnt_end_dt = '".$arr['mnt_end_dt']."'
+                , mnt_minute = '".$arr['mnt_minute']."'
+                , mnt_people = '".$arr['mnt_people']."'
+                , mnt_price = '".$arr['mnt_price']."'
+                , mnt_subject = '".$arr['mnt_subject']."'
+                , mnt_content = '".$arr['mnt_content']."'
+                , bom_status = '".$arr['bom_status']."'
+        ";
+        $sql = "SELECT *
+                FROM {$g5['bom_table']}
+                WHERE bom_part_no = '".$arr['bom_part_no']."'
+        ";
+        $row = sql_fetch($sql,1);
+        // 삭제 우선 처리
+        if($arr['bom_status']=='삭제') {
+            if($row['bom_idx']) {
+                $sql = "DELETE FROM {$g5['bom_table']} WHERE bom_idx = '".$row['bom_idx']."' ";
+                if(!$demo) {sql_query($sql,1);}
+                else {print_r3($sql);}
+            }
+        }
+        else {
+            // 없으면 등록
+            if(!$row['bom_idx']) {
+                $sql = " INSERT INTO {$g5['bom_table']} SET
+                            {$sql_common}
+                            , bom_reg_dt = '".G5_TIME_YMDHIS."'
+                            , bom_update_dt = '".G5_TIME_YMDHIS."'
+                ";
+                if(!$demo) {sql_query($sql,1);}
+                $row['bom_idx'] = sql_insert_id();
+            }
+            // 있으면 수정
+            else {
+                $sql = "UPDATE {$g5['bom_table']} SET
+                            {$sql_common}
+                            , bom_update_dt = '".G5_TIME_YMDHIS."'
+                        WHERE bom_idx = '".$row['bom_idx']."'
+                ";
+                if(!$demo) {sql_query($sql,1);}
+            }
+            if($demo) {print_r3($sql);}
+            // print_r3($sql);
+
+        }
+
+    }
+
+    return $row['db_idx'];
+}
+}
+
+// 업데이트 함수
 if(!function_exists('func_db_update')){
 function func_db_update($arr) {
     global $g5,$demo,$mms_array;
@@ -19,7 +118,7 @@ function func_db_update($arr) {
     // 관련 알람코드 추출
     $sql = "SELECT *
             FROM g5_1_code
-            WHERE com_idx = '15'
+            WHERE com_idx = '13'
                 AND mms_idx = '".$arr['mms_idx']."'
                 AND cod_code = '".$arr['alarm_code']."'
             ORDER BY cod_idx DESC LIMIT 1
@@ -39,11 +138,11 @@ function func_db_update($arr) {
 
 
     $arr['mnt_people'] = 1;
-    $arr['mnt_status'] = 'ok';
+    $arr['bom_status'] = 'ok';
 
 
     // 정보 입력
-    $sql_common = " com_idx = '15'
+    $sql_common = " com_idx = '13'
                     , mms_idx = '".$arr['mms_idx']."'
                     , trm_idx_maintain = '".$trm_idx."'
                     , mb_id = '".$arr['mb_id']."'
@@ -59,7 +158,7 @@ function func_db_update($arr) {
                     , mnt_price = '".$arr['mnt_price']."'
                     , mnt_subject = '".$arr['mnt_subject']."'
                     , mnt_content = '".$arr['mnt_content']."'
-                    , mnt_status = '".$arr['mnt_status']."'
+                    , bom_status = '".$arr['bom_status']."'
     ";
     $sql = "SELECT *
             FROM {$g5['maintain_table']}

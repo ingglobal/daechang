@@ -18,7 +18,7 @@ $where[] = " com_idx ='".$_SESSION['ss_com_idx']."' ";   // 디폴트 검색조�
 // 검색어 설정
 if ($stx != "") {
     switch ($sfl) {
-		case ( $sfl == 'bct_id' ) :
+		case ( $sfl == 'bct_idx' ) :
 			$where[] = " {$sfl} LIKE '".trim($stx)."%' ";
             break;
 		case ( $sfl == 'bom_part_no' ) :
@@ -47,7 +47,7 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
 if (!$sst)
 {
-    $sst  = "bct_id";
+    $sst  = "bct_idx";
     $sod = "asc";
 }
 $sql_order = "order by $sst $sod";
@@ -78,7 +78,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
 <label for="sfl" class="sound_only">검색대상</label>
 <select name="sfl" id="sfl">
     <option value="bct_name"<?php echo get_selected($sfl, "bct_name", true); ?>>항목명</option>
-    <option value="bct_id"<?php echo get_selected($sfl, "bct_id", true); ?>>분류코드</option>
+    <option value="bct_idx"<?php echo get_selected($sfl, "bct_idx", true); ?>>분류코드</option>
     <option value="bct_mb_id"<?php echo get_selected($sfl, "bct_mb_id", true); ?>>회원아이디</option>
 </select>
 
@@ -100,7 +100,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
     <caption><?php echo $g5['title']; ?> 목록</caption>
     <thead>
     <tr>
-        <th scope="col"><?php echo subject_sort_link("bct_id"); ?>분류코드</a></th>
+        <th scope="col"><?php echo subject_sort_link("bct_idx"); ?>분류코드</a></th>
         <th scope="col" id="sct_cate"><?php echo subject_sort_link("bct_name"); ?>항목명</a></th>
         <th scope="col" id="sct_amount">제품수</th>
         <th scope="col" id="sct_imgcol">정렬순서</th>
@@ -112,14 +112,14 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
     $s_add = $s_vie = $s_upd = $s_del = '';
     for ($i=0; $row=sql_fetch_array($result); $i++)
     {
-        $level = strlen($row['bct_id']) / 2 - 1;
+        $level = strlen($row['bct_idx']) / 2 - 1;
         $p_bct_name = '';
 
         if ($level > 0) {
             $class = 'class="name_lbl"'; // 2단 이상 분류의 label 에 스타일 부여 - 지운아빠 2013-04-02
             // 상위단계의 항목명
-            $p_bct_id = substr($row['bct_id'], 0, $level*2);
-            $sql = " select bct_name from {$g5['bom_category_table']} where bct_id = '$p_bct_id' ";
+            $p_bct_idx = substr($row['bct_idx'], 0, $level*2);
+            $sql = " select bct_name from {$g5['bom_category_table']} where bct_idx = '$p_bct_id' ";
             $temp = sql_fetch($sql);
             $p_bct_name = $temp['bct_name'].'의하위';
         } else {
@@ -129,26 +129,26 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
         $s_level = '<div><label for="bct_name_'.$i.'" '.$class.'><span class="sound_only">'.$p_bct_name.''.($level+1).'단 분류</span></label></div>';
         $s_level_input_size = 25 - $level *2; // 하위 분류일 수록 입력칸 넓이 작아짐 - 지운아빠 2013-04-02
 
-        if ($level+2 < 6) $s_add = '<a href="./bom_category_form.php?bct_id='.$row['bct_id'].'&amp;'.$qstr.'" class="btn btn_03">추가</a> '; // 분류는 5단계까지만 가능
+        if ($level+2 < 6) $s_add = '<a href="./bom_category_form.php?bct_id='.$row['bct_idx'].'&amp;'.$qstr.'" class="btn btn_03">추가</a> '; // 분류는 5단계까지만 가능
         else $s_add = '';
-        $s_upd = '<a href="./bom_category_form.php?w=u&amp;bct_id='.$row['bct_id'].'&amp;'.$qstr.'" class="btn btn_02"><span class="sound_only">'.get_text($row['bct_name']).' </span>수정</a> ';
+        $s_upd = '<a href="./bom_category_form.php?w=u&amp;bct_id='.$row['bct_idx'].'&amp;'.$qstr.'" class="btn btn_02"><span class="sound_only">'.get_text($row['bct_name']).' </span>수정</a> ';
 
         if ($is_admin == 'super'){ //(auth_check($auth[$sub_menu],"w",1)) { //($is_admin == 'super')
-            $s_del = '<a href="./bom_category_form_update.php?w=d&amp;bct_id='.$row['bct_id'].'&amp;'.$qstr.'" onclick="return delete_confirm(this);" class="btn btn_02"><span class="sound_only">'.get_text($row['bct_name']).' </span>삭제</a> ';
+            $s_del = '<a href="./bom_category_form_update.php?w=d&amp;bct_id='.$row['bct_idx'].'&amp;'.$qstr.'" onclick="return delete_confirm(this);" class="btn btn_02"><span class="sound_only">'.get_text($row['bct_name']).' </span>삭제</a> ';
         }
         // 해당 분류에 속한 제품의 수
-        $sql1 = " SELECT COUNT(*) AS cnt FROM {$g5['bom_table']} WHERE bct_id = '{$row['bct_id']}' ";
+        $sql1 = " SELECT COUNT(*) AS cnt FROM {$g5['bom_table']} WHERE bct_idx = '{$row['bct_idx']}' ";
         $row1 = sql_fetch($sql1,1);
 
         $bg = 'bg'.($i%2);
     ?>
     <tr class="<?php echo $bg; ?>">
         <td class="td_code" style="text-align:left;">
-            <input type="hidden" name="bct_id[<?php echo $i; ?>]" value="<?php echo $row['bct_id']; ?>">
-            <a href="<?php echo shop_category_url($row['bct_id']); ?>"><?php echo $row['bct_id']; ?></a>
+            <input type="hidden" name="bct_id[<?php echo $i; ?>]" value="<?php echo $row['bct_idx']; ?>">
+            <a href="<?php echo shop_category_url($row['bct_idx']); ?>"><?php echo $row['bct_idx']; ?></a>
         </td>
         <td headers="sct_cate" class="sct_name<?php echo $level; ?>"><?php echo $s_level; ?> <input type="text" name="bct_name[<?php echo $i; ?>]" value="<?php echo get_text($row['bct_name']); ?>" id="bct_name_<?php echo $i; ?>" required class="tbl_input full_input required"></td>
-        <td headers="sct_amount" class="td_amount"><a href="./bom_list.php?sca=<?php echo $row['bct_id']; ?>"><?php echo $row1['cnt']; ?></a></td>
+        <td headers="sct_amount" class="td_amount"><a href="./bom_list.php?sca=<?php echo $row['bct_idx']; ?>"><?php echo $row1['cnt']; ?></a></td>
         <td headers="sct_imgw">
             <label for="bct_out_width<?php echo $i; ?>" class="sound_only">정렬번호</label>
             <input type="text" name="bct_order[<?php echo $i; ?>]" value="<?php echo get_text($row['bct_order']); ?>" id="bct_out_width<?php echo $i; ?>" required class="required tbl_input" size="3" > <span class="sound_only">픽셀</span>

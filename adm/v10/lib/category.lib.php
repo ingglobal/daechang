@@ -22,11 +22,11 @@ class category_list {
 	//초기생성자 함(회사idx, 값, 목록여부, [안에 들어갈 id])
 	function __construct($value='',$list_flag=false,$list_id='') {
         $this->value = $value; //값
-		$this->name = 'bct_id'; //name
+		$this->name = 'bct_idx'; //name
 		$this->name .= ($list_flag)?$this->name.'['.$list_id.']':''; //name 수
 		$this->list_flag = $list_flag;// 목록인지 아닌지 여부
 		$this->list_id = $list_id; //목록이면 name="xxx[들어갈idx]"
-		$this->id = "bct_id"; //<input type="hidden" name="bct_id" />의 아이디 id
+		$this->id = "bct_idx"; //<input type="hidden" name="bct_idx" />의 아이디 id
 		$this->id1 = $this->id."_1";//첫번째 선택박스 id
 		$this->id2 = $this->id."_2";//두번째 선택박스 id
 		$this->id3 = $this->id."_3";//세번째 선택박스 id
@@ -87,24 +87,24 @@ class category_list {
 		$cats4 = array();
 
 		for($i=0;$i<4;$i++){
-			$csql = " SELECT bct_id,bct_name FROM {$g5['bom_category_table']} WHERE com_idx = '{$_SESSION['ss_com_idx']}' AND bct_id REGEXP '^.{".(($i==0)?2:strlen($cats[$i]))."}$' ";
+			$csql = " SELECT bct_idx,bct_name FROM {$g5['bom_category_table']} WHERE com_idx = '{$_SESSION['ss_com_idx']}' AND bct_id REGEXP '^.{".(($i==0)?2:strlen($cats[$i]))."}$' ";
 			$csql .= ($i == 0) ? "" : " AND bct_id LIKE '{$cats[$i-1]}%' ";
 			//echo $csql;
 			$cres = sql_query($csql,1);
 			if($cres->num_rows){
 				//${'cats'.($i+1)}
 				for($j=0;$crow=sql_fetch_array($cres);$j++){
-					${'cats'.($i+1)}[$crow['bct_id']] = $crow['bct_name'];
+					${'cats'.($i+1)}[$crow['bct_idx']] = $crow['bct_name'];
 				}
 			}
 		}
-		// echo $this->bct_id."<br>";
+		// echo $this->bct_idx."<br>";
 		// print_r2($cats1);
-		// echo $this->bct_id."<br>";
+		// echo $this->bct_idx."<br>";
 		// print_r2($cats2);
-		// echo $this->bct_id."<br>";
+		// echo $this->bct_idx."<br>";
 		// print_r2($cats3);
-		// echo $this->bct_id."<br>";
+		// echo $this->bct_idx."<br>";
 		// print_r2($cats4);
 
 		$file = G5_USER_ADMIN_SKIN_PATH.'/category/category.skin.php';
