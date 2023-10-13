@@ -316,6 +316,7 @@ function sch_submit(f){
 </div>
 
 <div class="btn_fixed_top">
+    <a href="#null" class="btn_05 btn btn_reload">새로고침</a>
     <a href="./alarm_data_excel_down.php?<?=$qstr?>" class="btn_03 btn">엑셀다운</a>
     <?php if($member['mb_manager_yn']) { ?>
     <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn_02 btn" style="margin-left:20px;">
@@ -328,6 +329,9 @@ function sch_submit(f){
 
 <script>
 $(function(e) {
+    $('.btn_reload').on('click',function(){
+        location.reload();
+    });
 
     // timepicker 설정
     $("input[name$=_time]").timepicker({
