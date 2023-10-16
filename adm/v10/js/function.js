@@ -8,6 +8,16 @@ $(document).on( 'keyup','input[name$=_price]',function(e) {
         $(this).val('');
     }
 });
+// 가격,갯수,무개 입력 쉼표 처리
+$(document).on( 'keyup','.input_price,.input_count,.input_weight,.input_cnt',function(e) {
+    $(this).val($(this).val().replace(/[^0-9|-|,]/g,""));
+    if(!isNaN($(this).val().replace(/,/g,'')))
+        $(this).val( thousand_comma( $(this).val().replace(/,/g,'') ) );
+    
+    if($(this).val() == '0') {
+        $(this).val('');
+    }
+});
 
 // 숫자를 가격으로 표시(천단위)
 if(typeof(numtoprice)!='function') {

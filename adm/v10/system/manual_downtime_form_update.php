@@ -3,6 +3,10 @@ $sub_menu = "925920";
 include_once("./_common.php");
 
 auth_check($auth[$sub_menu], 'w');
+
+$_POST['dta_memo'] = conv_unescape_nl(stripslashes($_POST['dta_memo']));
+
+
 // 변수 설정, 필드 구조 및 prefix 추출
 $g5_table_name = 'g5_1_data_downtime';
 $fields = sql_field_names($g5_table_name);
@@ -19,7 +23,7 @@ for($i=0;$i<sizeof($fields);$i++) {
     // 공백 제거
     $_POST[$fields[$i]] = trim($_POST[$fields[$i]]);
     // 천단위 제거
-    if(preg_match("/_price$/",$fields[$i]))
+    if(preg_match("/_price$/",$fields[$i]) || preg_match("/_count$/",$fields[$i]))
     $_POST[$fields[$i]] = preg_replace("/,/","",$_POST[$fields[$i]]);
 }
 
@@ -32,7 +36,7 @@ for($i=0;$i<sizeof($fields);$i++) {
 }
 // print_r2($sql_commons);exit;
 $sql_common = (is_array($sql_commons)) ? implode(",",$sql_commons) : '';
-
+// echo $sql_common;exit;
 
 if ($w == '') {
     

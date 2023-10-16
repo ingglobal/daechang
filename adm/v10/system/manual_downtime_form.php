@@ -64,7 +64,6 @@ echo $g5['container_sub_title'];
     <p>설비를 선택하시면 비가동 타입 정보를 설비 관련 정보로 다시 불러옵니다.</p>
     <p>입력하려는 불량 타입이 없는 경우 '직접입력'을 선택하시고 새로운 항목을 추가해 주시면 됩니다.</p>
 </div>
-
 <form name="form01" id="form01" action="./<?= $g5['file_name'] ?>_update.php" onsubmit="return form01_submit(this);" method="post" enctype="multipart/form-data" autocomplete="off">
     <input type="hidden" name="w" value="<?php echo $w ?>">
     <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
@@ -94,8 +93,53 @@ echo $g5['container_sub_title'];
             </colgroup>
             <tbody>
                 <tr>
+                    <th scope="row">공장선택</th>
+                    <td>
+                        <select name="dta_factory" id="dta_factory" class="required" required>
+                            <?=$g5['mng_factory_location_value_options']?>
+                        </select>
+                        <script>
+                            $('select[name=dta_factory]')
+                                .val("<?=${$pre}['dta_factory']?>")
+                                .attr('selected', 'selected');
+                        </script>
+                    </td>
+                    <th scope="row">라인선택</th>
+                    <td>
+                        <select name="dta_line" id="dta_line" class="required" required>
+                            <?=$g5['mng_line_location_value_options']?>
+                        </select>
+                        <script>
+                            $('select[name=dta_line]')
+                                .val("<?=${$pre}['dta_line']?>");
+                        </script>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">공정선택</th>
+                    <td>
+                        <select name="dta_process" id="dta_process" class="required" required>
+                            <?=$g5['mng_process_category_value_options']?>
+                        </select>
+                        <script>
+                            $('select[name=dta_process]')
+                                .val("<?=${$pre}['dta_process']?>");
+                        </script>
+                    </td>
+                    <th scope="row">하드웨어선택</th>
+                    <td>
+                        <select name="dta_hardware" id="dta_hardware" class="required" required>
+                            <?=$g5['mng_hardware_category_value_options']?>
+                        </select>
+                        <script>
+                            $('select[name=dta_hardware]')
+                                .val("<?=${$pre}['dta_hardware']?>");
+                        </script>
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row">설비선택</th>
-                    <td colspan="3">
+                    <td>
                         <select name="mms_idx" id="mms_idx" class="required" required>
                             <option value="">설비선택</option>
                             <?php
@@ -185,10 +229,8 @@ echo $g5['container_sub_title'];
                         }
                         ?>
                     </script>
-                </tr>
-                <tr>
                     <th scope="row">비가동타입</th>
-                    <td colspan="3">
+                    <td>
                         <i class="fa fa-spinner fa-spin fa-fw btn_spinner" style="display:none;"></i>
                         <select name="mst_idx" id="mst_idx" mst_idx="<?= ${$pre}['mst_idx'] ?>" class="required" required>
                             <option value="">비가동 타입을 선택하세요.</option>
@@ -209,14 +251,53 @@ echo $g5['container_sub_title'];
                 </tr>
                 <tr>
                     <th scope="row">비가동 시간</th>
-                    <td colspan="3">
-                        <input type="text" name="dta_start_dt" value="<?=${$pre}['dta_start_dt']?>" id="dta_start_dt" class="frm_input required" required="required" style="width:146px;">
+                    <td>
+                        <input type="hidden" name="dta_start_dt" value="<?=${$pre}['dta_start_dt']?>" id="dta_start_dt">
+                        <input type="text" value="<?=substr(${$pre}['dta_start_dt'],0,10)?>" id="dta_start_date" class="frm_input required" required="required" style="width:90px;">
+                        <select id="dta_start_time"></select>
                         ~
-                        <input type="text" name="dta_end_dt" value="<?=${$pre}['dta_end_dt']?>" id="dta_end_dt" class="frm_input required" required="required" style="width:146px;">
+                        <input type="hidden" name="dta_end_dt" value="<?=${$pre}['dta_end_dt']?>" id="dta_end_dt">
+                        <input type="text" name="dta_end_date" value="<?=substr(${$pre}['dta_end_dt'],0,10)?>" id="dta_end_date" class="frm_input required" required="required" style="width:90px;">
+                        <select id="dta_end_time"></select>
+                    </td>
+                    <th scope="row">차종선택</th>
+                    <td>
+                        <select name="dta_category" id="dta_category">
+                            <option value="">기타</option>
+                            <?php foreach($g5['cats_key_val'] as $k => $v) { ?>
+                            <option value="<?=$k?>" <?=get_selected(${$pre}['dta_category'], $k)?>><?=$v?></option>
+                            <?php } ?>
+                        </select>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">메모</th>
+                    <th scope="row">교환부품</th>
+                    <td>
+                        <input type="text" name="dta_change_part" id="dta_change_part" class="frm_input" value="<?=${$pre}['dta_change_part']?>" style="width:60%;">
+                    </td>
+                    <th scope="row">메이커</th>
+                    <td>
+                        <input type="text" name="dta_maker" id="dta_maker" class="frm_input" value="<?=${$pre}['dta_maker']?>" style="width:60%;">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">규격</th>
+                    <td colspan="3">
+                        <input type="text" name="dta_standard" id="dta_standard" class="frm_input" value="<?=${$pre}['dta_standard']?>" style="width:40%;">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">수량</th>
+                    <td>
+                        <input type="text" name="dta_count" id="dta_count" class="frm_input input_count" value="<?=number_format(${$pre}['dta_count'])?>" style="width:110px;text-align:right;"> EA
+                    </td>
+                    <th scope="row">금액</th>
+                    <td>
+                        <input type="text" name="dta_price" id="dta_price" class="frm_input" value="<?=number_format(${$pre}['dta_price'])?>" style="width:110px;text-align:right;"> 원
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">세부내용</th>
                     <td colspan="3">
                         <textarea name="dta_memo"><?php echo get_text(${$pre}['dta_memo']); ?></textarea>
                     </td>
@@ -232,14 +313,49 @@ echo $g5['container_sub_title'];
 </form>
 
 <script>
-    $(function() {
+$(function() {
+    $("input[id$=_date]").datepicker({ changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd", showButtonPanel: true, yearRange: "c-99:c+99" });
 
+    timePicker($('#dta_start_time'),24,0,23);
+    timePicker($('#dta_end_time'),24,0,23);
+    $('#dta_start_time').val('<?=substr(${$pre}['dta_start_dt'],11,5)?>');
+    $('#dta_end_time').val('<?=substr(${$pre}['dta_end_dt'],11,5)?>');
+
+    $('#dta_start_date,#dta_start_time').on('change',function(){
+        var dat = '';
+        var tim = '';
+        var dt = '';
+        if($(this).attr('id') == 'dta_start_date'){
+            dat = $(this).val();
+            tim = ' '+$('#dta_start_time').val()+':00';
+        } else {
+            dat = $('#dta_start_date').val();
+            tim = ' '+$(this).val()+':00';
+        }
+        dt = dat+tim;
+        $('#dta_start_dt').val(dt);
     });
 
-    function form01_submit(f) {
+    $('#dta_end_date,#dta_end_time').on('change',function(){
+        var dat = '';
+        var tim = '';
+        var dt = '';
+        if($(this).attr('id') == 'dta_end_date'){
+            dat = $(this).val();
+            tim = ' '+$('#dta_end_time').val()+':00';
+        } else {
+            dat = $('#dta_end_date').val();
+            tim = ' '+$(this).val()+':00';
+        }
+        dt = dat+tim;
+        $('#dta_end_dt').val(dt);
+    });
+});
 
-        return true;
-    }
+function form01_submit(f) {
+
+    return true;
+}
 </script>
 
 <?php

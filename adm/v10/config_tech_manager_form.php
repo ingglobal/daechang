@@ -107,6 +107,34 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                 </script>
             </td>
         </tr>
+        <tr>
+			<th scope="row">공장분류</th>
+			<td colspan="3">
+				<?php echo help('예) a=본동,b=B동,n=신공장') ?>
+				<input type="text" name="mng_factory_location" value="<?=$g5['setting']['mng_factory_location']?>" id="mng_factory_location" required class="required frm_input" style="width:60%;">
+			</td>
+		</tr>
+        <tr>
+			<th scope="row">라인분류</th>
+			<td colspan="3">
+				<?php echo help('예) auto=자동화,assembly=조립,co2=CO2,spot=SPOT') ?>
+				<input type="text" name="mng_line_location" value="<?=$g5['setting']['mng_line_location']?>" id="mng_line_location" required class="required frm_input" style="width:60%;">
+			</td>
+		</tr>
+        <tr>
+			<th scope="row">공정분류</th>
+			<td colspan="3">
+				<?php echo help('예) link=LINK') ?>
+				<input type="text" name="mng_process_category" value="<?=$g5['setting']['mng_process_category']?>" id="mng_process_category" required class="required frm_input" style="width:60%;">
+			</td>
+		</tr>
+        <tr>
+			<th scope="row">하드웨어분류</th>
+			<td colspan="3">
+				<?php echo help('예) sensor=센서,facility=설비') ?>
+				<input type="text" name="mng_hardware_category" value="<?=$g5['setting']['mng_hardware_category']?>" id="mng_hardware_category" required class="required frm_input" style="width:60%;">
+			</td>
+		</tr>
         </tbody>
 		</table>
 	</div>

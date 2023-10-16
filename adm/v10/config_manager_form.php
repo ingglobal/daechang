@@ -34,6 +34,8 @@ include_once('./_head.php');
 
 $pg_anchor = '<ul class="anchor">
     <li><a href="#anc_cf_default">기본설정</a></li>
+    <li><a href="#anc_cf_quality">품질관리설정</a></li>
+    <li><a href="#anc_cf_tech">생산기술설정</a></li>
     <li><a href="#anc_cf_sms">SMS 설정</a></li>
 </ul>';
 
@@ -112,6 +114,22 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
 				<input type="number" name="mng_pallet_days" value="<?php echo (($g5['setting']['mng_pallet_days'])?$g5['setting']['mng_pallet_days']:'0') ?>" id="mng_pallet_days" required class="required frm_input" style="width:60px;">
 			</td>
 		</tr>
+        </tbody>
+		</table>
+	</div>
+</section>
+  
+<section id="anc_cf_quality">
+	<h2 class="h2_frm">품질관리설정</h2>
+	<?php echo $pg_anchor ?>	
+	<div class="tbl_frm01 tbl_wrap">
+		<table>
+		<caption>품질관리설정</caption>
+		<colgroup>
+			<col class="grid_4">
+			<col>
+		</colgroup>
+		<tbody>
         <tr>
             <th scope="row">설비생산품질점검을 위한<br>생산시작시 문자 받을 인원</th>
             <td colspan="3">
@@ -157,6 +175,22 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                 </script>
             </td>
         </tr>
+        </tbody>
+        </table>
+    </div><!--.tbl_frm01 tbl_wrap-->
+</section>
+  
+<section id="anc_cf_tech">
+	<h2 class="h2_frm">생산기술관리설정</h2>
+	<?php echo $pg_anchor ?>	
+	<div class="tbl_frm01 tbl_wrap">
+		<table>
+		<caption>생산기술관리설정</caption>
+		<colgroup>
+			<col class="grid_4">
+			<col>
+		</colgroup>
+		<tbody>
         <tr>
             <th scope="row">설비고장대응을 위한<br>작업자 호출(Call)시 문자 받을 인원</th>
             <td colspan="3">
@@ -202,11 +236,40 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                 </script>
             </td>
         </tr>
+        <tr>
+			<th scope="row">공장분류</th>
+			<td colspan="3">
+				<?php echo help('예) a=본동,b=B동,n=신공장') ?>
+				<input type="text" name="mng_factory_location" value="<?=$g5['setting']['mng_factory_location']?>" id="mng_factory_location" required class="required frm_input" style="width:60%;">
+			</td>
+		</tr>
+        <tr>
+			<th scope="row">라인분류</th>
+			<td colspan="3">
+				<?php echo help('예) auto=자동화,assembly=조립,co2=CO2,spot=SPOT') ?>
+				<input type="text" name="mng_line_location" value="<?=$g5['setting']['mng_line_location']?>" id="mng_line_location" required class="required frm_input" style="width:60%;">
+			</td>
+		</tr>
+        <tr>
+			<th scope="row">공정분류</th>
+			<td colspan="3">
+				<?php echo help('예) link=LINK') ?>
+				<input type="text" name="mng_process_category" value="<?=$g5['setting']['mng_process_category']?>" id="mng_process_category" required class="required frm_input" style="width:60%;">
+			</td>
+		</tr>
+        <tr>
+			<th scope="row">하드웨어분류</th>
+			<td colspan="3">
+				<?php echo help('예) sensor=센서,facility=설비') ?>
+				<input type="text" name="mng_hardware_category" value="<?=$g5['setting']['mng_hardware_category']?>" id="mng_hardware_category" required class="required frm_input" style="width:60%;">
+			</td>
+		</tr>
         </tbody>
-		</table>
-	</div>
+        </table>
+    </div><!--.tbl_frm01 tbl_wrap-->
 </section>
-   
+
+
 <section id="anc_cf_sms">
     <h2 class="h2_frm">SMS 설정</h2>
     <?php //echo $pg_anchor; ?>

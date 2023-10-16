@@ -101,7 +101,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_USER_ADMIN_URL.'/js/timepicker
 ?>
 <script type="text/javascript" src="<?=G5_USER_ADMIN_URL?>/js/timepicker/jquery.timepicker.js"></script>
 <style>
-
+.td_dta_count,.td_dta_price{text-align:right;}
 </style>
 
 <div class="local_ov01 local_ov">
@@ -189,10 +189,20 @@ $(document).on('change','#ser_mms_idx',function(e){
             <label for="chkall" class="sound_only">전체</label>
             <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
         </th>
+        <th scope="col">ID</th>
+        <th scope="col">공장</th>
+        <th scope="col">라인</th>
         <th scope="col">설비</th>
-        <th scope="col">내용</th>
+        <th scope="col">차종</th>
+        <th scope="col">타입</th>
         <th scope="col">비가동시간</th>
-        <th scope="col">등록일시</th>
+        <th scope="col">작업시간</th>
+        <th scope="col">하드웨어구분</th>
+        <th scope="col">교환부품</th>
+        <th scope="col">메이커</th>
+        <th scope="col">규격</th>
+        <th scope="col">수량</th>
+        <th scope="col">금액</th>
         <th scope="col">관리</th>
     </tr>
     </thead>
@@ -209,10 +219,34 @@ $(document).on('change','#ser_mms_idx',function(e){
             <label for="chk_<?php echo $i; ?>" class="sound_only"><?php echo get_text($row['dta_name']); ?></label>
             <input type="checkbox" name="chk[]" value="<?php echo $i ?>" id="chk_<?php echo $i ?>">
         </td>
+        <td class="td_dta_idx"><?=$row['dta_idx']?></td>
+        <td class="td_dta_factory"><?=$g5['mng_factory_location_value'][$row['dta_factory']]?></td>
+        <td class="td_dta_line"><?=$g5['mng_line_location_value'][$row['dta_line']]?></td>
+        <td class="td_dta_category"><?=(($row['dta_category'])?$g5['cats_key_val'][$row['dta_category']]:'기타')?></td>
         <td class="td_mms_name"><?=$row['mms_name']?> <span class="font_size_7"><?=$row['mms_idx']?></span></td>
         <td class="td_mst_name"><?=$row['mst_name']?></td>
         <td class="td_dta_start_end_dt"><?=$row['dta_start_dt']?> ~ <?=$row['dta_end_dt']?></td>
-        <td class="td_dta_reg_dt"><?=$row['dta_reg_dt']?></td>
+        <td class="td_dta_time_sum">
+            <?php
+                $start_time = new DateTime($row['dta_start_dt']);
+                $end_time = new DateTime($row['dta_end_dt']);
+                $interval = $start_time->diff($end_time);
+                echo $interval->format('%H : %I : %S');
+                // $h = $interval->format('%H');
+                // $m = $interval->format('%I');
+                // $s = $interval->format('%S');
+                // $time_str = ($h != '00') ? $h.'시간' : '';
+                // $time_str .= ($m != '00') ? $m.'분' : '';
+                // $time_str .= ($s != '00') ? $s.'초' : '';
+                // echo $time_str;
+            ?>
+        </td>
+        <td class="td_dta_hardware"><?=(($row['dta_hardware'])?$g5['mng_hardware_category_value'][$row['dta_hardware']]:'-')?></td>
+        <td class="td_dta_change_part"><?=(($row['dta_change_part'])?$row['dta_change_part']:'-')?></td>
+        <td class="td_dta_maker"><?=(($row['dta_maker'])?$row['dta_maker']:'-')?></td>
+        <td class="td_dta_standard"><?=(($row['dta_standard'])?$row['dta_standard']:'-')?></td>
+        <td class="td_dta_count"><?=(($row['dta_count'])?number_format($row['dta_count']):'-')?></td>
+        <td class="td_dta_price"><?=(($row['dta_price'])?number_format($row['dta_price']):'-')?></td>
         <td class="td_mng"><?=$s_mod?></td>
     </tr>
     <?php
