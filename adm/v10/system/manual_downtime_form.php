@@ -316,8 +316,8 @@ echo $g5['container_sub_title'];
 $(function() {
     $("input[id$=_date]").datepicker({ changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd", showButtonPanel: true, yearRange: "c-99:c+99" });
 
-    timePicker($('#dta_start_time'),24,0,23);
-    timePicker($('#dta_end_time'),24,0,23);
+    timePicker($('#dta_start_time'),24,0,23,10);
+    timePicker($('#dta_end_time'),24,0,23,10);
     $('#dta_start_time').val('<?=substr(${$pre}['dta_start_dt'],11,5)?>');
     $('#dta_end_time').val('<?=substr(${$pre}['dta_end_dt'],11,5)?>');
 
