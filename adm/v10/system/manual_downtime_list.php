@@ -222,16 +222,17 @@ $(document).on('change','#ser_mms_idx',function(e){
         <td class="td_dta_idx"><?=$row['dta_idx']?></td>
         <td class="td_dta_factory"><?=$g5['mng_factory_location_value'][$row['dta_factory']]?></td>
         <td class="td_dta_line"><?=$g5['mng_line_location_value'][$row['dta_line']]?></td>
-        <td class="td_dta_category"><?=(($row['dta_category'])?$g5['cats_key_val'][$row['dta_category']]:'기타')?></td>
         <td class="td_mms_name"><?=$row['mms_name']?> <span class="font_size_7"><?=$row['mms_idx']?></span></td>
+        <td class="td_dta_category"><?=(($row['dta_category'])?$g5['cats_key_val'][$row['dta_category']]:'기타')?></td>
         <td class="td_mst_name"><?=$row['mst_name']?></td>
-        <td class="td_dta_start_end_dt"><?=$row['dta_start_dt']?> ~ <?=$row['dta_end_dt']?></td>
+        <td class="td_dta_start_end_dt"><?=substr($row['dta_start_dt'],0,16)?> ~ <?=substr($row['dta_end_dt'],0,16)?></td>
         <td class="td_dta_time_sum">
             <?php
                 $start_time = new DateTime($row['dta_start_dt']);
                 $end_time = new DateTime($row['dta_end_dt']);
                 $interval = $start_time->diff($end_time);
-                echo $interval->format('%H : %I : %S');
+                echo $interval->format('%H : %I');
+                // echo substr($interval->format('%H : %I : %S'),0,7);
                 // $h = $interval->format('%H');
                 // $m = $interval->format('%I');
                 // $s = $interval->format('%S');
