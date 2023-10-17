@@ -1,6 +1,60 @@
 <?php
 if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 
+if(!function_exists('sql_query2')){
+function sql_query2($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
+{
+    global $g5, $g5_debug;
+
+    if(!$link)
+        $link = $g5['connect_db'];
+
+    // Blind SQL Injection 취약점 해결
+    $sql = trim($sql);
+    // union의 사용을 허락하지 않습니다.
+    //$sql = preg_replace("#^select.*from.*union.*#i", "select 1", $sql);
+    $sql = preg_replace("#^select.*from.*[\s\(]+union[\s\)]+.*#i ", "select 1", $sql);
+    // `information_schema` DB로의 접근을 허락하지 않습니다.
+    $sql = preg_replace("#^select.*from.*where.*`?information_schema`?.*#i", "select 1", $sql);
+
+    $is_debug = get_permission_debug_show();
+
+    $start_time = $is_debug ? get_microtime() : 0;
+	$msc=microtime(true); // -----------------------
+
+    if(function_exists('mysqli_query') && G5_MYSQLI_USE) {
+        if ($error) {
+            $result = @mysqli_query($link, $sql) or die("<p>$sql<p>" . mysqli_errno($link) . " : " .  mysqli_error($link) . "<p>error file : {$_SERVER['SCRIPT_NAME']}");
+        } else {
+            $result = @mysqli_query($link, $sql);
+        }
+    } else {
+        if ($error) {
+            $result = @mysql_query($sql, $link) or die("<p>$sql<p>" . mysql_errno() . " : " .  mysql_error() . "<p>error file : {$_SERVER['SCRIPT_NAME']}");
+        } else {
+            $result = @mysql_query($sql, $link);
+        }
+    }
+
+	$msc=microtime(true)-$msc;
+    echo $msc.' seconds<br>'; //----------------------------
+    $end_time = $is_debug ? get_microtime() : 0;
+
+    if($result && $is_debug) {
+        // 여기에 실행한 sql문을 화면에 표시하는 로직 넣기
+        $g5_debug['sql'][] = array(
+            'sql' => $sql,
+            'start_time' => $start_time,
+            'end_time' => $end_time,
+            );
+    }
+
+    run_event('sql_query_after', $result, $sql, $start_time, $end_time);
+
+    return $result;
+}
+}
+
 // 141000 같은 값을 초로 변환하는 함수
 if(!function_exists('num2seconds')){
 function num2seconds($str)

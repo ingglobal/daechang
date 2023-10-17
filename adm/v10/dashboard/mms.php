@@ -1,5 +1,6 @@
 <?php
 // http://daechang.epcs.co.kr/adm/v10/dashboard/mms.php?w=1&h=1
+// 47호기생산: http://daechang.epcs.co.kr/adm/v10/dashboard/mms.php?w=2&h=1&mms_idx=138
 include_once('./_common.php');
 
 $g5['title'] = 'UPH';
@@ -19,7 +20,7 @@ $sql = "SELECT *
         ORDER BY pic_idx DESC
 ";
 // echo $sql.BR;
-$rs = sql_query($sql,1);
+$rs = sql_query2($sql,1);
 for($i=0;$row=sql_fetch_array($rs);$i++) {
     // first item for current production info.
     if($i==0) {
