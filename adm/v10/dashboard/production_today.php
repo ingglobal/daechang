@@ -30,7 +30,7 @@ $sql = "SELECT off_idx, mms_idx, off_period_type
         ORDER BY mms_idx, off_period_type, off_start_time
 ";
 // echo $sql.'<br>';
-$rs = sql_query2($sql,1);
+$rs = sql_query($sql,1);
 for($i=0;$row=sql_fetch_array($rs);$i++){
     // print_r2($row);
     $offwork[$i]['mms_idx'] = $row['mms_idx'];

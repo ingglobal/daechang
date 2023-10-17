@@ -59,7 +59,7 @@ $sql = "SELECT (CASE WHEN n='1' THEN ymd_date ELSE 'total' END) AS item_name
         ORDER BY n DESC, item_name
 ";
 // echo $sql.BR;
-$result = sql_query2($sql,1);
+$result = sql_query($sql,1);
 for ($i=0; $row=sql_fetch_array($result); $i++) {
     //print_r2($row);
     // 합계인 경우

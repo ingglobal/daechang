@@ -2860,6 +2860,23 @@ WHERE pri_idx IN (  SELECT pri_idx
 )
 ORDER BY pic_idx DESC
 .............
+SELECT SQL_NO_CACHE * FROM g5_1_production_item_count 
+WHERE pri_idx IN ( SELECT SQL_NO_CACHE pri_idx 
+                    FROM g5_1_production_item WHERE mms_idx = '138' 
+                    AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' )
+)
+ORDER BY pic_idx DESC
+......
+SELECT SQL_NO_CACHE * FROM g5_1_production_item_count 
+WHERE pri_idx IN ( 10684,10685,10688,10689,10692,10693,10696,10697)
+ORDER BY pic_idx DESC
+......
+SELECT GROUP_CONCAT(pri_idx)
+FROM g5_1_production_item WHERE mms_idx = '138' 
+AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' )
+......
+SELECT SQL_NO_CACHE * FROM g5_1_production_item_count WHERE pri_idx IN ( SELECT pri_idx FROM g5_1_production_item WHERE mms_idx = '138' AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' ) ) ORDER BY pic_idx DESC
+
 
 // 주간 생산
 SELECT (CASE WHEN n='1' THEN ymd_date ELSE 'total' END) AS item_name 
