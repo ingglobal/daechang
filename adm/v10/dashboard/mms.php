@@ -11,16 +11,16 @@ $st_date = $st_date ?: date("Y-m-d",G5_SERVER_TIME);
 
 $mms = get_table('mms','mms_idx',$mms_idx);
 
-$sql = "SELECT *
+$sql = "SELECT SQL_NO_CACHE *
         FROM {$g5['production_item_count_table']}
         WHERE pri_idx IN (  SELECT pri_idx
                             FROM {$g5['production_item_table']} WHERE mms_idx = '".$mms['mms_idx']."'
                             AND prd_idx IN ( SELECT prd_idx FROM {$g5['production_table']} WHERE prd_start_date = '".$st_date."' )
-        )
+        ) AND pic_date = '".$st_date."'
         ORDER BY pic_idx DESC
 ";
 // echo $sql.BR;
-$rs = sql_query($sql,1);
+$rs = sql_query2($sql,1);
 for($i=0;$row=sql_fetch_array($rs);$i++) {
     // first item for current production info.
     if($i==0) {

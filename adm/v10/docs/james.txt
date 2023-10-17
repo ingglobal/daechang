@@ -2845,37 +2845,8 @@ daechang(211.254.156.189) daechang_www > daechang_www
 cd /var/lib/mysql/daechang_www
 tar cf - * --exclude='db.opt' | tar xvf - -C ../daechang_test
 
-// 47호기
-SELECT * FROM g5_1_production_item_count
-WHERE pri_idx IN (  SELECT pri_idx
-                    FROM g5_1_production_item WHERE mms_idx = '138'
-                    AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' )
-)
-ORDER BY pic_idx DESC
-.............
-SELECT SQL_NO_CACHE * FROM g5_1_production_item_count
-WHERE pri_idx IN (  SELECT pri_idx
-                    FROM g5_1_production_item WHERE mms_idx = '138'
-                    AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' )
-)
-ORDER BY pic_idx DESC
-.............
-SELECT SQL_NO_CACHE * FROM g5_1_production_item_count 
-WHERE pri_idx IN ( SELECT SQL_NO_CACHE pri_idx 
-                    FROM g5_1_production_item WHERE mms_idx = '138' 
-                    AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' )
-)
-ORDER BY pic_idx DESC
-......
-SELECT SQL_NO_CACHE * FROM g5_1_production_item_count 
-WHERE pri_idx IN ( 10684,10685,10688,10689,10692,10693,10696,10697)
-ORDER BY pic_idx DESC
-......
-SELECT GROUP_CONCAT(pri_idx)
-FROM g5_1_production_item WHERE mms_idx = '138' 
-AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' )
-......
-SELECT SQL_NO_CACHE * FROM g5_1_production_item_count WHERE pri_idx IN ( SELECT pri_idx FROM g5_1_production_item WHERE mms_idx = '138' AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' ) ) ORDER BY pic_idx DESC
+
+
 
 
 // 주간 생산
@@ -2956,3 +2927,48 @@ WHERE n <= 2
 GROUP BY item_name
 ORDER BY n DESC, item_name
 .............
+
+
+// 대시보드 47호기 생산
+SELECT * FROM g5_1_production_item_count
+WHERE pri_idx IN (  SELECT pri_idx
+                    FROM g5_1_production_item WHERE mms_idx = '138'
+                    AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' )
+)
+ORDER BY pic_idx DESC
+.............
+SELECT SQL_NO_CACHE * FROM g5_1_production_item_count
+WHERE pri_idx IN (  SELECT pri_idx
+                    FROM g5_1_production_item WHERE mms_idx = '138'
+                    AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' )
+)
+ORDER BY pic_idx DESC
+.............
+SELECT SQL_NO_CACHE * FROM g5_1_production_item_count 
+WHERE pri_idx IN ( SELECT SQL_NO_CACHE pri_idx 
+                    FROM g5_1_production_item WHERE mms_idx = '138' 
+                    AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' )
+)
+ORDER BY pic_idx DESC
+......
+SELECT SQL_NO_CACHE * FROM g5_1_production_item_count 
+WHERE pri_idx IN ( 10684,10685,10688,10689,10692,10693,10696,10697)
+ORDER BY pic_idx DESC
+......
+SELECT GROUP_CONCAT(pri_idx)
+FROM g5_1_production_item WHERE mms_idx = '138' 
+AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' )
+......
+SELECT SQL_NO_CACHE * FROM g5_1_production_item_count WHERE pri_idx IN ( SELECT pri_idx FROM g5_1_production_item WHERE mms_idx = '138' AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' ) ) ORDER BY pic_idx DESC
+......
+explain
+SELECT SQL_NO_CACHE * FROM g5_1_production_item_count WHERE pri_idx IN ( SELECT pri_idx FROM g5_1_production_item WHERE mms_idx = '141' AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' ) ) ORDER BY pic_idx DESC
+......
+explain
+SELECT SQL_NO_CACHE * FROM g5_1_production_item_count WHERE pri_idx IN ( 10719,10723,10728,10730,10732,10736,10740 ) ORDER BY pic_idx DESC
+......
+SELECT GROUP_CONCAT(pri_idx)
+FROM g5_1_production_item WHERE mms_idx = '141' 
+AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' )
+......
+
