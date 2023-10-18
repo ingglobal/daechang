@@ -159,6 +159,12 @@ $colspan = ($provider_member_yn) ? $colspan - 1 : $colspan;
 .td_orange_bold{color:orange !important;font-weight:700;}
 .td_skyblue_bold{color:skyblue !important;font-weight:700;}
 .td_qr i{font-size:2em;cursor:pointer;}
+.td_mto_idx{position:relative;}
+.qr_bundle_download{position:absolute;display:block;top:0px;left:10px;width:20px;height:20px;cursor:pointer;background:none;}
+.qr_bundle_download:before{display:none;content:'';position:absolute;top:-10px;left:13px;width:10px;height:10px;transform:rotate(45deg);background:#1131A1;}
+.qr_bundle_download:after{display:none;content:'QR묶음다운로드';position:absolute;top:-30px;left:10px;width:110px;height:24px;line-height:24px;background:#1131A1;}
+.qr_bundle_download:hover:after
+,.qr_bundle_download:hover:before{display:block;}
 </style>
 <div class="local_ov01 local_ov">
     <?php echo $listall ?>
@@ -291,6 +297,8 @@ $colspan = ($provider_member_yn) ? $colspan - 1 : $colspan;
             $row['mb_name'] = $mem['mb_name'];
         }
         $s_mod = '<a href="./material_order_form.php?'.$qstr.'&amp;w=u&amp;'.$mtyp.'_idx='.$row[$mtyp.'_idx'].'">수정</a>';
+
+        $bg = 'bgg'.($row['mto_idx']%2);
     ?>
     <tr class="<?=$bg?>" tr_id="<?=$row[$mtyp.'_idx']?>">
         <td class="td_chk">
@@ -324,6 +332,11 @@ $colspan = ($provider_member_yn) ? $colspan - 1 : $colspan;
         <td class="td_mto_idx">
             <input type="hidden" name="mto_idx[<?=$row[$mtyp.'_idx']?>]" value="<?=$row['mto_idx']?>">
             <?=$row['mto_idx']?>
+            <?php if($row['moi_status'] == 'ready'){ //(true){ //($row['moi_status'] == 'ready') { ?>
+            <a href="<?=G5_USER_ADMIN_URL?>/material_qr_bundle_download.php?mto_idx=<?=$row['mto_idx']?>" class="qr_bundle_download" mto_idx="<?=$row['mto_idx']?>" download>
+                <i class="fa fa-download" aria-hidden="true"></i>
+            </a>
+            <?php } ?>
         </td><!--발주ID-->
         <td class="td_moi_count<?=(($provider_member_yn)?' td_orange_bold':'')?>">
             <?php if($provider_member_yn){ ?>
@@ -446,6 +459,23 @@ $('.td_moi_memo,.td_mto_memo').on('mouseenter',function(){
 $('.td_moi_memo,.td_mto_memo').on('mouseleave',function(){
     $(this).find('pre').removeClass('focus');
 });
+
+// $('.qr_bundle_download').on('click', function(){
+//     var mto_idx = $(this).attr('mto_idx');
+//     var down_url = "<?=G5_USER_ADMIN_URL?>/material_qr_bundle_download.php?mto_idx="+mto_idx;
+
+    // $.ajax({
+    //     url: down_url,
+    //     type: "GET",
+    //     data: {'mto_idx': mto_idx},
+    //     success: function(res){
+            
+    //     },
+    //     error: function (xhr, status, error) {
+    //         console.log("Error", error);
+    //     }
+    // });
+// });
 
 //모달관련
 let down_url = '';
