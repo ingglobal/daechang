@@ -16,14 +16,19 @@ $where[] = " bmw_status NOT IN ('trash','delete') ";   // 디폴트 검색조건
 // 검색어 설정
 if ($stx != "") {
     switch ($sfl) {
-		case ( $sfl == 'bmw.bom_idx' || $sfl == 'bom_part_no' ) :
-			$where[] = " {$sfl} = '".trim($stx)."' ";
-            break;
 		case ( $sfl == 'bmw_hp' ) :
 			$where[] = " $sfl LIKE '%".trim($stx)."%' ";
             break;
         default :
 			$where[] = " $sfl LIKE '%".trim($stx)."%' ";
+            break;
+    }
+}
+// 검색어 설정
+if ($stx2 != "") {
+    switch ($sfl2) {
+		case ( $sfl2 == 'bmw.bom_idx' || $sfl2 == 'bom_part_no' ) :
+			$where[] = " {$sfl2} = '".trim($stx2)."' ";
             break;
     }
 }
@@ -101,16 +106,18 @@ $colspan = 16;
 </select>
 <script>$('select[name=ser_mms_idx]').val("<?=$ser_mms_idx?>").attr('selected','selected');</script>
 <select name="sfl" id="sfl">
-    <option value="bom_part_no"<?php echo get_selected($_GET['sfl'], "bom_part_no"); ?>>품번</option>
-    <option value="bom_name"<?php echo get_selected($_GET['sfl'], "bom_name"); ?>>품명</option>
-    <option value="bmw.bom_idx"<?php echo get_selected($_GET['sfl'], "bmw.bom_idx"); ?>>BOMidx</option>
-    <option value="bmw.mms_idx"<?php echo get_selected($_GET['sfl'], "bmw.mms_idx"); ?>>설비번호</option>
-    <option value="mb_name"<?php echo get_selected($_GET['sfl'], "mb_name"); ?>>이름</option>
-    <option value="bmw.mb_id"<?php echo get_selected($_GET['sfl'], "bmw.mb_id"); ?>>아이디</option>
+    <option value="mb_name"<?php echo get_selected($_GET['sfl'], "mb_name"); ?>>작업자이름</option>
+    <option value="bmw.mb_id"<?php echo get_selected($_GET['sfl'], "bmw.mb_id"); ?>>작업자아이디</option>
     <option value="mb_hp"<?php echo get_selected($_GET['sfl'], "mb_hp"); ?>>휴대폰번호</option>
 </select>
 <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
 <input type="text" name="stx" value="<?php echo $stx ?>" id="stx" class="frm_input">
+<select name="sfl2" id="sfl2">
+    <option value="bom_part_no"<?php echo get_selected($_GET['sfl'], "bom_part_no"); ?>>품번</option>
+    <option value="bom_name"<?php echo get_selected($_GET['sfl'], "bom_name"); ?>>품명</option>
+</select>
+<label for="stx2" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
+<input type="text" name="stx2" value="<?php echo $stx2 ?>" id="stx2" class="frm_input">
 <input type="submit" class="btn_submit" value="검색">
 
 </form>
@@ -127,6 +134,8 @@ $colspan = 16;
 <input type="hidden" name="sod" value="<?php echo $sod ?>">
 <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
 <input type="hidden" name="stx" value="<?php echo $stx ?>">
+<input type="hidden" name="sfl2" value="<?php echo $sfl2 ?>">
+<input type="hidden" name="stx2" value="<?php echo $stx2 ?>">
 <input type="hidden" name="page" value="<?php echo $page ?>">
 <input type="hidden" name="token" value="">
 <input type="hidden" name="w" value="">
