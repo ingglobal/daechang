@@ -19,16 +19,27 @@ $where[] = " boj_status NOT IN ('trash','delete') ";   // 디폴트 검색조건
 // 검색어 설정
 if ($stx != "") {
     switch ($sfl) {
-		case ( $sfl == 'boj_idx' || $sfl == 'boj.mms_idx' || $sfl == 'boj.bom_idx' || $sfl == 'bom_part_no' ) :
+		case ( $sfl == 'boj_idx' || $sfl == 'boj.bom_idx' || $sfl == 'bom_part_no' || $sfl == 'bom_code' ) :
 			$where[] = " {$sfl} = '".trim($stx)."' ";
-            break;
-		case ( $sfl == 'boj_hp' ) :
-			$where[] = " $sfl LIKE '%".trim($stx)."%' ";
             break;
         default :
 			$where[] = " $sfl LIKE '%".trim($stx)."%' ";
             break;
     }
+}
+// 검색어2 설정
+if ($stx2 != "") {
+    switch ($sfl2) {
+		case ( $sfl2 == 'boj_plc_ip' || $sfl2 == 'boj_plc_port' ) :
+			$where[] = " {$sfl2} = '".trim($stx2)."' ";
+            break;
+    }
+}
+
+
+// 설비번호 검색
+if ($ser_mms_idx) {
+    $where[] = " boj.mms_idx = '".$ser_mms_idx."' ";
 }
 
 
@@ -66,6 +77,8 @@ $sql = " SELECT * {$sql_common} {$sql_search} {$sql_order} LIMIT {$from_record},
 // print_r3($sql);
 $result = sql_query($sql);
 
+$qstr .= '&ser_mms_idx='.$ser_mms_idx; // 추가로 확장해서 넘겨야 할 변수들
+
 $colspan = 16;
 ?>
 
@@ -75,20 +88,27 @@ $colspan = 16;
 </div>
 
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get">
-
+<select name="ser_mms_idx" id="ser_mms_idx">
+    <option value="">전체설비</option>
+    <?=$g5['mms_options']?>
+</select>
+<script>$('select[name=ser_mms_idx]').val("<?=$ser_mms_idx?>").attr('selected','selected');</script>
 <label for="sfl" class="sound_only">검색대상</label>
 <select name="sfl" id="sfl">
     <option value="bom_part_no"<?php echo get_selected($_GET['sfl'], "bom_part_no"); ?>>품번</option>
-    <option value="mms_name"<?php echo get_selected($_GET['sfl'], "mms_name"); ?>>설비명</option>
-    <option value="boj.mms_idx"<?php echo get_selected($_GET['sfl'], "boj.mms_idx"); ?>>설비번호</option>
-    <option value="bom_name"<?php echo get_selected($_GET['sfl'], "bom_name"); ?>>제품명</option>
+    <option value="bom_name"<?php echo get_selected($_GET['sfl'], "bom_name"); ?>>품명</option>
     <option value="boj.bom_idx"<?php echo get_selected($_GET['sfl'], "boj.bom_idx"); ?>>BOMidx</option>
     <option value="boj_code"<?php echo get_selected($_GET['sfl'], "boj_code"); ?>>지그명</option>
-    <option value="boj_plc_ip"<?php echo get_selected($_GET['sfl'], "boj_plc_ip"); ?>>아이피</option>
-    <option value="boj_plc_port"<?php echo get_selected($_GET['sfl'], "boj_plc_ip"); ?>>포트</option>
 </select>
 <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
-<input type="text" name="stx" value="<?php echo $stx ?>" id="stx" required class="required frm_input">
+<input type="text" name="stx" value="<?php echo $stx ?>" id="stx" class="frm_input">
+<label for="sfl2" class="sound_only">검색대상2</label>
+<select name="sfl2" id="sfl2">
+    <option value="boj_plc_ip"<?php echo get_selected($_GET['sfl2'], "boj_plc_ip"); ?>>아이피</option>
+    <option value="boj_plc_port"<?php echo get_selected($_GET['sfl2'], "boj_plc_port"); ?>>포트</option>
+</select>
+<label for="stx2" class="sound_only">검색어2<strong class="sound_only"> 필수</strong></label>
+<input type="text" name="stx2" value="<?php echo $stx2 ?>" id="stx2" class="frm_input">
 <input type="submit" class="btn_submit" value="검색">
 
 </form>
@@ -104,6 +124,8 @@ $colspan = 16;
 <input type="hidden" name="sod" value="<?php echo $sod ?>">
 <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
 <input type="hidden" name="stx" value="<?php echo $stx ?>">
+<input type="hidden" name="sfl2" value="<?php echo $sfl2 ?>">
+<input type="hidden" name="stx2" value="<?php echo $stx2 ?>">
 <input type="hidden" name="page" value="<?php echo $page ?>">
 <input type="hidden" name="token" value="">
 <input type="hidden" name="w" value="">
