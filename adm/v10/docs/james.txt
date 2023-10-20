@@ -2972,3 +2972,55 @@ FROM g5_1_production_item WHERE mms_idx = '141'
 AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2023-10-17' )
 ......
 
+// 2023-08-17 생산량 있는 거!!
+UPDATE g5_1_item SET itm_status = 'finish' WHERE itm_part_no = '89311-S8510' AND itm_date = '2023-08-17' AND itm_status = 'defect'
+UPDATE g5_1_item SET itm_status = 'finish' WHERE itm_part_no = '89411-S8510' AND itm_date = '2023-08-17' AND itm_status = 'defect'
+
+UPDATE g5_1_item SET itm_status = 'defect', itm_defect_text = '헤드레트 조립중 볼트파손', itm_memo = '폐기' WHERE itm_part_no = '89311-S8510' AND itm_date = '2023-08-17' AND itm_status = 'finish' ORDER BY itm_idx LIMIT 9
+UPDATE g5_1_material SET mtr_status = 'defect', mtr_defect_text = '헤드레트 조립중 볼트파손', mtr_memo = '폐기' WHERE mtr_part_no = '89311-S8510' AND mtr_date = '' AND mtr_status = 'finish' ORDER BY mtr_idx LIMIT 9
+....
+UPDATE g5_1_item SET itm_status = 'defect', itm_defect_text = '헤드레트 조립중 볼트파손', itm_memo = '폐기' WHERE itm_part_no = '89411-S8510' AND itm_date = '2023-08-17' AND itm_status = 'finish' ORDER BY itm_idx LIMIT 6
+UPDATE g5_1_material SET mtr_status = 'defect', mtr_defect_text = '헤드레트 조립중 볼트파손', mtr_memo = '폐기' WHERE mtr_part_no = '89411-S8510' AND mtr_date = '' AND mtr_status = 'finish' ORDER BY mtr_idx LIMIT 6
+....
+SELECT itm_idx FROM g5_1_item WHERE itm_part_no = '89311-S8510' AND itm_date = '2023-08-17' AND itm_status = 'defect'
+
+
+press=프레스,welding=용접,bending=밴딩,assemple=조립,weldingassemple=조립/용접,assemplewelding=용접/조립,injection=사출,greenrust=녹발청,breaking=파괴시험,shipping=운송,testing=검사,developments=개발품,etc=기타
+
+// Query for quality_list
+SELECT * FROM g5_1_item WHERE itm_status = 'defect'
+SELECT * FROM g5_1_material WHERE mtr_status = 'defect'
+................................
+SELECT SQL_CALC_FOUND_ROWS *
+FROM
+(
+    (
+    SELECT
+        'material' AS bom_type
+        , mtr_idx AS db_idx
+        , mtr_part_no AS bom_part_no
+        , mtr_name AS bom_name
+        , mtr_defect_type AS defect_type
+        , mtr_defect_text AS defect_text
+        , mtr_date AS stat_date
+        , mtr_status AS status
+    FROM g5_1_material
+    WHERE mtr_status = 'defect'
+    )
+    UNION ALL
+    (
+    SELECT
+        'product' AS bom_type
+        , itm_idx AS db_idx
+        , itm_part_no AS bom_part_no
+        , itm_name AS bom_name
+        , itm_defect_type AS defect_type
+        , itm_defect_text AS defect_text
+        , itm_date AS stat_date
+        , itm_status AS status
+    FROM g5_1_item
+    WHERE itm_status = 'defect'
+    )
+) AS db_table
+................................
+

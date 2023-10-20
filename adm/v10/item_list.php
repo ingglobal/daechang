@@ -63,9 +63,13 @@ if ($stx) {
 
 // 기간 검색
 if ($ser_st_date)	// 시작일 있는 경우
-    $where[] .= " itm_reg_dt >= '{$ser_st_date} 00:00:00' ";
+    $where[] = " itm_reg_dt >= '{$ser_st_date} 00:00:00' ";
 if ($ser_en_date)	// 종료일 있는 경우
-    $where[] .= " itm_reg_dt <= '{$ser_en_date} 23:59:59' ";
+    $where[] = " itm_reg_dt <= '{$ser_en_date} 23:59:59' ";
+
+// 통계일
+if ($ser_stat_date)
+    $where[] = " itm_date = '{$ser_stat_date}' ";
 
 // 고객사
 if ($ser_cst_idx_customer) {
@@ -152,8 +156,8 @@ $pending_count = $row['cnt'];
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get" style="width:100%;">
 <label for="sfl" class="sound_only">검색대상</label>
 기간: 
-<input type="text" name="ser_st_date" value="<?=$ser_st_date ?>" id="ser_st_date" class="frm_input" style="width:80px;"> ~
-<input type="text" name="ser_en_date" value="<?=$ser_en_date ?>" id="ser_en_date" class="frm_input" style="width:80px;">
+<input type="text" name="ser_st_date" value="<?=$ser_st_date ?>" id="ser_st_date" class="frm_input" style="width:90px;"> ~
+<input type="text" name="ser_en_date" value="<?=$ser_en_date ?>" id="ser_en_date" class="frm_input" style="width:90px;">
 <select name="sfl" id="sfl">
     <option value="">검색항목</option>
     <option value="bom_part_no" <?=get_selected($sfl, 'bom_part_no')?>>품번</option>
@@ -212,11 +216,9 @@ $pending_count = $row['cnt'];
                         <input type="text" name="ser_mb_name" value="<?=$mb1['mb_name']?>" id="mb_name" class="frm_input" style="width:100px;" readonly>
                         <a href="./member_select.php?file_name=<?=$g5['file_name']?>" class="btn btn_02 btn_member">찾기</a>
                     </td>
-					<th>단가</th>
+					<th>통계일</th>
 					<td>
-						<input type="text" name="ser_st_price" value="<?=$ser_st_price?>" class="frm_input" style="width:70px">원
-						~
-						<input type="text" name="ser_en_price" value="<?=$ser_en_price?>" class="frm_input" style="width:70px">원
+						<input type="text" name="ser_stat_date" value="<?=$ser_stat_date?>" class="frm_input" style="width:90px">
 					</td>
 				</tr>
 				<tr>

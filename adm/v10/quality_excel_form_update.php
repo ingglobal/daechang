@@ -9,10 +9,17 @@ if(!$excel_type) {
     alert('엑셀 종류를 선택하세요.');
 }
 
-$demo = 0;  // 데모모드 = 1
-
 // print_r2($_REQUEST);
 // exit;
+
+$demo = 0;  // 데모모드 = 1
+
+// 년월 정보 추출 
+$year = $_REQUEST['ym'] ? substr($_REQUEST['ym'],0,4) : substr(G5_TIME_YMD,0,4);
+$month = substr($_REQUEST['ym'],-2);
+// echo $year.'/'.$month.BR;
+// exit;
+
 
 require_once G5_LIB_PATH.'/PhpSpreadsheet19/vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet; 
@@ -58,6 +65,7 @@ include_once('./_head.php');
 		작업 시작~~ <font color=crimson><b>[끝]</b></font> 이라는 단어가 나오기 전 중간에 중지하지 마세요.
 	</span><br><br>
 	<span id="cont"></span>
+	<div id="defect"></div>
 </div>
 <?php
 include_once ('./_tail.php');
@@ -93,7 +101,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     }
     // print_r3($list);
     $arr['no'] = intval($list[0]);  // 순번
-    $arr['month'] = intval($list[1]); // 월
+    $arr['month'] = $list[1] ? sprintf("%02d",intval($list[1])) : $month; // 월
     $arr['day'] = intval($list[2]);   // 일
     $arr['type'] = trim($list[3]);  // 구분
     $arr['cat'] = trim(addslashes($list[4]));  // 차종
@@ -110,12 +118,90 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
         && $arr['bom_name'] && $arr['count']
         && is_numeric($arr['count']) )
     {
-        print_r3($arr);
-
-        // 해당 날짜 불량 디비 초기화
-
-
-        // 해당 날짜 맨 처음 생산량만큼 불량처리
+        // print_r3($arr);
+        
+        // 해당 날짜 기존 불량 디비가 있으면 먼저 초기화 (both of item & material)
+        $itm_date[$i] = $year.'-'.$arr['month'].'-'.$arr['day'];
+        // Reset for items ..............
+        $sql = " SELECT itm_idx FROM {$g5['item_table']} WHERE itm_part_no = '".$arr['bom_part_no']."' AND itm_date = '".$itm_date[$i]."' AND itm_status = 'defect' ";
+        $rs = sql_query($sql,1);
+        $itm_count[$i] = sql_num_rows($rs);
+        // print_r3($sql);
+        // print_r3($itm_count[$i]);
+        // 불량 데이터 초기화 (defect -> finish)
+        if($itm_count[$i]) {
+            $sql = "UPDATE {$g5['item_table']} SET itm_status = 'finish'
+                    WHERE itm_part_no = '".$arr['bom_part_no']."' AND itm_date = '".$itm_date[$i]."' AND itm_status = 'defect'
+            ";
+            // print_r3($sql);
+            sql_query($sql,1);
+        }
+        // Reset for materials .................
+        $sql = " SELECT mtr_idx FROM {$g5['material_table']} WHERE mtr_part_no = '".$arr['bom_part_no']."' AND mtr_date = '".$itm_date[$i]."' AND mtr_status = 'defect' ";
+        $rs = sql_query($sql,1);
+        $material_count[$i] = sql_num_rows($rs);
+        // print_r3($sql);
+        // print_r3($itm_count[$i]);
+        // 불량 데이터 초기화 (defect -> finish)
+        if($material_count[$i]) {
+            $sql = "UPDATE {$g5['material_table']} SET mtr_status = 'finish'
+                    WHERE mtr_part_no = '".$arr['bom_part_no']."' AND mtr_date = '".$itm_date[$i]."' AND mtr_status = 'defect'
+            ";
+            // print_r3($sql);
+            sql_query($sql,1);
+        }
+        
+        // print_r3($g5['set_defect_type_value']);
+        // print_r3($arr['defect_type']);
+        // print_r3($g5['set_mtr_defect_type_value']);
+        // item insert. 불량 타입이 있을 때만 입력합니다.
+        if(in_array($arr['defect_type'],$g5['set_defect_type_value'])) {
+            // $key[$i] = array_search($arr['defect_type'], $g5['set_defect_type_value']);
+            foreach ($g5['set_defect_type_value'] as $key => $value) {
+                if ($value == $arr['defect_type']) {
+                    $type[$i] = $key;
+                    break;
+                }
+            }
+            // 해당 날짜 생산중에서 맨 앞에서부터 불량 갯수만큼 불량처리
+            $sql = "UPDATE {$g5['item_table']} SET 
+                        itm_status = 'defect',
+                        itm_defect_type = '".$type[$i]."',
+                        itm_defect_text = '".$arr['defect_text']."',
+                        itm_memo = '".$arr['result']."'
+                    WHERE itm_part_no = '".$arr['bom_part_no']."' AND itm_date = '".$itm_date[$i]."' AND itm_status = 'finish'
+                    ORDER BY itm_idx LIMIT ".$arr['count']."
+            ";
+            // print_r3($sql);
+            sql_query($sql,1);
+        }
+        else {
+            $defect_types[] = $arr['defect_type'];
+        }
+        // material. 불량 타입이 있을 때만 입력합니다.
+        if(in_array($arr['defect_type'],$g5['set_mtr_defect_type_value'])) {
+            // $key[$i] = array_search($arr['defect_type'], $g5['set_mtr_defect_type_value']);
+            foreach ($g5['set_mtr_defect_type_value'] as $key => $value) {
+                if ($value == $arr['defect_type']) {
+                    $type[$i] = $key;
+                    break;
+                }
+            }
+            // 해당 날짜 생산중에서 맨 앞에서부터 불량 갯수만큼 불량처리
+            $sql = "UPDATE {$g5['material_table']} SET 
+                        mtr_status = 'defect',
+                        mtr_defect_type = '".$type[$i]."',
+                        mtr_defect_text = '".$arr['defect_text']."',
+                        mtr_memo = '".$arr['result']."'
+                    WHERE mtr_part_no = '".$arr['bom_part_no']."' AND mtr_date = '".$mtr_date[$i]."' AND mtr_status = 'finish'
+                    ORDER BY mtr_idx LIMIT ".$arr['count']."
+            ";
+            // print_r3($sql);
+            sql_query($sql,1);
+        }
+        else {
+            $defect_types[] = $arr['defect_type'];
+        }
 
         $idx++; 
     }
@@ -125,7 +211,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     // 메시지 보임
     if(preg_match("/[-0-9A-Z]/",$arr['bom_part_no'])) {
         echo "<script> document.all.cont.innerHTML += '".$idx
-                .". ".$arr['month']."/".$arr['day'].": ".$arr['bom_part_no']."]: ".$arr['bom_name']." -> ".$arr['count']
+                .". ".$arr['month']."/".$arr['day'].": ".$arr['bom_part_no']."]: ".$arr['bom_name']." -> ".$arr['count']." 개 불량"
                 ." ----------->> 처리 완료<br>'; </script>\n";
     }
 
@@ -149,6 +235,16 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
 //     print_r3($allData[1][$i]);
 // }
 
+// 입력 불가 불량 타입 표현
+if($defect_types[0]) {
+    $defect_types = array_unique($defect_types);
+    // print_r3($defect_types);
+    // print_r3('새로운 불량 유형이 있어서 등록하지 못했습니다.<span style="color:darkorange;">'.BR.implode(",",$defect_types).'</span>'.BR.'불량유형이 환경설정에 먼저 등록되어야 합니다.'.BR.'관리자에게 문의해 주세요.');
+    $defect_msg = '<div style="margin-top:20px;border:1px solid #ddd;padding:15px;">새로운 불량 유형이 있어서 일부 정보를 등록하지 못했습니다.'.BR.'불량유형: <span style="color:darkorange;">'.implode(",",$defect_types).'</span>'.BR.'환경설정에 먼저 등록되어야 하므로 관리자에게 문의해 주세요.</div>';
+}
+
+
+
 
 // 관리자 디버깅 메시지
 if( is_array($g5['debug_msg']) ) {
@@ -168,4 +264,7 @@ if( is_array($g5['debug_msg']) ) {
 
 <script>
 	document.all.cont.innerHTML += "<br><br>총 <?php echo number_format($idx) ?>건 완료<br><br><font color=crimson><b>[끝]</b></font>";
+    <?php if($defect_types[0]) { ?>
+        document.all.defect.innerHTML = '<?=$defect_msg?>';
+    <?php } ?>
 </script>

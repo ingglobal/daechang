@@ -13,7 +13,8 @@ if($member['mb_manager_yn']) {
 
 $g5['container_sub_title'] = '
 <h2 id="container_sub_title">
-    <a href="./quality_list.php" class="btn_top_menu '.$active_quality_list.'">품질관리</a>
+    <a href="./quality_monthly_list.php" class="btn_top_menu '.$active_quality_monthly_list.'">월간품질관리</a>
+    <a href="./quality_list.php" class="btn_top_menu '.$active_quality_list.'">품질관리현황</a>
     <a href="./quality_excel_form.php" class="btn_top_menu '.$active_quality_excel_form.'">불량엑셀등록</a>
     '.$sub_title_list.'
 </h2>
