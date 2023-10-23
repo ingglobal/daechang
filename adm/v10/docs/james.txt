@@ -3024,3 +3024,76 @@ FROM
 ) AS db_table
 ................................
 
+// monthly statistics
+-----------------------
+SELECT *
+FROM
+(
+    (
+    SELECT
+        'material' AS bom_type
+        , mtr_idx AS db_idx
+        , mtr_part_no AS bom_part_no
+        , mtr_name AS bom_name
+        , mtr_defect_type AS defect_type
+        , mtr_defect_text AS defect_text
+        , mtr_date AS stat_date
+        , mtr_status AS status
+    FROM g5_1_material
+    WHERE mtr_status = 'defect'
+    )
+    UNION ALL
+    (
+    SELECT
+        'product' AS bom_type
+        , itm_idx AS db_idx
+        , itm_part_no AS bom_part_no
+        , itm_name AS bom_name
+        , itm_defect_type AS defect_type
+        , itm_defect_text AS defect_text
+        , itm_date AS stat_date
+        , itm_status AS status
+    FROM g5_1_item
+    WHERE itm_status = 'defect'
+    )
+) AS db_table
+...........................
+SELECT SQL_CALC_FOUND_ROWS *
+FROM
+(
+    (
+    SELECT
+        'material' AS bom_type
+        , mtr_idx AS db_idx
+        , mtr_part_no AS bom_part_no
+        , mtr_name AS bom_name
+        , mtr_defect_type AS defect_type
+        , mtr_defect_text AS defect_text
+        , mtr_date AS stat_date
+        , mtr_status AS status
+        , COUNT(mtr_idx) AS subtotal
+    FROM g5_1_material
+    WHERE mtr_status = 'defect' AND mtr_date LIKE '2023-08%'
+    GROUP BY mtr_part_no, mtr_date, mtr_defect_type
+    )
+    UNION ALL
+    (
+    SELECT
+        'product' AS bom_type
+        , itm_idx AS db_idx
+        , itm_part_no AS bom_part_no
+        , itm_name AS bom_name
+        , itm_defect_type AS defect_type
+        , itm_defect_text AS defect_text
+        , itm_date AS stat_date
+        , itm_status AS status
+        , COUNT(itm_idx) AS subtotal
+    FROM g5_1_item
+    WHERE itm_status = 'defect' AND itm_date LIKE '2023-08%'
+    GROUP BY itm_part_no, itm_date, itm_defect_type
+    )
+) AS db_table
+
+
+
+
