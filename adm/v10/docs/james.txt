@@ -3095,5 +3095,10 @@ FROM
 ) AS db_table
 
 
+// mac to ec2 db server.
+james@sonjisig-ui-MacBookPro Downloads % pwd
+/Users/james/Downloads
+james@sonjisig-ui-MacBookPro Downloads % chmod 400 epcs-api-server-key.pem
+james@sonjisig-ui-MacBookPro Downloads % ssh -i epcs-api-server-key.pem ec2-user@15.165.3.96 -p9922
 
 
