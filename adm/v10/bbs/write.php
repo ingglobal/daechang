@@ -20,7 +20,7 @@ $notice_array = explode(',', trim($board['bo_notice']));
 if (!($w == '' || $w == 'u' || $w == 'r')) {
     alert('w 값이 제대로 넘어오지 않았습니다.');
 }
-// print_r2($write);exit;
+
 if ($w == 'u' || $w == 'r') {
     if ($write['wr_id']) {
         // 가변 변수로 $wr_1 .. $wr_10 까지 만든다.
@@ -430,8 +430,8 @@ $editor_js .= chk_editor_js('wr_content', $is_dhtml_editor);
 // 임시 저장된 글 수
 $autosave_count = autosave_count($member['mb_id']);
 // 기존 $write 배열 값에 meta_bale에서 추출한 값을 병합한다.
+
 $write = @array_merge($write,get_table_meta('mms','mms_idx',$write['wr_2']));
-// print_r2($write);exit;
 
 // $delete_href = G5_USER_ADMIN_BBS_URL.'/delete.php?bo_table='.$bo_table.'&amp;wr_id='.$wr_id.'&amp;token='.$token.'&amp;page='.$page.urldecode($qstr);
 

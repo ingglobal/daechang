@@ -11,20 +11,16 @@ if ($bo_table) {
         $write = array_merge($write, get_serialized($write['wr_9']));
     }
 }
-//{"r_name":["홍길동","이순신"],"r_role":["과장","부장"],"r_hp":["01012234567","0101222343"],"r_email":["hong@hong.com","lee@lee.com"]}
+
 // report people array to json
 $wr_alarmlist['r_name'] = $_REQUEST['r_name'];
 $wr_alarmlist['r_role'] = $_REQUEST['r_role'];
 $wr_alarmlist['r_hp'] = $_REQUEST['r_hp'];
 $wr_alarmlist['r_email'] = $_REQUEST['r_email'];
 $wr_alarms = json_encode( $wr_alarmlist, JSON_UNESCAPED_UNICODE );
-// $_REQUEST['wr_alarm_list'] = $wr_alarms;
-$_POST['wr_9'] = $wr_alarms;
+$_REQUEST['wr_alarm_list'] = $wr_alarms;
 // print_r2($_REQUEST);
-// print_r2($wr_alarms);
-// echo "<br>";
-// //exit;
-// print_r2($_POST['wr_9']);exit;
+// print_r2($wr_alarms);exit;
 
 // wr_send_type
 for($i=0;$i<sizeof($wr_send_type);$i++) {

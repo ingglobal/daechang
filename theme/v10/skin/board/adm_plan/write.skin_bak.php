@@ -18,7 +18,7 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style2.css">', 
     <h2 class="sound_only"><?php echo $g5['title'] ?></h2>
 
     <!-- 게시물 작성/수정 시작 { -->
-    <form name="fwrite" id="fwrite" method="post" enctype="multipart/form-data" autocomplete="off" style="width:<?php echo $width; ?>">
+    <form name="fwrite" id="fwrite" action="<?php echo $action_url ?>" onsubmit="return fwrite_submit(this);" method="post" enctype="multipart/form-data" autocomplete="off" style="width:<?php echo $width; ?>">
     <input type="hidden" name="uid" value="<?php echo get_uniqid(); ?>">
     <input type="hidden" name="w" value="<?php echo $w ?>">
     <input type="hidden" name="bo_table" value="<?php echo $bo_table ?>">
@@ -31,7 +31,6 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style2.css">', 
     <input type="hidden" name="sod" value="<?php echo $sod ?>">
     <input type="hidden" name="page" value="<?php echo $page ?>">
     <input type="hidden" name="ser_com_idx" value="<?php echo $ser_com_idx ?>">
-    <input type="hidden" name="token" value="">
     <div class="write_div">
         <select name="wr_7" id="wr_7">
             <option value="0">분류를 선택하세요.</option>
@@ -231,7 +230,7 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style2.css">', 
 
     <div class="btn_fixed_top" style="top:57px;">
         <a href="javascript:history.back();" class="btn_cancel btn">취소</a>
-        <input type="button" onclick="fwrite_submit(this.parentNode.parentNode)" value="작성완료" id="btn_submit" accesskey="s" class="btn_submit btn">
+        <input type="submit" value="작성완료" id="btn_submit" accesskey="s" class="btn_submit btn">
     </div>
     </form>
 
@@ -304,10 +303,8 @@ function html_auto_br(obj)
 }
 
 function fwrite_submit(f){
-    var action_url = '<?=$action_url?>';
-    f.token.value = get_ajax_token();
-    
     <?php echo $editor_js; // 에디터 사용시 자바스크립트에서 내용을 폼필드로 넣어주며 내용이 입력되었는지 검사함   ?>
+    alert(f.mms_idx.value);return false;
     var subject = "";
     var content = "";
     $.ajax({
@@ -355,15 +352,26 @@ function fwrite_submit(f){
         }
     }
     
-    if(f.mms_idx.value=='' || !f.mms_idx.value) {
+    if(f.mms_idx.value=='') {
         alert("설비를 입력하세요.");
         return false;
     }
 
 
+    $('.towhom_info span[class^="r_"]').each(function(e){
+        // console.log( $(this).html() );
+        var this_val = $(this).text();
+        var this_name = $(this).attr('class');
+        $(this).append( $('<input type="hidden" name="'+this_name+'[]" value="'+this_val+'">') );
+    });
+    
+
+    <?php echo $captcha_js; // 캡챠 사용시 자바스크립트에서 입력된 캡챠를 검사함  ?>
+
+    document.getElementById("btn_submit").disabled = "disabled";
+
+    return true;
     // return false;
-    f.action = action_url;
-    f.submit();
 }
 
 // wr_content height setting

@@ -5,8 +5,6 @@ if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style.css">', 0);
 add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style2.css">', 0);
 // print_r3($write);
-
-// print_r2($towhom_li);exit;
 ?>
 <style>
     .towhom_info .fa {cursor:pointer;}
@@ -18,7 +16,7 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style2.css">', 
     <h2 class="sound_only"><?php echo $g5['title'] ?></h2>
 
     <!-- 게시물 작성/수정 시작 { -->
-    <form name="fwrite" id="fwrite" method="post" enctype="multipart/form-data" autocomplete="off" style="width:<?php echo $width; ?>">
+    <form name="fwrite" id="fwrite" action="<?php echo $action_url ?>" onsubmit="return fwrite_submit(this);" method="post" enctype="multipart/form-data" autocomplete="off" style="width:<?php echo $width; ?>">
     <input type="hidden" name="uid" value="<?php echo get_uniqid(); ?>">
     <input type="hidden" name="w" value="<?php echo $w ?>">
     <input type="hidden" name="bo_table" value="<?php echo $bo_table ?>">
@@ -31,13 +29,15 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style2.css">', 
     <input type="hidden" name="sod" value="<?php echo $sod ?>">
     <input type="hidden" name="page" value="<?php echo $page ?>">
     <input type="hidden" name="ser_com_idx" value="<?php echo $ser_com_idx ?>">
-    <input type="hidden" name="token" value="">
+    <input type="hidden" name="ser_wr_5" value="<?php echo $ser_wr_5 ?>">
+    <input type="hidden" name="ser_wr_6" value="<?php echo $ser_wr_6 ?>">
+    <input type="hidden" name="ser_wr_10" value="<?php echo $ser_wr_10 ?>">
     <div class="write_div">
         <select name="wr_7" id="wr_7">
             <option value="0">분류를 선택하세요.</option>
             <?=$mms_type_form_options?>
         </select>
-        <script>$('select[name="wr_7"]').val('<?=(($wr_7)?$wr_7:0)?>');</script>
+        <script>$('select[name="wr_7"]').val('<?=$wr_7?>');</script>
     </div>
     <div class="write_div">
         <label for="wr_cart" class="sound_only">설비</label>
@@ -70,6 +70,9 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style2.css">', 
     $option_hidden = '';
     if ($is_notice || $is_html || $is_secret || $is_mail) {
         $option = '';
+        if ($is_notice) {
+            $option .= "\n".'<input type="checkbox" id="notice" name="notice" value="1" '.$notice_checked.'>'."\n".'<label for="notice">공지</label>';
+        }
 
         if ($is_html) {
             if ($is_dhtml_editor) {
@@ -77,6 +80,18 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style2.css">', 
             } else {
                 $option .= "\n".'<input type="checkbox" id="html" name="html" onclick="html_auto_br(this);" value="'.$html_value.'" '.$html_checked.'>'."\n".'<label for="html">HTML</label>';
             }
+        }
+
+        if ($is_secret) {
+            if ($is_admin || $is_secret==1) {
+                $option .= "\n".'<input type="checkbox" id="secret" name="secret" value="secret" '.$secret_checked.'>'."\n".'<label for="secret">비밀글</label>';
+            } else {
+                $option_hidden .= '<input type="hidden" name="secret" value="secret">';
+            }
+        }
+
+        if ($is_mail) {
+            $option .= "\n".'<input type="checkbox" id="mail" name="mail" value="mail" '.$recv_email_checked.'>'."\n".'<label for="mail">답변메일받기</label>';
         }
     }
 
@@ -90,6 +105,30 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style2.css">', 
             <option value="">분류를 선택하세요</option>
             <?php echo $category_option ?>
         </select>
+    </div>
+    <?php } ?>
+
+    <div class="bo_w_info write_div" style="display:none;">
+    <?php if ($is_name) { ?>
+        <label for="wr_name" class="sound_only">이름<strong>필수</strong></label>
+        <input type="text" name="wr_name" value="<?php echo $name ?>" id="wr_name" required class="frm_input required" placeholder="이름">
+    <?php } ?>
+
+    <?php if ($is_password) { ?>
+        <label for="wr_password" class="sound_only">비밀번호<strong>필수</strong></label>
+        <input type="password" name="wr_password" id="wr_password" <?php echo $password_required ?> class="frm_input <?php echo $password_required ?>" placeholder="비밀번호">
+    <?php } ?>
+
+    <?php if ($is_email) { ?>
+            <label for="wr_email" class="sound_only">이메일</label>
+            <input type="text" name="wr_email" value="<?php echo $email ?>" id="wr_email" class="frm_input email " placeholder="이메일">
+    <?php } ?>
+    </div>
+
+    <?php if ($is_homepage) { ?>
+    <div class="write_div" style="display:none;">
+        <label for="wr_homepage" class="sound_only">홈페이지</label>
+        <input type="text" name="wr_homepage" value="<?php echo $homepage ?>" id="wr_homepage" class="frm_input full_input" size="50" placeholder="홈페이지">
     </div>
     <?php } ?>
 
@@ -155,11 +194,11 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style2.css">', 
                 for($i=0;$i<@sizeof($towhom_li);$i++) {
                     echo '<li>
                             <span><i class="fa fa-remove"></i></span>
-                            <span class="r_name"><input type="hidden" name="r_name[]" value="'.$towhom_li[$i]['r_name'].'">'.$towhom_li[$i]['r_name'].'</span>
-                            <span class="r_role"><input type="hidden" name="r_role[]" value="'.$towhom_li[$i]['r_role'].'">'.$towhom_li[$i]['r_role'].'</span>
-                            <span class="r_hp"><input type="hidden" name="r_hp[]" value="'.$towhom_li[$i]['r_hp'].'">'.$towhom_li[$i]['r_hp'].'</span>
-                            <span class="r_email"><input type="hidden" name="r_email[]" value="'.$towhom_li[$i]['r_email'].'">'.$towhom_li[$i]['r_email'].'</span>
-                            </li>
+                            <span class="r_name">'.$towhom_li[$i]['r_name'].'</span>
+                            <span class="r_role">'.$towhom_li[$i]['r_role'].'</span>
+                            <span class="r_hp">'.$towhom_li[$i]['r_hp'].'</span>
+                            <span class="r_email">'.$towhom_li[$i]['r_email'].'</span>
+                          </li>
                     ';
                 }
                 ?>
@@ -231,7 +270,7 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style2.css">', 
 
     <div class="btn_fixed_top" style="top:57px;">
         <a href="javascript:history.back();" class="btn_cancel btn">취소</a>
-        <input type="button" onclick="fwrite_submit(this.parentNode.parentNode)" value="작성완료" id="btn_submit" accesskey="s" class="btn_submit btn">
+        <input type="submit" value="작성완료" id="btn_submit" accesskey="s" class="btn_submit btn">
     </div>
     </form>
 
@@ -303,11 +342,10 @@ function html_auto_br(obj)
         obj.value = "";
 }
 
-function fwrite_submit(f){
-    var action_url = '<?=$action_url?>';
-    f.token.value = get_ajax_token();
-    
+function fwrite_submit(f)
+{
     <?php echo $editor_js; // 에디터 사용시 자바스크립트에서 내용을 폼필드로 넣어주며 내용이 입력되었는지 검사함   ?>
+
     var subject = "";
     var content = "";
     $.ajax({
@@ -355,15 +393,26 @@ function fwrite_submit(f){
         }
     }
     
-    if(f.mms_idx.value=='' || !f.mms_idx.value) {
+    if(f.mms_idx.value=='') {
         alert("설비를 입력하세요.");
         return false;
     }
 
 
+    $('.towhom_info span[class^="r_"]').each(function(e){
+        // console.log( $(this).html() );
+        var this_val = $(this).text();
+        var this_name = $(this).attr('class');
+        $(this).append( $('<input type="hidden" name="'+this_name+'[]" value="'+this_val+'">') );
+    });
+    
+
+    <?php echo $captcha_js; // 캡챠 사용시 자바스크립트에서 입력된 캡챠를 검사함  ?>
+
+    document.getElementById("btn_submit").disabled = "disabled";
+
+    return true;
     // return false;
-    f.action = action_url;
-    f.submit();
 }
 
 // wr_content height setting
@@ -388,8 +437,6 @@ $(document).on('click','.btn_mb_report',function(e){
         alert('휴대폰 또는 이메일 중 하나는 입력해 주셔야 합니다.');
         return false;
     }
-
-    
     if(mb_hp!='') {
         var rgEx = /(01[016789])[-]*(\d{4}|\d{3})[-]*\d{4}$/g;
         var chkFlg = rgEx.test(mb_hp);
@@ -410,20 +457,12 @@ $(document).on('click','.btn_mb_report',function(e){
         }
     }
 
-    if(mb_hp==''&&mb_email!=''){
-        mb_hp = '';
-    }
-
-    if(mb_hp!=''&&mb_email==''){
-        mb_email = '';
-    }
-
     mb_dom = '<li>';
     mb_dom += ' <span><i class="fa fa-remove"></i></span>';
-    mb_dom += ' <span class="r_name"><input type="hidden" name="r_name[]" value="'+mb_name+'">'+mb_name+'</span>';
-    mb_dom += ' <span class="r_role"><input type="hidden" name="r_role[]" value="'+mb_role+'">'+mb_role+'</span>';
-    mb_dom += ' <span class="r_hp"><input type="hidden" name="r_hp[]" value="'+mb_hp+'">'+mb_hp+'</span>';
-    mb_dom += ' <span class="r_email"><input type="hidden" name="r_email[]" value="'+mb_email+'">'+mb_email+'</span>';
+    mb_dom += ' <span class="r_name">'+mb_name+'</span>';
+    mb_dom += ' <span class="r_role">'+mb_role+'</span>';
+    mb_dom += ' <span class="r_hp">'+mb_hp+'</span>';
+    mb_dom += ' <span class="r_email">'+mb_email+'</span>';
     mb_dom += '</li>';
     $('.towhom_info ul').append(mb_dom);
     $('.towhom_form input').val('');

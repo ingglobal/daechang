@@ -8,14 +8,14 @@ if (!defined('_GNUBOARD_')) exit;
 // common 후킹
 add_event('common_header','u_common_header',10);
 function u_common_header(){
-    global $board,$board_skin_path,$board_skin_url;
+    global $board,$write,$board_skin_path,$board_skin_url;
 
     // 관리자단 게시판 스킨 설정
     $fr_adm = preg_match("/\/adm\/v10/",$_SERVER['HTTP_REFERER']);
     if (defined('G5_IS_ADMIN') || $fr_adm) {
         // 관리자 스킨
         $unser = unserialize(stripslashes($board['bo_7']));
-        // print_r3($unser);
+        // print_r3($unser);exit;
         if( is_array($unser) ) {
             foreach ($unser as $k1=>$v1) {
                 // print_r3($k1.'/'.$v1);
