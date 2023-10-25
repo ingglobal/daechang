@@ -4,11 +4,23 @@ include_once('./_common.php');
 
 auth_check($auth[$sub_menu],"r");
 
-$g5['title'] = '품질관리현황';
+$g5['title'] = '월간품질관리';
 @include_once('./_top_menu_quality.php');
 include_once('./_head.php');
 echo $g5['container_sub_title'];
 
+
+// Default month setting
+$ym = ($ym) ? $ym : date("Y-m",G5_SERVER_TIME);
+
+// Month prev and next
+$ym_prev = ((int)substr($ym,-2) == 1) ? 
+				(substr($ym,0,4)-1).'-12' 
+				: substr($ym,0,4).'-'.sprintf("%02d",((int)substr($ym,-2)-1));
+$ym_next = ((int)substr($ym,-2) == 12) ?
+				(substr($ym,0,4)+1).'-01'
+				: substr($ym,0,4).'-'.sprintf("%02d",((int)substr($ym,-2)+1));
+// echo $ym.BR;
 
 
 $where = array();
@@ -28,8 +40,8 @@ if ($stx != "") {
 }
 
 // 기간 검색
-if ($ser_st_date)	// 시작일 있는 경우
-    $where[] = " stat_date >= '{$ser_st_date}' ";
+if ($month)	// 시작일 있는 경우
+    $where[] = " stat_date >= '{$month}' ";
 if ($ser_en_date)	// 종료일 있는 경우
     $where[] = " stat_date <= '{$ser_en_date}' ";
 
@@ -61,7 +73,10 @@ $sql = "SELECT SQL_CALC_FOUND_ROWS *
                 , mtr_defect_text AS defect_text
                 , mtr_date AS stat_date
                 , mtr_status AS status
-            FROM {$g5['material_table']} WHERE mtr_status = 'defect'
+                , COUNT(mtr_idx) AS subtotal
+            FROM g5_1_material
+            WHERE mtr_status = 'defect' AND mtr_date LIKE '".$ym."%'
+            GROUP BY mtr_part_no, mtr_date, mtr_defect_type
             )
             UNION ALL
             (
@@ -74,13 +89,46 @@ $sql = "SELECT SQL_CALC_FOUND_ROWS *
                 , itm_defect_text AS defect_text
                 , itm_date AS stat_date
                 , itm_status AS status
-            FROM {$g5['item_table']} WHERE itm_status = 'defect'
+                , COUNT(itm_idx) AS subtotal
+            FROM g5_1_item
+            WHERE itm_status = 'defect' AND itm_date LIKE '".$ym."%'
+            GROUP BY itm_part_no, itm_date, itm_defect_type
             )
         ) AS db_table
-        {$sql_search}
-        {$sql_order}
-		LIMIT {$from_record}, {$rows} 
 ";
+// $sql = "SELECT SQL_CALC_FOUND_ROWS *
+//         FROM
+//         (
+//             (
+//             SELECT
+//                 'material' AS bom_type
+//                 , mtr_idx AS db_idx
+//                 , mtr_part_no AS bom_part_no
+//                 , mtr_name AS bom_name
+//                 , mtr_defect_type AS defect_type
+//                 , mtr_defect_text AS defect_text
+//                 , mtr_date AS stat_date
+//                 , mtr_status AS status
+//             FROM {$g5['material_table']} WHERE mtr_status = 'defect'
+//             )
+//             UNION ALL
+//             (
+//             SELECT
+//                 'product' AS bom_type
+//                 , itm_idx AS db_idx
+//                 , itm_part_no AS bom_part_no
+//                 , itm_name AS bom_name
+//                 , itm_defect_type AS defect_type
+//                 , itm_defect_text AS defect_text
+//                 , itm_date AS stat_date
+//                 , itm_status AS status
+//             FROM {$g5['item_table']} WHERE itm_status = 'defect'
+//             )
+//         ) AS db_table
+//         {$sql_search}
+//         {$sql_order}
+// 		LIMIT {$from_record}, {$rows} 
+// ";
 // print_r3($sql);//exit;
 $result = sql_query($sql,1);
 $count = sql_fetch_array( sql_query(" SELECT FOUND_ROWS() as total ") ); 
@@ -89,18 +137,26 @@ $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
 
 
 $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목록</a>';
-$qstr .= '&sca='.$sca.'&ser_st_date='.$ser_st_date.'&ser_en_date='.$ser_en_date; // 추가로 확장해서 넘겨야 할 변수들
+$qstr .= '&sca='.$sca.'&month='.$month.'&ser_en_date='.$ser_en_date; // 추가로 확장해서 넘겨야 할 변수들
 
 ?>
+<style>
+.month_box {display:inline-block;position:relative;margin-right:10px !important;}
+.month_box a {padding:5px 10px;vertical-align:middle;}
+.month_box a i{font-size:1.3em;}
+</style>
 <div class="local_ov01 local_ov">
     <?php echo $listall ?>
     <span class="btn_ov01"><span class="ov_txt">총 </span><span class="ov_num"> <?php echo number_format($total_count) ?>건 </span></span>
 </div>
 
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get">
+    <div class="month_box">
+        <a href="?ym=<?=$ym_prev?>"><i class="fa fa-chevron-circle-left icon_prev_next" style="left:5px"></i></a>
+        <input type="text" name="ym" value="<?=$ym?>" id="ym" class="frm_input" style="width:70px;text-align:center;">
+        <a href="?ym=<?=$ym_next?>"><i class="fa fa-chevron-circle-right icon_prev_next" style="right:5px"></i></a>
+    </div>
     <label for="sfl" class="sound_only">검색대상</label>
-    <input type="text" name="ser_st_date" value="<?=$ser_st_date ?>" id="ser_st_date" class="frm_input" style="width:90px;"> ~
-    <input type="text" name="ser_en_date" value="<?=$ser_en_date ?>" id="ser_en_date" class="frm_input" style="width:90px;">
     <select name="sfl" id="sfl">
         <option value="bom_part_no"<?php echo get_selected($_GET['sfl'], "bom_part_no"); ?>>품번</option>
         <option value="bom_name"<?php echo get_selected($_GET['sfl'], "bom_name"); ?>>품명</option>
@@ -139,6 +195,7 @@ $qstr .= '&sca='.$sca.'&ser_st_date='.$ser_st_date.'&ser_en_date='.$ser_en_date;
         <th scope="col">구분</th>
         <th scope="col">불량유형</th>
         <th scope="col">문제점및원인</th>
+        <th scope="col">발생수량</th>
     </tr>
     <tr>
     </tr>
@@ -166,6 +223,7 @@ $qstr .= '&sca='.$sca.'&ser_st_date='.$ser_st_date.'&ser_en_date='.$ser_en_date;
         <td class="td_bom_type"><?=$row['bom_type']?></td><!-- 구분 -->
         <td class="td_defect_type"><?=$g5['set_defect_type_value'][$row['defect_type']]?></td><!-- 불량유형 -->
         <td class="td_defect_text"><?=$row['defect_text']?></td><!-- 문제점및원인 -->
+        <td class="td_subtotal"><?=$row['subtotal']?></td><!-- 발생수량 -->
     </tr>
     <?php
     }

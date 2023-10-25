@@ -71,7 +71,7 @@ include_once ('./_tail.php');
 ?>
 
 <?php
-$countgap = 10; // 몇건씩 보낼지 설정
+$countgap = 50; // 몇건씩 보낼지 설정
 $sleepsec = 1000;  // 백만분의 몇초간 쉴지 설정, default=200
 $maxscreen = 100; // 몇건씩 화면에 보여줄건지?
 
