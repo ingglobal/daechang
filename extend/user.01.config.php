@@ -9,6 +9,7 @@ define('G5_JSON_DIR',                       'json');
 define('G5_HOOK_DIR',                       'hook');
 define('G5_KIOSK_DIR',                      'kiosk');
 define('G5_MONITOR_DIR',                    'monitor');
+define('G5_MONITOR2_DIR',                   'monitor2');
 define('G5_TMP_DIR',                        'tmp');
 define('G5_WDG_DATA_PATH',                  G5_DATA_PATH.'/wdg');
 define('G5_WDG_DATA_URL',                   G5_URL.'/data/wdg');
@@ -82,6 +83,7 @@ define('G5_USER_ADMIN_KIOSK_JS_PATH',       G5_USER_ADMIN_PATH.'/'.G5_KIOSK_DIR.
 define('G5_USER_ADMIN_KIOSK_JS_URL',        G5_USER_ADMIN_URL.'/'.G5_KIOSK_DIR.'/'.G5_JS_DIR);
 define('G5_USER_ADMIN_KIOSK_LIB_PATH',      G5_USER_ADMIN_PATH.'/'.G5_KIOSK_DIR.'/'.G5_LIB_DIR);
 define('G5_USER_ADMIN_KIOSK_LIB_URL',       G5_USER_ADMIN_URL.'/'.G5_KIOSK_DIR.'/'.G5_LIB_DIR);
+
 define('G5_MONITOR_PATH',                   G5_PATH.'/'.G5_MONITOR_DIR);
 define('G5_MONITOR_URL',                    G5_URL.'/'.G5_MONITOR_DIR);
 define('G5_MONITOR_AJAX_PATH',              G5_MONITOR_PATH.'/'.G5_AJAX_DIR);
@@ -96,6 +98,22 @@ define('G5_MONITOR_JS_PATH',                G5_MONITOR_PATH.'/'.G5_JS_DIR);
 define('G5_MONITOR_JS_URL',                 G5_MONITOR_URL.'/'.G5_JS_DIR);
 define('G5_MONITOR_LIB_PATH',               G5_MONITOR_PATH.'/'.G5_LIB_DIR);
 define('G5_MONITOR_LIB_URL',                G5_MONITOR_URL.'/'.G5_LIB_DIR);
+
+define('G5_MONITOR2_PATH',                  G5_PATH.'/'.G5_MONITOR2_DIR);
+define('G5_MONITOR2_URL',                   G5_URL.'/'.G5_MONITOR2_DIR);
+define('G5_MONITOR2_AJAX_PATH',             G5_MONITOR2_PATH.'/'.G5_AJAX_DIR);
+define('G5_MONITOR2_AJAX_URL',              G5_MONITOR2_URL.'/'.G5_AJAX_DIR);
+define('G5_MONITOR2_BBS_PATH',              G5_MONITOR2_PATH.'/'.G5_BBS_DIR);
+define('G5_MONITOR2_BBS_URL',               G5_MONITOR2_URL.'/'.G5_BBS_DIR);
+define('G5_MONITOR2_CSS_PATH',              G5_MONITOR2_PATH.'/'.G5_CSS_DIR);
+define('G5_MONITOR2_CSS_URL',               G5_MONITOR2_URL.'/'.G5_CSS_DIR);
+define('G5_MONITOR2_IMG_PATH',              G5_MONITOR2_PATH.'/'.G5_IMG_DIR);
+define('G5_MONITOR2_IMG_URL',               G5_MONITOR2_URL.'/'.G5_IMG_DIR);
+define('G5_MONITOR2_JS_PATH',               G5_MONITOR2_PATH.'/'.G5_JS_DIR);
+define('G5_MONITOR2_JS_URL',                G5_MONITOR2_URL.'/'.G5_JS_DIR);
+define('G5_MONITOR2_LIB_PATH',              G5_MONITOR2_PATH.'/'.G5_LIB_DIR);
+define('G5_MONITOR2_LIB_URL',               G5_MONITOR2_URL.'/'.G5_LIB_DIR);
+
 define('G5_USER_BBS_URL',                   G5_USER_URL.'/'.G5_BBS_DIR);
 define('G5_USER_BBS_PATH',                  G5_USER_PATH.'/'.G5_BBS_DIR);
 define('G5_USER_AJAX_URL',                  G5_USER_URL.'/'.G5_AJAX_DIR);
