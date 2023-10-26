@@ -21,19 +21,14 @@ $st_time = ($st_time) ? $st_time : date("H:i:s",strtotime($en_date.' '.$en_time)
 ?>
 <style>
 .div_container {position:relative;}
-.div_container.after {display:block;visibility:hidden;clear:both;content:'';}
-.div_container > div {
-    border: solid 1px #5b5b5d;
-    border-radius: 5px;
-    min-height: 450px;
-    padding: 10px;
-    width: 49.5%;
-    margin-bottom:10px;
-}
+.div_container:after {display:block;visibility:hidden;clear:both;content:'';}
+.div_container > div {border: solid 1px #5b5b5d;border-radius: 5px;min-height: 450px;padding: 10px;width: 49.5%;margin-bottom:10px;}
 .div_left {float:left;}
 .div_right {float:right;}
-.div_container .more {float:right;font-size:0.8em;}
+.div_container .more, .div_container_full .more {float:right;font-size:0.8em;}
 .text01 {font-size:0.8em;margin:0 auto;}
+.div_container_full {border: solid 1px #5b5b5d;border-radius: 5px;min-height: 150px;padding: 10px;margin-bottom:10px;}
+.span_title {display:inline-block;margin-bottom:10px;font-size:1.2em;}
 </style>
 
 <script src="<?php echo G5_URL?>/lib/highcharts/Highstock/code/highstock.js"></script>
@@ -357,8 +352,67 @@ $st_time = ($st_time) ? $st_time : date("H:i:s",strtotime($en_date.' '.$en_time)
             </script>
         </div>
     </div>
-</div>
+    <div class="div_container_full prelative">
+        <span class="span_title">비가동</span>
+        <a href="./manual_downtime_list.php" class="more">더보기</a>
+        <div class="tbl_head01 tbl_wrap">
+            <?php
+            $sql = "SELECT dta.*, mms.mms_name, mst.mst_name, mst.mst_type
+                    FROM {$g5['data_downtime_table']} AS dta
+                        LEFT JOIN {$g5['mms_table']} AS mms ON dta.mms_idx = mms.mms_idx
+                        LEFT JOIN {$g5['mms_status_table']} AS mst ON dta.mst_idx = mst.mst_idx
+                    WHERE dta.com_idx = '{$_SESSION['ss_com_idx']}'
+                    ORDER BY dta.dta_reg_dt DESC
+                    LIMIT 10
+            ";
+            // echo $sql.'<br>';
+            $result = sql_query($sql,1);
+            ?>
+            <table class="table01">
+                <thead class="tbl_head">
+                <tr>
+                    <th scope="col" style="width:100px;">설비</th>
+                    <th scope="col" style="width:">차종</th>
+                    <th scope="col" style="width:">타입</th>
+                    <th scope="col" style="width:">하드웨어구분</th>
+                    <th scope="col" style="width:260px;">비가동시간</th>
+                    <th scope="col" style="width:100px;">작업시간</th>
+                    <th scope="col" style="width:100px;">금액</th>
+                </tr>
+                </thead>
+                <tbody class="tbl_body">
+                <?php
+                for ($i=0; $row=sql_fetch_array($result); $i++) {
+                    //print_r2($row);
+                    // 합계인 경우
+                    
+                    // 작업시간
+                    $start_time = new DateTime($row['dta_start_dt']);
+                    $end_time = new DateTime($row['dta_end_dt']);
+                    $interval = $start_time->diff($end_time);
+                    // echo $interval->format('%H : %I');
+                    $row['working_hour'] = $interval->format('%H : %I');
 
+                    echo '
+                    <tr class="'.$row['tr_class'].'">
+                        <td class="text_left">'.$row['mms_name'].'</td>
+                        <td class="text_left">'.(($row['dta_category'])?$g5['cats_key_val'][$row['dta_category']]:'기타').'</td>
+                        <td class="text_left">'.$row['mst_name'].'</td>
+                        <td class="text_left">'.(($row['dta_hardware'])?$g5['mng_hardware_category_value'][$row['dta_hardware']]:'-').'</td>
+                        <td class="text_left">'.substr($row['dta_start_dt'],0,16).'~'.substr($row['dta_end_dt'],0,16).'</td>
+                        <td class="text_center">'.$row['working_hour'].'</td>
+                        <td class="text_right pr_5">'.(($row['dta_price'])?number_format($row['dta_price']):'-').'</td>
+                    </tr>
+                    ';
+                }
+                if ($i == 0)
+                    echo '<tr class="tr_empty"><td class="td_empty" colspan="6">자료가 없습니다.</td></tr>';
+                ?>
+            </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 
 

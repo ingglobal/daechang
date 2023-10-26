@@ -3102,3 +3102,16 @@ james@sonjisig-ui-MacBookPro Downloads % chmod 400 epcs-api-server-key.pem
 james@sonjisig-ui-MacBookPro Downloads % ssh -i epcs-api-server-key.pem ec2-user@15.165.3.96 -p9922
 
 
+ 1307176 | active | 2023-10-26 10:16:22.161321+09 | SELECT COUNT(*) as cnt  FROM g5_1_socket   WHERE  1=1  AND  sck_ip = '192.168.123.251'
+ 1307173 | active | 2023-10-26 10:16:22.161321+09 | SELECT COUNT(*) as cnt  FROM g5_1_socket   WHERE  1=1  AND  sck_ip = '192.168.123.251'
+ 1307174 | active | 2023-10-26 10:16:22.161321+09 | SELECT COUNT(*) as cnt  FROM g5_1_socket   WHERE  1=1  AND  sck_ip = '192.168.123.251'
+ 1307175 | active | 2023-10-26 10:16:22.161321+09 | SELECT COUNT(*) as cnt  FROM g5_1_socket   WHERE  1=1  AND  sck_ip = '192.168.123.251'
+
+SELECT pg_cancel_backend(1307176);
+
+ 1307254 | active | 2023-10-26 10:18:05.467527+09 | SELECT COUNT(*) as cnt  FROM g5_1_socket   WHERE  1=1  AND  sck_ip = '192.168.123.251'
+ 1307250 | active | 2023-10-26 10:18:05.467527+09 | SELECT COUNT(*) as cnt  FROM g5_1_socket   WHERE  1=1  AND  sck_ip = '192.168.123.251'
+ 1307252 | active | 2023-10-26 10:18:05.467527+09 | SELECT COUNT(*) as cnt  FROM g5_1_socket   WHERE  1=1  AND  sck_ip = '192.168.123.251'
+ 1307253 | active | 2023-10-26 10:18:05.467527+09 | SELECT COUNT(*) as cnt  FROM g5_1_socket   WHERE  1=1  AND  sck_ip = '192.168.123.251'
+ 
+ SELECT pg_cancel_backend(1307254);
