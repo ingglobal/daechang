@@ -135,7 +135,8 @@ var items = [
   {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>49호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=141" frameborder="0" scrolling="no"></iframe></div>'},
   {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>50호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=140" frameborder="0" scrolling="no"></iframe></div>'},
   {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>51호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=143" frameborder="0" scrolling="no"></iframe></div>'},
-  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>52호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=144" frameborder="0" scrolling="no"></iframe></div>'}
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>52호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=144" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 4, h: 2, noResize: true, content: '<div class="widget_title"><span>설비 비가동</span></div><div class="widget_content frame_03"><iframe id="frame_03" src="<?=G5_USER_ADMIN_URL?>/dashboard/downtime.php?w=5&h=2" frameborder="0" scrolling="no"></iframe></div>'}
 ];
 var options = {
     column:6,
