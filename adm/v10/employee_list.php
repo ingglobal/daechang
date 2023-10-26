@@ -14,6 +14,11 @@ $where[] = " mb_level = 4 ";   // 디폴트 검색조건
 // 해당 업체만
 $where[] = " mb_4 = '".$_SESSION['ss_com_idx']."' ";
 
+// 생산팀관리자가 접속할 경우 관리권한이 없는 회원만 관리가능
+if($member['mb_9'] == 'admin_production') {
+    $where[] = " mb_9 = '' ";
+}
+
 
 // 검색어 설정
 if ($stx != "") {
