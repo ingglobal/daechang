@@ -4,7 +4,7 @@
 $sub_menu = "940120";
 include_once('./_common.php');
 
-if(!auth_check($auth[$sub_menu],"r,w",1)) {
+if(!auth_check($auth[$sub_menu],"r,w,d",1)) {
     alert('메뉴에 접근 권한이 없습니다.');
 }
 if(!$excel_type) {
