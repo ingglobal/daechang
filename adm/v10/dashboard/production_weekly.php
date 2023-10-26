@@ -7,7 +7,8 @@ include_once('./_head.sub.php');
 
 // st_date, en_date
 // 한달 전
-$sql = " SELECT DATE_ADD(now(), INTERVAL -1 MONTH) AS month_ago ";
+$sql = " SELECT DATE_ADD(now(), INTERVAL -1 WEEK) AS month_ago ";
+// echo $sql.BR;
 $one = sql_fetch($sql,1);
 $st_date = $st_date ?: substr($one['month_ago'],0,10);
 $en_date = $en_date ?: G5_TIME_YMD;
