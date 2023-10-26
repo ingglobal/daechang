@@ -44,8 +44,7 @@ if($config['cf_add_meta'])
 ?>
 <title><?php echo $g5_head_title; ?></title>
 <?php
-echo '<link rel="stylesheet" href="'.G5_MONITOR_CSS_URL.'/monitor.css?ver='.G5_CSS_VER.'">'.PHP_EOL;
-echo '<link rel="stylesheet" href="'.G5_MONITOR_CSS_URL.'/draggabilly_custom.css?ver='.G5_CSS_VER.'">'.PHP_EOL;
+echo '<link rel="stylesheet" href="">'.PHP_EOL;
 ?>
 <!--[if lte IE 8]>
 <script src="<?php echo G5_JS_URL ?>/html5.js"></script>
@@ -53,7 +52,7 @@ echo '<link rel="stylesheet" href="'.G5_MONITOR_CSS_URL.'/draggabilly_custom.css
 <script>
 // 자바스크립트에서 사용하는 전역변수 선언
 var g5_url       = "<?php echo G5_URL ?>";
-var g5_monitor_url   = "<?php echo G5_MONITOR_URL ?>";
+var g5_monitor_url   = "<?php echo $g5_monitor_url ?>";
 var g5_is_member = "<?php echo isset($is_member)?$is_member:''; ?>";
 var g5_is_admin  = "<?php echo isset($is_admin)?$is_admin:''; ?>";
 var g5_sca       = "<?php echo isset($sca)?$sca:''; ?>";
@@ -71,6 +70,8 @@ add_javascript('<script src="'.G5_JS_URL.'/common.js?ver='.G5_JS_VER.'"></script
 add_javascript('<script src="'.G5_JS_URL.'/wrest.js?ver='.G5_JS_VER.'"></script>', 0);
 add_javascript('<script src="'.G5_JS_URL.'/placeholders.min.js"></script>', 0);
 add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/font-awesome/css/font-awesome.min.css">', 0);
+// add_stylesheet('<link rel="stylesheet" href="'.$g5_monitor_url.'/css/monitor.css?ver='.G5_CSS_VER.'">', 0);
+add_stylesheet('<link rel="stylesheet" href="'.$g5_monitor_url.'/css/monitor.css">', 0);
 ?>
 </head>
 <body<?php echo isset($g5['body_script']) ? $g5['body_script'] : ''; ?>>

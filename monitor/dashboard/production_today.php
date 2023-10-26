@@ -179,14 +179,15 @@ for ($i=0; $row=sql_fetch_array($rs); $i++) {
 $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목록</a>';
 
 
-if(is_file(G5_MONITOR_PATH.'/dashboard/css/style.css')) {
-    add_stylesheet('<link rel="stylesheet" href="'.G5_MONITOR_URL.'/dashboard/css/style.css">', 2);
+if(is_file($g5_monitor_path.'/dashboard/css/style.css')) {
+    add_stylesheet('<link rel="stylesheet" href="'.$g5_monitor_url.'/dashboard/css/style.css">', 2);
 }
-if(is_file(G5_MONITOR_PATH.'/dashboard/css/'.$g5['file_name'].'.css')) {
-    add_stylesheet('<link rel="stylesheet" href="'.G5_MONITOR_URL.'/dashboard/css/'.$g5['file_name'].'.css">', 2);
+if(is_file($g5_monitor_path.'/dashboard/css/'.$g5['file_name'].'.css')) {
+    add_stylesheet('<link rel="stylesheet" href="'.$g5_monitor_url.'/dashboard/css/'.$g5['file_name'].'.css">', 2);
 }
 ?>
 <style>
+
 </style>
 
 <div class="local_ov01 local_ov" style="display:none;">
@@ -580,47 +581,28 @@ if(is_file(G5_MONITOR_PATH.'/dashboard/css/'.$g5['file_name'].'.css')) {
 </form>
 
 <style>
-.box_header {color:#9c9c9c;margin:2px 6px;}
-.box_header:after {display:block;visibility:hidden;clear:both;content:'';}
-.box_header .top_left {float:left;}
-.box_header .top_right {float:right;}
-.box_body {color:#9c9c9c;font-size:1.8em;text-align: center;border:0px solid red;}
-.box_body:after {display:block;visibility:hidden;clear:both;content:'';}
-.box_body .now {color:#c3c393;font-size:2.0em;font-weight:550;}
-.box_footer {position:fixed;bottom:0;width:100%;color:#9c9c9c;text-align:center;padding:2px 0px 10px;border:0px solid blue;}
-.box_footer:after {display:block;visibility:hidden;clear:both;content:'';}
-.box_footer .production_percent {color:#c3c393;}
+.box_footer{text-align:left;padding-right:20px;border:0px solid red;display:none;}
+.box_footer p{}
+.box_footer p .prd_percent{font-size:3em;}
 </style>
-<div class="box_header">
-    <div class="top_left">
-        <p class="title_main"><?=G5_TIME_YMD?> (<?=$g5['week_names'][date("w",G5_SERVER_TIME)]?>)</p>
+<div class="box">
+    <div class="box_header">
+        <p class="title_main">목표 대비 생산</p>
     </div>
-    <div class="top_right">
-        <p>
-            <a href="../item_worker_today_list.php" class="btn_detail" style="margin-right:10px;"><i class="fa fa-list-alt"></i></a>
-            <a href="javascript:" class="btn_reload"><i class="fa fa-repeat"></i></a>
-        </p>
+    <div class="box_body">
+        <p class="now"><?=number_format($production_total)?></p>
+        <p class="goal">( <?=number_format($target_goal)?> )</p>
     </div>
-</div>
-<div class="box_body">
-    <span class="now"><?=number_format($production_total)?></span> / <span class="goal"><?=number_format($target_goal)?></span>
-</div>
-<div class="box_footer">
-    <p>목표 대비 생산: <span class="production_percent"><?=number_format($row['rate'],1)?>%</span></p>
+    <div class="box_footer">
+        <p><span class="prd_percent"><?=number_format($row['rate'],1)?>%</span></p>
+    </div>
 </div>
 
 <script>
-$(document).on('click','.btn_detail',function(e){
-    e.preventDefault();
-    parent.location.href = $(this).attr('href');
-});
-$(document).on('click','.btn_reload',function(){
-    self.location.reload();
-});
 // 10분에 한번 재로딩
-setTimeout(function(e){
-    self.location.reload();
-},1000*600);
+// setTimeout(function(e){
+//     self.location.reload();
+// },1000*600);
 </script>
 
 <?php

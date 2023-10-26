@@ -178,52 +178,16 @@ for ($i=0; $row=sql_fetch_array($rs); $i++) {
 $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목록</a>';
 
 
-if(is_file(G5_MONITOR_PATH.'/dashboard/css/style.css')) {
-    add_stylesheet('<link rel="stylesheet" href="'.G5_MONITOR_URL.'/dashboard/css/style.css">', 2);
+if(is_file($g5_monitor_path.'/dashboard/css/style.css')) {
+    add_stylesheet('<link rel="stylesheet" href="'.$g5_monitor_url.'/dashboard/css/style.css">', 2);
 }
-if(is_file(G5_MONITOR_PATH.'/dashboard/css/'.$g5['file_name'].'.css')) {
-    add_stylesheet('<link rel="stylesheet" href="'.G5_MONITOR_URL.'/dashboard/css/'.$g5['file_name'].'.css">', 2);
+if(is_file($g5_monitor_path.'/dashboard/css/'.$g5['file_name'].'.css')) {
+    add_stylesheet('<link rel="stylesheet" href="'.$g5_monitor_url.'/dashboard/css/'.$g5['file_name'].'.css">', 2);
 }
 ?>
 <style>
 </style>
-<link rel="stylesheet" href="<?=G5_MONITOR_URL?>/dashboard/css/style.css">
-<div class="local_ov01 local_ov" style="display:none;">
-    <?php echo $listall ?>
-    <span class="btn_ov01"><span class="ov_txt">총건수 </span><span class="ov_num"> <?php echo number_format($total_count) ?>건</span></span>
-</div>
-
-<div class="local_desc01 local_desc" style="display:none;">
-    <p><?=$st_date?> 각 작업자별 생산 현황입니다.</p>
-    <p>10분 정도 시차 Delay(딜레이)를 두고 실시간 반영됩니다. 시스템 부하를 분산시키기 위한 불가피한 지연 시간입니다.</p>
-</div>
-
-<form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get" style="width:100%;display:none;">
-<label for="sfl" class="sound_only">검색대상</label>
-<input type="text" name="st_date" value="<?=$st_date?>" id="st_date" class="frm_input" autocomplete="off" style="width:90px;">
-<select name="ser_mb_id" id="ser_mb_id">
-    <option value="">작업자전체</option>
-    <?php
-    for ($i=0; $i<sizeof($mb_selects); $i++) {
-        echo '<option value="'.$mb_selects[$i]['mb_id'].'">'.$mb_selects[$i]['mb_name'].' ('.$mb_selects[$i]['mb_id'].')</option>';
-    }
-    ?>
-</select>
-<script>$('#ser_mb_id').val('<?=$ser_mb_id?>');</script>
-<select name="sfl" id="sfl">
-    <option value="">검색항목</option>
-    <option value="bom_part_no" <?=get_selected($sfl, 'bom_part_no')?>>품번</option>
-    <option value="bom_name" <?=get_selected($sfl, 'bom_name')?>>품명</option>
-    <option value="pri.bom_idx" <?=get_selected($sfl, 'pri.bom_idx')?>>BOM번호</option>
-    <option value="mms_idx" <?=get_selected($sfl, 'mms_idx')?>>설비번호</option>
-</select>
-<label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
-<input type="text" name="stx" value="<?php echo $stx ?>" id="stx" class="frm_input">
-<input type="submit" class="btn_submit btn_submit2" value="검색">
-</form>
-
-
-
+<link rel="stylesheet" href="<?=$g5_monitor_url?>/dashboard/css/style.css">
 
 <form name="form01" id="form01" action="./<?=$g5['file_name']?>_update.php" onsubmit="return form01_submit(this);" method="post" style="display:none;">
 <input type="hidden" name="sst" value="<?php echo $sst ?>">
@@ -577,41 +541,22 @@ if(is_file(G5_MONITOR_PATH.'/dashboard/css/'.$g5['file_name'].'.css')) {
 
 </form>
 
-
-
-
-<style>
-</style>
-<div class="box_header">
-    <div class="top_left">
-        <p class="title_main"><?=G5_TIME_YMD?> (<?=$g5['week_names'][date("w",G5_SERVER_TIME)]?>)</p>
+<div class="box">
+    <div class="box_header">
+        <p class="title_main">UPH</p>
     </div>
-    <div class="top_right">
-        <p>
-            <a href="../item_worker_today_list.php" class="btn_detail" style="margin-right:10px;"><i class="fa fa-list-alt"></i></a>
-            <a href="javascript:" class="btn_reload"><i class="fa fa-repeat"></i></a>
-        </p>
+    <div class="box_body">
+        <span><?=$row['pri_uph_ave']?></span>
     </div>
-</div>
-<div class="box_body">
-    <p><?=$row['pri_uph_ave']?></p>
-</div>
-<div class="box_footer">
-    <p>UPH 시간당 생산량</p>
 </div>
 
 <script>
-$(document).on('click','.btn_detail',function(e){
-    e.preventDefault();
-    parent.location.href = $(this).attr('href');
-});
-$(document).on('click','.btn_reload',function(){
-    self.location.reload();
-});
+/*
 // 10분에 한번 재로딩
 setTimeout(function(e){
     self.location.reload();
 },1000*600);
+*/
 </script>
 
 <?php

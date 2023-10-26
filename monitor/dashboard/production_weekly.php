@@ -7,7 +7,7 @@ include_once('./_head.sub.php');
 
 // st_date, en_date
 // 한달 전
-$sql = " SELECT DATE_ADD(now(), INTERVAL -1 MONTH) AS month_ago ";
+$sql = " SELECT DATE_ADD(now(), INTERVAL -1 WEEK) AS month_ago ";
 $one = sql_fetch($sql,1);
 $st_date = $st_date ?: substr($one['month_ago'],0,10);
 $en_date = $en_date ?: G5_TIME_YMD;
@@ -80,44 +80,32 @@ for ($i=0; $row=sql_fetch_array($result); $i++) {
 }
 
 
-if(is_file(G5_MONITOR_PATH.'/dashboard/css/style.css')) {
-    add_stylesheet('<link rel="stylesheet" href="'.G5_MONITOR_URL.'/dashboard/css/style.css">', 2);
+if(is_file($g5_monitor_path.'/dashboard/css/style.css')) {
+    add_stylesheet('<link rel="stylesheet" href="'.$g5_monitor_url.'/dashboard/css/style.css">', 2);
 }
-if(is_file(G5_MONITOR_PATH.'/dashboard/css/'.$g5['file_name'].'.css')) {
-    add_stylesheet('<link rel="stylesheet" href="'.G5_MONITOR_URL.'/dashboard/css/'.$g5['file_name'].'.css">', 2);
+if(is_file($g5_monitor_path.'/dashboard/css/'.$g5['file_name'].'.css')) {
+    add_stylesheet('<link rel="stylesheet" href="'.$g5_monitor_url.'/dashboard/css/'.$g5['file_name'].'.css">', 2);
 }
 ?>
 <style>
+.box{position:relative;}
+.box_header .title_main{font-size:3em;}
+.box_body2{position:absolute;width:100%;left:0;bottom:17px;}
+.box_body2 #chart_day{border:0px solid red;height:100% !important;}
 </style>
 
-<div class="box_header">
-    <div class="top_left">
+<div class="box">
+    <div class="box_header">
         <p class="title_main"><?=$st_date?> ~ <?=$en_date?></p>
     </div>
-    <div class="top_right">
-        <p>
-            <a href="../stat/output.php" class="btn_detail" style="margin-right:10px;"><i class="fa fa-list-alt"></i></a>
-            <a href="javascript:" class="btn_reload"><i class="fa fa-repeat"></i></a>
-        </p>
+    <div class="box_body2">
+        <div id="chart_day"></div>
     </div>
 </div>
-<div class="box_body">
-    <div id="chart_day" style="height:100%;"></div>
-</div>
-
-
 
 <script>
 var dom_height = $('.frame_03', parent.document).height() - 20;
 $('#chart_day').css('height',dom_height+'px');
-
-$(document).on('click','.btn_detail',function(e){
-    e.preventDefault();
-    parent.location.href = $(this).attr('href');
-});
-$(document).on('click','.btn_reload',function(){
-    self.location.reload();
-});
 
 Highcharts.chart('chart_day', {
     chart: {
@@ -178,9 +166,9 @@ setTimeout(function(e){
     $('.highcharts-credits').remove();
 },10);
 // 10분에 한번 재로딩
-setTimeout(function(e){
-    self.location.reload();
-},1000*600);
+// setTimeout(function(e){
+//     self.location.reload();
+// },1000*600);
 </script>
 
 <?php
