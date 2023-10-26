@@ -180,10 +180,10 @@ $colspan = 16;
 </div>
 
 <div class="btn_fixed_top">
-    <?php //if ($member['mb_manager_yn']) { ?>
+    <?php if (!auth_check($auth[$sub_menu],"r,w",1)) { ?>
        <a href="javascript:" id="btn_excel_upload2" class="btn btn_02">임직원엑셀등록</a>
        <a href="javascript:" id="btn_excel_upload" class="btn btn_02" style="margin-right:50px;">작업자엑셀등록</a>
-    <?php //} ?>
+    <?php } ?>
     <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02" style="display:none;">
     <?php if (!auth_check($auth[$sub_menu],'w',1)) { //($member['mb_manager_yn']) { ?>
     <input type="submit" name="act_button" value="선택탈퇴" onclick="document.pressed=this.value" class="btn btn_02">
