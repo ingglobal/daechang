@@ -2,7 +2,7 @@
 $sub_menu = "940110";
 include_once('./_common.php');
 
-auth_check($auth[$sub_menu], 'd');
+auth_check($auth[$sub_menu], 'w');
 
 $demo = 0;  // 데모모드 = 1
 
