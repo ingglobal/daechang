@@ -229,6 +229,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
                     $ar['mb_name_no'] = preg_replace("/[^0-9]*/s", "", $arr['worker1_array'][$j]);
                     $ar['mb_name_str'] = preg_replace("/".$ar['mb_name_no']."/", "", $arr['worker1_array'][$j]);
                     $ar['mb_name'] = trim($ar['mb_name_str']);
+                    $ar['mb_name'] = trim($arr['worker1_array'][$j]);   // 재선언.. 좀 이상하구만.
                     $sql = "SELECT mb_id FROM {$g5['member_table']} WHERE mb_name = '".$ar['mb_name']."' AND mb_leave_date = '' ";
                     // print_r3($sql);
                     $mb1 = sql_fetch($sql,1);
@@ -250,6 +251,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
                     $ar['mb_name_no'] = preg_replace("/[^0-9]*/s", "", $arr['worker2_array'][$j]);
                     $ar['mb_name_str'] = preg_replace("/".$ar['mb_name_no']."/", "", $arr['worker2_array'][$j]);
                     $ar['mb_name'] = trim($ar['mb_name_str']);
+                    $ar['mb_name'] = trim($arr['worker2_array'][$j]);   // 재선언.. 좀 이상하구만.
                     $sql = "SELECT mb_id FROM {$g5['member_table']} WHERE mb_name = '".$ar['mb_name']."' AND mb_leave_date = '' ";
                     // print_r3($sql);
                     $mb2 = sql_fetch($sql,1);
@@ -270,6 +272,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
                     $ar['mb_name_no'] = preg_replace("/[^0-9]*/s", "", $arr['worker3_array'][$j]);
                     $ar['mb_name_str'] = preg_replace("/".$ar['mb_name_no']."/", "", $arr['worker3_array'][$j]);
                     $ar['mb_name'] = trim($ar['mb_name_str']);
+                    $ar['mb_name'] = trim($arr['worker3_array'][$j]);   // 재선언.. 좀 이상하구만.
                     $sql = "SELECT mb_id FROM {$g5['member_table']} WHERE mb_name = '".$ar['mb_name']."' AND mb_leave_date = '' ";
                     // print_r3($sql);
                     $mb3 = sql_fetch($sql,1);
