@@ -303,7 +303,7 @@ include_once('./_head.php');
                         </script>
                     </td>
                     <td class="td_btns">
-                        <input type="submit" name="act_button" value="문자" class="btn btn_05">
+                        <!--input type="submit" name="act_button" value="문자" class="btn btn_05"-->
                         <?=($bom_prev==$row3['bom_idx'])?$s_del:$s_copy?>
                     </td>
                 </tr>
@@ -353,7 +353,7 @@ include_once('./_head.php');
     $production_url = ($calendar) ? './order_out_practice_calendar_list.php?'.$qstr:'./production_list.php?'.$qstr;
     ?>
     <?php if($w == 'u'){ ?>
-    <input type="submit" name="act_button" value="문자발송" onclick="document.pressed=this.value" class="btn btn_05">
+    <!-- <input type="submit" name="act_button" value="문자발송" onclick="document.pressed=this.value" class="btn btn_05"> -->
     <input type="submit" name="act_button" value="초기화" onclick="document.pressed=this.value" class="btn btn_05 mr_30">
     <?php } ?>
     <a href="<?=$production_url?>" class="btn btn_02">목록</a>

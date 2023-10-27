@@ -207,7 +207,7 @@ $qstr .= '&sca='.$sca.'&st_date='.$st_date.'&en_date='.$en_date; // 추가로 �
 </div>
 
 <div class="btn_fixed_top">
-    <?php if (!auth_check($auth[$sub_menu],'w')) { ?>
+    <?php if (false){ //(!auth_check($auth[$sub_menu],'w')) { ?>
     <input type="submit" name="act_button" value="선택문자전송" onclick="document.pressed=this.value" class="btn btn_05">
     <?php } ?>
     <?php if (!auth_check($auth[$sub_menu],'w')) { ?>
