@@ -228,8 +228,8 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
                     // print_r3(make_cell_number($arr['worker1_array'][$j]));
                     $ar['mb_name_no'] = preg_replace("/[^0-9]*/s", "", $arr['worker1_array'][$j]);
                     $ar['mb_name_str'] = preg_replace("/".$ar['mb_name_no']."/", "", $arr['worker1_array'][$j]);
-                    $ar['mb_name'] = $ar['mb_name_str'];
-                    $sql = "SELECT mb_id FROM {$g5['member_table']} WHERE mb_name = '".$ar['mb_name']."' ";
+                    $ar['mb_name'] = trim($ar['mb_name_str']);
+                    $sql = "SELECT mb_id FROM {$g5['member_table']} WHERE mb_name = '".$ar['mb_name']."' AND mb_leave_date = '' ";
                     // print_r3($sql);
                     $mb1 = sql_fetch($sql,1);
                     if($mb1['mb_id']) {
@@ -249,8 +249,8 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
                     // print_r3($arr['worker2_array'][$j]);
                     $ar['mb_name_no'] = preg_replace("/[^0-9]*/s", "", $arr['worker2_array'][$j]);
                     $ar['mb_name_str'] = preg_replace("/".$ar['mb_name_no']."/", "", $arr['worker2_array'][$j]);
-                    $ar['mb_name'] = $ar['mb_name_str'];
-                    $sql = "SELECT mb_id FROM {$g5['member_table']} WHERE mb_name = '".$ar['mb_name']."' ";
+                    $ar['mb_name'] = trim($ar['mb_name_str']);
+                    $sql = "SELECT mb_id FROM {$g5['member_table']} WHERE mb_name = '".$ar['mb_name']."' AND mb_leave_date = '' ";
                     // print_r3($sql);
                     $mb2 = sql_fetch($sql,1);
                     if($mb2['mb_id']) {
@@ -269,8 +269,8 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
                     // print_r3($arr['worker3_array'][$j]);
                     $ar['mb_name_no'] = preg_replace("/[^0-9]*/s", "", $arr['worker3_array'][$j]);
                     $ar['mb_name_str'] = preg_replace("/".$ar['mb_name_no']."/", "", $arr['worker3_array'][$j]);
-                    $ar['mb_name'] = $ar['mb_name_str'];
-                    $sql = "SELECT mb_id FROM {$g5['member_table']} WHERE mb_name = '".$ar['mb_name']."' ";
+                    $ar['mb_name'] = trim($ar['mb_name_str']);
+                    $sql = "SELECT mb_id FROM {$g5['member_table']} WHERE mb_name = '".$ar['mb_name']."' AND mb_leave_date = '' ";
                     // print_r3($sql);
                     $mb3 = sql_fetch($sql,1);
                     if($mb3['mb_id']) {
@@ -333,7 +333,8 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
 
 
             // 설비 디비 생성
-            $arr['mms_name_array'] = explode(",",$arr['remark']);
+            // $arr['mms_name_array'] = explode(",",$arr['remark']);
+            $arr['mms_name_array'] = explode(",",preg_replace("/\s+/", "", $arr['remark']));
             for($j=0;$j<=sizeof($arr['mms_name_array']);$j++) {
                 if(is_numeric($arr['mms_name_array'][$j])) {
                     $arr['mms_name_array'][$j] .= '호기';

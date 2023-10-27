@@ -4,6 +4,11 @@ include_once('./_common.php');
 
 auth_check($auth[$sub_menu], 'r');
 
+$g5['title'] = '설비별작업자관리';
+include_once('./_top_menu_mms.php');
+include_once('./_head.php');
+echo $g5['container_sub_title'];
+
 $sql_common = " FROM {$g5['bom_mms_worker_table']} AS bmw
                 LEFT JOIN {$g5['bom_table']} AS bom ON bom.bom_idx = bmw.bom_idx
                 LEFT JOIN {$g5['member_table']} AS mb ON mb.mb_id = bmw.mb_id
@@ -54,7 +59,7 @@ $sql_order = " ORDER BY {$sst} {$sod} ";
 $sql = " SELECT COUNT(*) AS cnt {$sql_common} {$sql_search} ";
 $row = sql_fetch($sql,1);
 $total_count = $row['cnt'];
-//print_r3($sql).'<br>';
+// echo $sql.BR;
 
 $rows = $config['cf_page_rows'];
 $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
@@ -63,11 +68,6 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
 
 $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목록</a>';
-
-$g5['title'] = '설비별작업자관리';
-include_once('./_top_menu_mms.php');
-include_once('./_head.php');
-echo $g5['container_sub_title'];
 
 $sql = " SELECT * {$sql_common} {$sql_search} {$sql_order} LIMIT {$from_record}, {$rows} ";
 // echo $sql.BR;
@@ -94,7 +94,7 @@ $colspan = 16;
     $sql2 = "SELECT mms_idx, mms_name
             FROM {$g5['mms_table']}
             WHERE com_idx = '".$_SESSION['ss_com_idx']."'
-            ORDER BY mms_idx
+            ORDER BY mms_name
     ";
     // echo $sql2.'<br>';
     $result2 = sql_query($sql2,1);
