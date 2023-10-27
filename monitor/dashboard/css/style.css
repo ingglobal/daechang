@@ -29,12 +29,12 @@ html{height:100%;}
 body {/*background-color:#1f1f20;*/height:100%;}
 .box {position:relative;height:100%;}
 .box_header {color:#dfdfdf;position:absolute;top:0;left:0;width:100%;z-index:10;}
-.box_header .title_main{font-size:4em;font-weight:700;height:1em;line-height:1em;}
+.box_header .title_main{font-size:13vw;font-weight:700;height:13vw;line-height:13vw;border:0px solid red}
 .box_body {color:white;text-align: center;border:0px solid red;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;}
-.box_body span {color:#c3c393;font-size:9em;font-weight:700;}
-.box_body p {color:#c3c393;font-size:9em;font-weight:700;border:0px solid red;}
+.box_body span {color:#c3c393;font-size:32vw;font-weight:700;}
+.box_body p {color:#c3c393;font-size:27vw;font-weight:700;border:0px solid red;line-height:1.2em;}
 .box_body p.now {}
-.box_body p.goal {font-size:5em;}
+.box_body p.goal {font-size:18vw}
 .box_footer {position:fixed;bottom:0;width:100%;color:#9c9c9c;text-align:center;padding:2px 0px 10px;border:0px solid blue;}
 .box_footer:after {display:block;visibility:hidden;clear:both;content:'';}
 

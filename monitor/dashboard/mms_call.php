@@ -29,7 +29,7 @@ html,body{}
     animation: redCallChange 1s infinite;
 }
 .box_body2 ul{}
-.box_body2 ul li{font-size:5em;font-weight:700;}
+.box_body2 ul li{font-size:15vw;font-weight:700;}
 .box_body2 ul li:before{content:'- '}
 </style>
 <div class="box">

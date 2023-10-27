@@ -89,7 +89,7 @@ if(is_file($g5_monitor_path.'/dashboard/css/'.$g5['file_name'].'.css')) {
 ?>
 <style>
 .box{position:relative;}
-.box_header .title_main{font-size:3em;}
+.box_header .title_main{font-size:5vw;height:5vw;line-height:5vw;}
 .box_body2{position:absolute;width:100%;left:0;bottom:17px;}
 .box_body2 #chart_day{border:0px solid red;height:100% !important;}
 </style>
