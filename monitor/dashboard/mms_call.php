@@ -22,7 +22,7 @@ if(is_file($g5_monitor_path.'/dashboard/css/'.$g5['file_name'].'.css')) {
 ?>
 <style>
 html,body{}
-.box{padding-top:100px;}
+.box{padding-top:200px;}
 .box_header .title_main{color:#aaa !important;}
 .box_body2{height:100%;border:0px solid red;overflow-y:hidden;}
 .box_body2.call{
