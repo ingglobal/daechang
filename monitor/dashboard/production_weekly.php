@@ -115,16 +115,26 @@ Highcharts.chart('chart_day', {
         enabled: false
     },
     title: {
-        text: '',
+        text: ''
     },
     xAxis: {
         // categories: ['2020-10-01', '2020-10-02', '2020-10-03', '2020-10-04']
-        categories: ['<?=implode("','",$categories)?>']
+        categories: ['<?=implode("','",$categories)?>'],
+        labels: {
+            style: {
+                fontSize: '20px'
+            }
+        }
     },
     yAxis: {
         min: 0,
         title: {
             text: ''
+        },
+        labels: {
+            style: {
+                fontSize: '20px'
+            }
         },
         stackLabels: {
             enabled: true,
@@ -134,7 +144,8 @@ Highcharts.chart('chart_day', {
                     Highcharts.defaultOptions.title.style &&
                     Highcharts.defaultOptions.title.style.color
                 ) || 'gray',
-                textOutline: 'none'
+                textOutline: 'none',
+                fontSize: '20px'
             }
         }
     },
