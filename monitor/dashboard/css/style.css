@@ -38,12 +38,11 @@ body {/*background-color:#1f1f20;*/height:100%;}
 .box_footer {position:fixed;bottom:0;width:100%;color:#9c9c9c;text-align:center;padding:2px 0px 10px;border:0px solid blue;}
 .box_footer:after {display:block;visibility:hidden;clear:both;content:'';}
 
-
 @keyframes redCallChange{
     0% {
         background-color: transparent;
     }
     100% {
-        background-color:#d50606;
+        background-color:#6e0606;
     }
 }
