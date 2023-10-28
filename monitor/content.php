@@ -18,5 +18,5 @@
 // 10분에 한번 재로딩
 setTimeout(function(e){
     self.location.reload();
-},6000);
+},20000);
 </script>
