@@ -133,7 +133,7 @@ Highcharts.chart('chart_day', {
         },
         labels: {
             style: {
-                fontSize: '20px'
+                fontSize: '25px'
             }
         },
         stackLabels: {
@@ -145,7 +145,7 @@ Highcharts.chart('chart_day', {
                     Highcharts.defaultOptions.title.style.color
                 ) || 'gray',
                 textOutline: 'none',
-                fontSize: '20px'
+                fontSize: '25px'
             }
         }
     },
