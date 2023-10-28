@@ -26,7 +26,7 @@ html,body{}
 .box_header .title_main{color:#aaa !important;}
 .box_body2{height:100%;border:0px solid red;overflow-y:hidden;}
 .box_body2.call{
-    animation: redCallChange 1s infinite;
+    /* */
 }
 .box_body2 ul{}
 .box_body2 ul li{font-size:15vw;font-weight:700;}
