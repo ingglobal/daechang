@@ -147,6 +147,9 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
 
         // 대창공업 ITEM LIST_REV1(22.12.22)-개발이범희GJ_REV12.xlxs ================================================================
         if($excel_type=='01') {
+            
+            // // if(!preg_match('/89311-S8510/',$arr['bom_part_no'])) {continue;}
+            // if($arr['bom_part_no']!='89311-S8510') {continue;}
 
             // 레벨 추출
             for($j=1;$j<13;$j++) {
@@ -226,7 +229,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
                     $pp = preg_replace("/[^0-9]*/s", "", $arr['worker1_array'][$j]);
                     // print_r3($arr['worker1_array'][$j]);
                     // print_r3(make_cell_number($arr['worker1_array'][$j]));
-                    $ar['mb_name_no'] = preg_replace("/[^0-9]*/s", "", $arr['worker1_array'][$j]);
+                    $ar['mb_name_no'] = preg_replace("/[^0-9]*/s", "", $arr['worker1_array'][$j]); // 작업자 이름 옆에 설비 번호를 넣었던 때가 있었구만!! 으~~~ 지금은 없는 걸로 봅니다.
                     $ar['mb_name_str'] = preg_replace("/".$ar['mb_name_no']."/", "", $arr['worker1_array'][$j]);
                     $ar['mb_name'] = trim($ar['mb_name_str']);
                     $ar['mb_name'] = trim($arr['worker1_array'][$j]);   // 재선언.. 좀 이상하구만.
@@ -234,7 +237,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
                     // print_r3($sql);
                     $mb1 = sql_fetch($sql,1);
                     if($mb1['mb_id']) {
-                        $arr['day_mmses'][] = $ar['mb_name_no'];
+                        // $arr['day_mmses'][] = $ar['mb_name_no']; // 작업자 이름 옆에 번호는 이제 없는 것으로 본다.
                         $arr['day_ids'][] = $mb1['mb_id'];  // array value for day workers
                     }
                     unset($ar);
@@ -256,7 +259,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
                     // print_r3($sql);
                     $mb2 = sql_fetch($sql,1);
                     if($mb2['mb_id']) {
-                        $arr['night_mmses'][] = $ar['mb_name_no'];
+                        // $arr['night_mmses'][] = $ar['mb_name_no'];
                         $arr['night_ids'][] = $mb2['mb_id'];  // array value for night workers
                     }
                     unset($ar);
@@ -277,7 +280,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
                     // print_r3($sql);
                     $mb3 = sql_fetch($sql,1);
                     if($mb3['mb_id']) {
-                        $arr['sub_mmses'][] = $ar['mb_name_no'];
+                        // $arr['sub_mmses'][] = $ar['mb_name_no'];
                         $arr['sub_ids'][] = $mb3['mb_id'];  // array value for sub workers
                     }
                     unset($ar);

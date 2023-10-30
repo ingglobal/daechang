@@ -77,7 +77,7 @@ $sql = "SELECT *
         {$sql_common} {$sql_search} {$sql_order}
         LIMIT {$from_record}, {$rows}
 ";
-// print_r3($sql);
+// echo $sql.BR;
 $result = sql_query($sql,1);
 
 // 완제품

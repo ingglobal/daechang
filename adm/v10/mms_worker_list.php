@@ -73,7 +73,7 @@ $sql = " SELECT * {$sql_common} {$sql_search} {$sql_order} LIMIT {$from_record},
 // echo $sql.BR;
 $result = sql_query($sql);
 
-$qstr .= '&ser_mms_idx='.$ser_mms_idx; // 추가로 확장해서 넘겨야 할 변수들
+$qstr .= '&sfl2='.$sfl2.'&stx2='.$stx2.'&ser_mms_idx='.$ser_mms_idx; // 추가로 확장해서 넘겨야 할 변수들
 
 $colspan = 16;
 ?>

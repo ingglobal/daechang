@@ -3128,3 +3128,199 @@ ezuksT63/owo8q06CEuNR5ONMSWl+Yl5O3qwz8Fj
 
 호말디: 01083251847
 떠이2: 01025141739
+
+aws s3 sync s3://epcs-edge-raw-data .
+
+
+알람코드 디비입력해 두기
+태그코드 디비입력해 두기
+
+CREATE TABLE `e3_alarm_code` (
+  `alc_idx` int(11) NOT NULL COMMENT '알람idx',
+  `com_idx` int(11) NOT NULL DEFAULT 0 COMMENT '업체idx',
+  `mms_idx` int(11) NOT NULL DEFAULT 0 COMMENT '설비idx',
+  `cod_idx` int(11) NOT NULL DEFAULT 0 COMMENT '에러코드idx',
+  `dta_idx` int(11) NOT NULL DEFAULT 0 COMMENT '에러데이터idx',
+  `alc_shf_no` int(11) NOT NULL DEFAULT 0 COMMENT '교대번호',
+  `alc_cod_code` varchar(10) NOT NULL COMMENT '코드',
+  `alc_cod_category` int(11) NOT NULL DEFAULT 0 COMMENT '카테고리',
+  `alc_cod_type` varchar(20) DEFAULT NULL COMMENT '에러코드타입',
+  `alc_pre_yn` int(11) NOT NULL DEFAULT 0 COMMENT '예지여부',
+  `alc_no` int(11) NOT NULL DEFAULT 0 COMMENT '알람발생몇번째',
+  `alc_send_type` varchar(20) DEFAULT NULL COMMENT '발송타입',
+  `alc_keys` varchar(255) DEFAULT '' COMMENT '검색키',
+  `alc_status` varchar(20) NOT NULL COMMENT '상태',
+  `alc_reg_dt` datetime DEFAULT '0000-00-00 00:00:00' COMMENT '등록일시',
+  `alc_update_dt` datetime DEFAULT '0000-00-00 00:00:00' COMMENT '수정일시'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+
+CREATE TABLE `e3_alarm_code` (
+  `alc_idx` int(11) NOT NULL COMMENT '알람idx' AUTO_INCREMENT,
+  `com_idx` int(11) NOT NULL DEFAULT 0 COMMENT '업체idx',
+  `mms_idx` int(11) NOT NULL COMMENT '설비장비코드',
+  `trm_idx_alarm` int(11) NOT NULL DEFAULT 0 COMMENT '알람분류',
+  `alc_code` varchar(50) NOT NULL COMMENT '코드',
+  `alc_name` varchar(50) NOT NULL COMMENT '코드명',
+  `alc_type` char(2) NOT NULL DEFAULT 'r' COMMENT 'r=저장,a=알람,p=주기,p2=PLC알람',
+  `alc_offline_yn` tinyint(2) NOT NULL DEFAULT 0 COMMENT '비가동영향여부',
+  `alc_quality_yn` tinyint(2) NOT NULL DEFAULT 0 COMMENT '품질영향여부',
+  `alc_interval` int(11) NOT NULL COMMENT '단위시간(범위),초',
+  `alc_count` int(11) NOT NULL COMMENT '발생빈도',
+  `alc_min_sec` int(11) NOT NULL DEFAULT 0 COMMENT '최소주기',
+  `alc_count_limit` int(11) NOT NULL DEFAULT 0 COMMENT '과부하 방지',
+  `alc_send_type` varchar(30) NOT NULL COMMENT '발송타입 email,sms,push',
+  `alc_memo` text DEFAULT NULL COMMENT '메모',
+  `alc_status` varchar(20) DEFAULT 'pending' COMMENT '상태',
+  `alc_reg_dt` datetime DEFAULT current_timestamp() COMMENT '등록일시',
+  `alc_update_dt` datetime DEFAULT current_timestamp() COMMENT '수정일시',
+  PRIMARY KEY (`alc_idx`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+ALTER TABLE `e3_alarm_code` CHANGE `mms_idx` `fct_idx` INT(11) NOT NULL COMMENT '설비idx';
+
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M130D', 'R-47 로보트 이상',         'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-04-21 22:26:40', '2023-05-18 17:09:54');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M130A', 'R-47 GAS 공급중단',        'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-04-21 22:26:39', '2023-05-18 17:12:26');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M1339', 'R-47 AIR 공급중단',        'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-04-12 09:22:35', '2023-05-18 17:12:47');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M1352', 'R-47 LS 이상발생',         'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-04-02 00:04:37', '2023-05-22 14:01:19');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M1353', 'R-47 로보트 원위치 이상',  'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-03-29 10:29:27', '2023-05-18 17:13:22');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M1350', 'R-47 로보트기동 이상발생', 'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-03-28 09:36:14', '2023-05-18 17:13:41');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M1309', 'R-47 프로그램 미선택 이상','a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-03-23 15:02:07', '2023-05-18 17:14:28');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M1026', 'R-47 파트감지 이상',       'a', 0, 0, 0, 0, 60, 5, 'email', '', 'ok', '2022-03-21 07:19:15', '2023-05-18 17:14:46');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M130E', 'R-48 비상정비',            'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-04-21 22:26:40', '2023-05-18 17:09:01');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M130D', 'R-48 로보트 이상',         'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-04-21 22:26:40', '2023-05-18 17:09:54');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M130A', 'R-48 GAS 공급중단',        'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-04-21 22:26:39', '2023-05-18 17:12:26');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M1339', 'R-48 AIR 공급중단',        'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-04-12 09:22:35', '2023-05-18 17:12:47');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M1353', 'R-48 로보트 원위치 이상',  'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-03-29 10:29:27', '2023-05-18 17:13:22');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M1350', 'R-48 로보트기동 이상발생', 'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-03-28 09:36:14', '2023-05-18 17:13:41');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M1309', 'R-48 프로그램 미선택 이상','a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-03-23 15:02:07', '2023-05-18 17:14:28');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M1026', 'R-48 파트감지 이상',       'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-03-21 07:19:15', '2023-05-18 17:14:46');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M130E', 'R-49 비상정비',            'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-04-21 22:26:40', '2023-05-18 17:09:01');
+INSERT INTO `e3_alarm_code` VALUES(NULL, 2, 1, 0, 'M130D', 'R-49 로보트 이상',         'a', 0, 0, 0, 0, 0, 5, 'email', '', 'ok', '2022-04-21 22:26:40', '2023-05-18 17:09:54');
+
+CREATE TABLE `e3_tag_code` (
+  `tgc_idx` int(11) NOT NULL COMMENT '태그idx' AUTO_INCREMENT,
+  `com_idx` int(11) NOT NULL DEFAULT 0 COMMENT '업체idx',
+  `fct_idx` int(11) NOT NULL COMMENT '설비장비코드',
+  `tgc_code` varchar(50) NOT NULL COMMENT '코드',
+  `tgc_name` varchar(50) NOT NULL COMMENT '코드명',
+  `dta_type` tinyint(4) NOT NULL DEFAULT 0 COMMENT '측정타입',
+  `dta_no` tinyint(2) NOT NULL DEFAULT 0 COMMENT '측정번호',
+  `tgc_type` varchar(50) DEFAULT '' COMMENT '태그예지type',
+  `tgc_target` int(11) NOT NULL COMMENT '설정값',
+  `tgc_minmax` char(2) NOT NULL DEFAULT '>' COMMENT '상하기준기호',
+  `tgc_interval` int(11) NOT NULL COMMENT '정상주기',
+  `tgc_count` int(11) NOT NULL COMMENT '알림기준횟수',
+  `tgc_interval_unsual` int(11) NOT NULL COMMENT '비정상주기',
+  `tgc_count_unsual` int(11) NOT NULL COMMENT '비정상기준횟수',
+  `tgc_range_t1` int(11) NOT NULL DEFAULT 0 COMMENT '상단주의시작값',
+  `tgc_range_t2` int(11) NOT NULL DEFAULT 0 COMMENT '상단경고시작값',
+  `tgc_range_t3` int(11) NOT NULL DEFAULT 0 COMMENT '상단위험시작값',
+  `tgc_range_b1` int(11) NOT NULL DEFAULT 0 COMMENT '하단주의시작값',
+  `tgc_range_b2` int(11) NOT NULL DEFAULT 0 COMMENT '하단경고시작값',
+  `tgc_range_b3` int(11) NOT NULL DEFAULT 0 COMMENT '하단위험시작값',
+  `tgc_range1_interval` int(11) NOT NULL DEFAULT 0 COMMENT '주의주기',
+  `tgc_range2_interval` int(11) NOT NULL DEFAULT 0 COMMENT '경고주기',
+  `tgc_range3_interval` int(11) NOT NULL DEFAULT 0 COMMENT '위험주기',
+  `tgc_range1_count` int(11) NOT NULL DEFAULT 0 COMMENT '주의기준횟수',
+  `tgc_range2_count` int(11) NOT NULL DEFAULT 0 COMMENT '경고기준횟수',
+  `tgc_range3_count` int(11) NOT NULL DEFAULT 0 COMMENT '위험기준횟수',
+  `tgc_range1_interval_unsual` int(11) NOT NULL DEFAULT 0 COMMENT '임계치비정상주기',
+  `tgc_range1_count_unsual` int(11) NOT NULL DEFAULT 0 COMMENT '임계치비정상기준횟수',
+  `tgc_send_type` varchar(30) NOT NULL COMMENT '발송타입',
+  `tgc_message_limit` int(11) NOT NULL DEFAULT 0 COMMENT '알림과부하설정',
+  `tgc_memo` text DEFAULT NULL COMMENT '메모',
+  `tgc_status` varchar(20) DEFAULT 'pending' COMMENT '상태',
+  `tgc_reg_dt` datetime DEFAULT current_timestamp() COMMENT '등록일시',
+  `tgc_update_dt` datetime DEFAULT current_timestamp() COMMENT '수정일시',
+  PRIMARY KEY (`tgc_idx`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+ALTER TABLE `e3_tag_code` CHANGE `mms_idx` `fct_idx` INT(11) NOT NULL COMMENT '설비idx';
+
+INSERT INTO `e3_tag_code` VALUES(NULL, 2, 1, 'V001', '생산 싸이클 타임 설정', 13, 1, 'range', 0, '>', 3600, 0, 60, 0, 80, 90, 110, 30, 20, 10, 600, 600, 600, 1, 2, 3, 0, 0, 'email', 5, '', 'ok', '2022-01-25 15:46:36', '2022-01-26 14:28:02');
+INSERT INTO `e3_tag_code` VALUES(NULL, 2, 1, 'V002', '50공정 연속 NG 횟수 예지', 13, 5, 'value', 100, '>', 3600, 10, 60, 10, 80, 90, 100, 30, 20, 10, 600, 600, 600, 3, 2, 1, 0, 20, 'email', 5, '메모입니다.\r\n메모 관련 메시지입니다.', 'ok', '2022-01-25 15:57:45', '2022-01-26 13:44:44');
+INSERT INTO `e3_tag_code` VALUES(NULL, 2, 1, 'V003', '프레스1 메인모터 전류 상 이상', 3, 1, 'range', 100, '>', 3600, 0, 60, 0, 80, 90, 100, 30, 20, 10, 600, 600, 600, 3, 2, 1, 0, 0, 'email', 5, '', 'trash', '2022-01-26 13:26:31', '2022-01-26 14:12:26');
+INSERT INTO `e3_tag_code` VALUES(NULL, 2, 1, 'V004', '프레스1 메인모터 전류 상 이상', 3, 1, 'range', 100, '>', 3600, 0, 60, 0, 80, 90, 100, -30, -30, -30, 600, 600, 600, 3, 3, 5, 60, 0, 'email', 5, '', 'ok', '2022-01-26 14:27:05', '2022-03-03 09:16:25');
+INSERT INTO `e3_tag_code` VALUES(NULL, 2, 1, 'V005', '프레스1 메인모터 전류 상 이상', 1, 2, 'value', 100, '>', 3600, 3, 60, 0, 80, 90, 100, 30, 20, 10, 600, 600, 600, 30, 20, 10, 0, 0, 'email,push', 5, '', 'ok', '2022-02-09 18:54:24', '2022-03-14 13:46:43');
+INSERT INTO `e3_tag_code` VALUES(NULL, 2, 1, 'V006', '프레스1 메인모터 전류 상 이상', 3, 5, 'range', 100, '>', 3600, 0, 60, 0, 80, 90, 100, 30, 20, 10, 600, 600, 600, 30, 20, 10, 0, 3, 'email', 5, '', 'ok', '2022-02-09 18:54:51', '2022-02-26 19:39:32');
+INSERT INTO `e3_tag_code` VALUES(NULL, 2, 1, 'V007', '123온도', 1, 1, 'range', 100, '>', 3600, 0, 60, 0, 80, 90, 100, 30, 20, 10, 600, 600, 600, 30, 20, 10, 0, 0, '', 5, '', 'ok', '2022-02-11 09:42:05', '2022-03-06 12:06:18');
+INSERT INTO `e3_tag_code` VALUES(NULL, 2, 1, 'V008', '123온도', 3, 1, 'range', 100, '>', 3600, 0, 60, 0, 80, 90, 100, 30, 20, 10, 600, 600, 600, 5, 5, 5, 0, 0, 'email', 5, '', 'ok', '2022-02-15 13:13:54', '2022-03-23 21:20:54');
+
+INSERT INTO `e3_company` (`com_is_first`, `com_name`, `com_names`, `com_tel`, `com_type`, `com_president`, `com_sms_send_yn`, `com_email_send_yn`, `com_push_send_yn`, `com_kosmo_key`, `com_memo`, `com_more`, `com_is_delete`, `com_reg_id`, `com_reg_dt`, `com_update_id`, `com_update_dt`) VALUES
+(1, '한호산업', '한호산업(20-08-02~)', '010-1234-5678', 'carparts', '홍길동', 0, 0, 0, '', 'test_memo', NULL, 0, 'system', '2023-10-24 04:53:17', NULL, '2023-10-24 04:53:17'),
+(1, '한주라이트메탈', '한주라이트메탈(20-08-02~)', '010-1234-5678', 'carparts', '홍길동', 0, 0, 0, '', 'test_memo', NULL, 0, 'system', '2023-10-24 04:53:17', NULL, '2023-10-24 04:53:17');
+
+INSERT INTO `e3_company` (`com_is_first`, `com_name`, `com_names`, `com_tel`, `com_type`, `com_president`, `com_sms_send_yn`, `com_email_send_yn`, `com_push_send_yn`, `com_kosmo_key`, `com_memo`, `com_more`, `com_is_delete`, `com_reg_id`, `com_reg_dt`, `com_update_id`, `com_update_dt`) VALUES
+(1, '대창공업', '대창공업(20-08-02~)', '010-1234-5678', 'carparts', '홍길동', 0, 0, 0, '', 'test_memo', NULL, 0, 'system', '2023-10-24 04:53:17', NULL, '2023-10-24 04:53:17');
+
+// 한호설비 11-
+INSERT INTO `e3_facility` (`com_idx`, `fcg_idx`, `trm_idx_facility_type`, `fct_management_no`, `fct_name`, `fct_model_name`, `fct_price`, `fct_line_code`, `fct_install_date`, `fct_output_display_yn`, `fct_memo`, `fct_display_order`, `fct_status`, `fct_reg_mb_id`, `fct_reg_dt`, `fct_update_mb_id`, `fct_update_dt`) VALUES
+(11, 1, 2, '1', '1500톤 프레스', '1500톤 프레스', 100000, 'PR-F', '2023-10-01', 'Y', '설비 메모', 1, 'ok', 'system', '2023-10-27 13:50:22', NULL, NULL);
+
+
+
+CREATE TABLE `e3_plc_protocol` (
+  `ppr_idx` int(11) NOT NULL COMMENT '통신규약idx' AUTO_INCREMENT,
+  `com_idx` int(11) NOT NULL DEFAULT 0 COMMENT '업체idx',
+  `fct_idx` int(11) NOT NULL DEFAULT 0 COMMENT '설비idx',
+  `alc_idx` int(11) NOT NULL DEFAULT 0 COMMENT '알람코드idx',
+  `ppr_plc_data_type` int(11) NOT NULL DEFAULT 0 COMMENT 'PLC데이터타입',
+  `ppr_tag_name` varchar(10) NOT NULL COMMENT '코드',
+  `ppr_ip` varchar(20) NOT NULL COMMENT '아이피',
+  `ppr_port` int(11) NOT NULL DEFAULT 0 COMMENT '포트번호',
+  `ppr_no` int(11) NOT NULL DEFAULT 0 COMMENT '배열번호',
+  `ppr_bit` int(11) NOT NULL DEFAULT 0 COMMENT '비트번호',
+  `ppr_decimal` float NOT NULL DEFAULT 0 COMMENT '소수점',
+  `ppr_set_time` float NOT NULL DEFAULT 0 COMMENT '시간구분',
+  `ppr_memo` text DEFAULT NULL COMMENT '메모',
+  `ppr_reg_dt` datetime DEFAULT current_timestamp() COMMENT '등록일시',
+  `ppr_update_dt` datetime DEFAULT current_timestamp() COMMENT '수정일시',
+  `ppr_reg_mb_id` varchar(50) DEFAULT '' COMMENT '등록회원아이디',
+  `ppr_update_mb_id` varchar(50) DEFAULT '' COMMENT '수정회원아이디',
+  PRIMARY KEY (`ppr_idx`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+INSERT INTO `e3_facility` (`com_idx`, `fcg_idx`, `trm_idx_facility_type`, `fct_management_no`, `fct_name`, `fct_model_name`, `fct_price`, `fct_line_code`, `fct_install_date`, `fct_output_display_yn`, `fct_memo`, `fct_display_order`, `fct_status`, `fct_reg_mb_id`, `fct_reg_dt`, `fct_update_mb_id`, `fct_update_dt`) VALUES
+(11, 1, 2, '1', '1500톤 프레스', '1500톤 프레스', 100000, 'PR-F', '2023-10-01', 'Y', '설비 메모', 1, 'ok', 'system', '2023-10-27 13:50:22', NULL, NULL);
+
+
+
+
+한호 디비 디비입력해 두기
+
+89311-S8510 (154)
+89411-S8510
+89311-S8DA0
+89411-S8DA0
+89311-S8DB0
+89411-S8DB0
+89311-S8520
+89411-S8520
+
+// 제품구조
+SELECT * FROM ( ( SELECT com_idx, bom.bom_idx, bom.bom_name, bom_type, bom_part_no, bom_price, bom_status, 'MIP' AS cst_name , 0 AS bit_idx, 0 AS bit_bom_idx, 0 AS bit_main_yn, 0 AS bom_idx_child, '' AS bit_reply, bom_usage AS bit_count FROM g5_1_bom AS bom WHERE bom_idx = '154' AND bom_type IN ('product','half') ) UNION ALL ( SELECT bom.com_idx, bom.bom_idx, bom.bom_name, bom_type, bom_part_no, bom_price, bom_status, cst_name , bit.bit_idx, bit.bom_idx, bit.bit_main_yn, bit.bom_idx_child, bit.bit_reply, bit.bit_count FROM g5_1_bom_item AS bit LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = bit.bom_idx_child LEFT JOIN g5_1_customer AS cst ON cst.cst_idx = bom.cst_idx_provider WHERE bit.bom_idx = '154' AND bom_type IN ('product','half') ORDER BY bit.bit_reply ) ) AS db1 ORDER BY bit_reply
+
+89311-S8510
+
+// 야간이 있는지..
+SELECT bmw_type FROM g5_1_bom_mms_worker AS bmw WHERE bmw_status NOT IN ('trash','delete') AND bom_idx = '154' AND bmw_type IN ('night') GROUP BY bmw_type;
+SELECT bmw_type FROM g5_1_bom_mms_worker AS bmw WHERE bmw_status NOT IN ('trash','delete') AND bom_idx = '156' AND bmw_type IN ('night') GROUP BY bmw_type;
+SELECT bmw_type FROM g5_1_bom_mms_worker AS bmw WHERE bmw_status NOT IN ('trash','delete') AND bom_idx = '157' AND bmw_type IN ('night') GROUP BY bmw_type;
+
+// 설비수
+SELECT mms_idx FROM g5_1_bom_mms_worker WHERE bmw_status NOT IN ('trash','delete') AND bom_idx = '154' GROUP BY mms_idx;
+SELECT mms_idx FROM g5_1_bom_mms_worker WHERE bmw_status NOT IN ('trash','delete') AND bom_idx = '156' GROUP BY mms_idx;
+SELECT mms_idx FROM g5_1_bom_mms_worker WHERE bmw_status NOT IN ('trash','delete') AND bom_idx = '157' GROUP BY mms_idx;
+
+
+SELECT mb_id FROM g5_member WHERE mb_name = '타와트' AND mb_leave_date = '';
+SELECT mb_id FROM g5_member WHERE mb_name = '마운' AND mb_leave_date = '';
+
+작업중으로 바뀌는 시점!!
+
+
+
+
+
+

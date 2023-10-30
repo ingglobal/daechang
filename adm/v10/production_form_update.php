@@ -51,13 +51,13 @@ else if($w == 'u'){
     // print_r2($_REQUEST);
 
     if ($_POST['act_button'] == "초기화") {
-        // 작업자아이템이 정보 초기화
+        // 작업자아이템 정보 초기화
         $sql = "DELETE FROM {$g5['production_member_table']} 
                 WHERE pri_idx IN (SELECT pri_idx FROM {$g5['production_item_table']} WHERE prd_idx = '".$prd_idx."') 
         ";
         // echo $sql.BR;
         sql_query($sql,1);
-        // 생산아이템이 정보 초기화
+        // 생산아이템 정보 초기화
         $sql = " DELETE FROM {$g5['production_item_table']} WHERE prd_idx = '".$prd_idx."' ";
         // echo $sql.BR;
         sql_query($sql,1);

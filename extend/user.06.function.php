@@ -255,6 +255,7 @@ function get_production_item($prd)
     // 구성품이 없는 경우는 BOM 구조를 따라서 생성
     if(!$row['rows']) {
 
+        // 제품의 bom 구조 추출 (완제품, 반제품(서브제품)만..)
         $sql1 = "   SELECT *
                     FROM (
                             (
