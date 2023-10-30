@@ -46,7 +46,7 @@ $('.num_del').on('click',function(){
     $('#input_num').val('');
 });
 $('.num_input').on('click',function(){
-    var input_num = $('#input_num').val();
+    var input_num = ($('#input_num').val() == '')?'0':parseInt($('#input_num').val(),10);
     $('#input_num').val('');
     $('.input_cnt_on').val(input_num);
     $('.input_cnt_on').removeClass('input_cnt_on');

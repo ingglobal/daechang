@@ -174,7 +174,7 @@ function form01_submit(f){
             return false;
         }
 
-        if(!$('#plt_in_cnt_'+$(this).val()).val()){
+        if($('#plt_in_cnt_'+$(this).val()).val() == '0'){
             alert('적재수량을 입력해주세요.');
             $('#plt_in_cnt_'+$(this).val()).focus();
             $submit_flag = false;
