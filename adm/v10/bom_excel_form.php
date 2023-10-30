@@ -19,6 +19,7 @@ echo $g5['container_sub_title'];
 <div class="local_desc01 local_desc" style="display:no ne;">
     <p>엑셀로 파일을 관리할 때는 <span style="color:darkorange;">표준 양식</span>을 지켜주셔야 합니다.</p>
     <p>표준 양식과 다른 구조를 가진 엑셀 파일을 사용하면 안 됩니다. 기존 데이터 구조를 깨뜨릴 수 있습니다. 반드시 주의해 주세요.</p>
+    <p>BOM엑셀을 등록한 다음 차례대로 엑셀을 등록해서 주셔야 합니다. (BOM엑셀 -> 지그엑셀 -> PLC엑셀)</p>
 </div>
 <div class="local_desc01 local_desc" style="display:none;">
     <p>엑셀 등록 시 시간이 5분 이상(또는 더 많이) 걸리는 경우는 등록이 불가능한 경우입니다. (참조 파일로 복잡하게 얽혀 있거나 파일 크기가 너무 큰 경우입니다.)</p>

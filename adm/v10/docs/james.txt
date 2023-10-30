@@ -3302,6 +3302,8 @@ INSERT INTO `e3_facility` (`com_idx`, `fcg_idx`, `trm_idx_facility_type`, `fct_m
 SELECT * FROM ( ( SELECT com_idx, bom.bom_idx, bom.bom_name, bom_type, bom_part_no, bom_price, bom_status, 'MIP' AS cst_name , 0 AS bit_idx, 0 AS bit_bom_idx, 0 AS bit_main_yn, 0 AS bom_idx_child, '' AS bit_reply, bom_usage AS bit_count FROM g5_1_bom AS bom WHERE bom_idx = '154' AND bom_type IN ('product','half') ) UNION ALL ( SELECT bom.com_idx, bom.bom_idx, bom.bom_name, bom_type, bom_part_no, bom_price, bom_status, cst_name , bit.bit_idx, bit.bom_idx, bit.bit_main_yn, bit.bom_idx_child, bit.bit_reply, bit.bit_count FROM g5_1_bom_item AS bit LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = bit.bom_idx_child LEFT JOIN g5_1_customer AS cst ON cst.cst_idx = bom.cst_idx_provider WHERE bit.bom_idx = '154' AND bom_type IN ('product','half') ORDER BY bit.bit_reply ) ) AS db1 ORDER BY bit_reply
 
 89311-S8510
+^16^^R-016^
+^80^^R-080^
 
 // 야간이 있는지..
 SELECT bmw_type FROM g5_1_bom_mms_worker AS bmw WHERE bmw_status NOT IN ('trash','delete') AND bom_idx = '154' AND bmw_type IN ('night') GROUP BY bmw_type;
@@ -3319,6 +3321,9 @@ SELECT mb_id FROM g5_member WHERE mb_name = '마운' AND mb_leave_date = '';
 
 작업중으로 바뀌는 시점!!
 
+
+그룹복제
+관리자 복제 무제한 가능!!
 
 
 

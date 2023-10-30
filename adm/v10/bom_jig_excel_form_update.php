@@ -118,7 +118,9 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
         // print_r3($arr);
 
         // 설비 찾기 (mms_model에 값을 넣어둬야 함)
-        $sql = " SELECT mms_idx, mms_name FROM {$g5['mms_table']} WHERE mms_name = '".$arr['machine_name']."' OR mms_name_ref LIKE '%^".$arr['machine_name']."^%' ";
+        $sql = "SELECT mms_idx, mms_name FROM {$g5['mms_table']}
+                WHERE mms_name = '".$arr['machine_name']."' OR mms_name_ref LIKE '%^".$arr['machine_name']."^%'
+        ";
         $mms = sql_fetch($sql);
         // print_r3($mms);
         // 품번 찾기
