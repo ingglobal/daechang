@@ -12,12 +12,13 @@ $(function(){
     $('<strong style="color:#fff;"><span style="color:yellow;">'+cf_company_title+'</span> SYSTEM</strong>').appendTo(ft_p);
     
     if(Number(mb_level) == 10){
+        // alert(0);
         $('<span id="logo_company_name">'+cf_company_title+'</span>').appendTo('#logo');
         if(!$('.tnb_com_select').length){
             $('<li class="tnb_li"><a href="javascript:" class="tnb_com_select">디폴트업체</a></li>').prependTo($('#tnb > ul'));
         }
-        if(!$('#logo_company_name').length){
-            $('<a href="'+g5_url+'/_make_data/" class="">.</a>').appendTo($('#logo_company_name'));
+        if($('#logo_company_name').length){
+            $('<a href="'+g5_url+'/_make_data/" target="_blank" class="">.</a>').appendTo($('#logo_company_name'));
         }
 
         $('.tnb_com_select').on('click',function(){
