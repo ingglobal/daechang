@@ -181,7 +181,7 @@ setTimeout(function(e){
 // 10분에 한번 재로딩
 setTimeout(function(e){
     self.location.reload();
-},1000*600);
+},1000*60);
 </script>
 
 <?php
