@@ -37,6 +37,12 @@ $menu_datas = array(
         , 'me_link' => G5_USER_ADMIN_MOBILE_URL.'/mms_call_list.php'
         , 'me_target' => '_self'
         , 'me_icon' => 'fa-bell'
+    ),
+    array(
+        'me_name' => '설비수동카운트'
+        , 'me_link' => G5_USER_ADMIN_MOBILE_URL.'/mms_manual_count_list.php'
+        , 'me_target' => '_self'
+        , 'me_icon' => 'fa-hand-peace-o'
     )
     // array(
     //     'me_name' => '빠레트정보'
