@@ -15,6 +15,7 @@ $where[] = " mms_status NOT IN ('trash','delete') ";   // 디폴트 검색조건
 // com_idx 조건
 $where[] = " com_idx IN (".$_SESSION['ss_com_idx'].") ";
 $where[] = " mms_name NOT IN ('-') ";
+$where[] = " mms_name NOT LIKE '%,%' ";
 
 
 if (isset($stx)&&$stx!='') {
