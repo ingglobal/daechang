@@ -101,6 +101,11 @@ $where[] = " prd_start_date = '".$stat_date."' ";    // 오늘 것만
 // 해당 업체만
 $where[] = " pri.com_idx = '".$_SESSION['ss_com_idx']."' ";
 
+// 설비번호 검색
+if ($ser_mms_idx) {
+    $where[] = " mms_idx = '".$ser_mms_idx."' ";
+}
+
 if ($stx && $sfl) {
     switch ($sfl) {
 		case ( $sfl == $pre.'_id' || $sfl == $pre.'_idx' || $sfl == 'mms_idx' ) :
@@ -204,6 +209,26 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get" style="width:100%;">
 <label for="sfl" class="sound_only">검색대상</label>
 <input type="text" name="st_date" value="<?=$st_date?>" id="st_date" class="frm_input" autocomplete="off" style="width:90px;">
+<select name="ser_mms_idx" id="ser_mms_idx">
+    <option value="">설비전체</option>
+    <?php
+    // 해당 범위 안의 모든 설비를 select option으로 만들어서 선택할 수 있도록 한다.
+    // Get all the mms_idx values to make them optionf for selection.
+    $sql2 = "SELECT mms_idx, mms_name
+            FROM {$g5['mms_table']}
+            WHERE com_idx = '".$_SESSION['ss_com_idx']."'
+            ORDER BY mms_idx       
+    ";
+    // echo $sql2.'<br>';
+    $result2 = sql_query($sql2,1);
+    for ($i=0; $row2=sql_fetch_array($result2); $i++) {
+        // print_r2($row2);
+        echo '<option value="'.$row2['mms_idx'].'" '.get_selected($ser_mms_idx, $row2['mms_idx']).'>'.$row2['mms_name'].'('.$row2['mms_idx'].')</option>';
+    }
+    ?>
+</select>
+<script>$('select[name=ser_mms_idx]').val("<?=$ser_mms_idx?>").attr('selected','selected');</script>
+
 <select name="ser_mb_id" id="ser_mb_id">
     <option value="">작업자전체</option>
     <?php
@@ -218,7 +243,6 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
     <option value="bom_part_no" <?=get_selected($sfl, 'bom_part_no')?>>품번</option>
     <option value="bom_name" <?=get_selected($sfl, 'bom_name')?>>품명</option>
     <option value="pri.bom_idx" <?=get_selected($sfl, 'pri.bom_idx')?>>BOM번호</option>
-    <option value="mms_idx" <?=get_selected($sfl, 'mms_idx')?>>설비번호</option>
 </select>
 <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
 <input type="text" name="stx" value="<?php echo $stx ?>" id="stx" class="frm_input">
@@ -526,7 +550,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
         <td class="td_pri_type font_size_7"><?=$g5['set_bom_type_value'][$row['bom_type']]?></td><!-- 구분 -->
         <td class="td_bct_idx font_size_7"><?=$row['bct']['bct_name']?></td><!-- 차종 -->
         <td class="td_mb_name"><a href="?ser_mb_id=<?=$row['mb_id']?>"><?=$row['mb1']['mb_name']?></a></td><!-- 작업자 -->
-        <td class="td_mms_name"><a href="?sfl=mms_idx&stx=<?=$row['mms_idx']?>"><?=$g5['mms'][$row['mms_idx']]['mms_name']?></a></td><!-- 설비 -->
+        <td class="td_mms_name"><a href="?ser_mms_idx=<?=$row['mms_idx']?>"><?=$g5['mms'][$row['mms_idx']]['mms_name']?></a></td><!-- 설비 -->
         <td class="td_pri_hours font_size_7"><?=$row['pri_hours']?><?=$row['pri_work_min_text']?></td><!-- 생산시간 -->
         <td class="td_pri_offdown font_size_7"><?=$row['offdown_text']?></td><!-- 비가동 -->
         <td class="td_pri_uph"><?=$row['pri_uph']?></td><!-- UPH -->
