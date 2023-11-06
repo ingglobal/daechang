@@ -263,10 +263,18 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
 	</tr>
 	<tr>
 		<th scope="row"><label for="mms_data_0">첨부 파일#1</label></th>
-		<td colspan="3">
+		<td>
 			<?php echo help("설비와 관련해서 추가로 관리해야 할 자료가 있으면 등록하고 관리해 주시면 됩니다."); ?>
 			<input type="file" name="mms_data_file[0]" class="frm_input">
 			<?=$mms['mms_data'][0]['file']?>
+		</td>
+		<th scope="row">테스트수동카운트여부</th>
+		<td>
+			<label for="mms_testmanual_yn">
+               <input type="checkbox" name="mms_testmanual_yn" id="mms_testmanual_yn" value="1" <?=($mms['mms_testmanual_yn']=='1')?'checked':''?> class="frm_input">
+               테스트를 위한 수동카운트설비인 경우 체크하세요.<br>
+			   (입력하는 재고 카운트가 g5_1_material_item테이블에도 등록됨)
+            </label>
 		</td>
 	</tr>
 	<tr>

@@ -49,17 +49,12 @@ if ($where)
 
 
 if (!$sst) {
-    $sst = "mms_sort";
-    $sod = "";
+    $sst = "mms_idx";
+    $sod = "DESC";
 }
+$sql_order = " ORDER BY {$sst} {$sod} ";
 
-if (!$sst2) {
-    $sst2 = ", mms_idx";
-    $sod2 = "DESC";
-}
-$sql_order = " ORDER BY {$sst} {$sod} {$sst2} {$sod2} ";
-
-$rows = 200;//$config['cf_page_rows'];
+$rows = $config['cf_page_rows'];
 if (!$page) $page = 1; // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
@@ -101,12 +96,9 @@ $items2 = array(
     ,"mms_status"=>array("상태",0,0,1)
 );
 $items = array_merge($items1,$items2);
-$colspan = 13;
 ?>
 <style>
-.tbl_head01 thead.sticky th{position:sticky;top:134px;z-index:1;}
 .td_mms_image {width:120px;}
-.no_img{display:inline-block;width:100px;height:80px;text-align:center;line-height:80px;}
 </style>
 
 <div class="local_ov01 local_ov">
@@ -118,7 +110,7 @@ $colspan = 13;
 <label for="sfl" class="sound_only">검색대상</label>
 <select name="sfl" id="sfl">
     <?php
-    $skips = array('mms_idx','mms_status','mms_set_output','mms_image','trm_idx_category','mms_idx2','mms_price','mms_parts','mms_maintain','com_idx','mmg_idx','mms_checks','mms_item', 'mms_graph_tag','mms_reg_dt','mmg_name','mms_install_date');
+    $skips = array('mms_idx','mms_status','mms_set_output','mms_image','trm_idx_category','mms_idx2','mms_price','mms_parts','mms_maintain','com_idx','mmg_idx','mms_checks','mms_item');
     if(is_array($items)) {
         foreach($items as $k1 => $v1) {
             if(in_array($k1,$skips)) {continue;}
@@ -128,8 +120,8 @@ $colspan = 13;
     ?>
     <?php if($member['mb_manager_yn']) { ?>
 	<option value="mms.mms_idx"<?php echo get_selected($_GET['sfl'], "mms.mms_idx"); ?>>설비고유번호</option>
-	<!-- <option value="mms.mmg_idx"<?php echo get_selected($_GET['sfl'], "mms.mmg_idx"); ?>>그룹번호</option>
-	<option value="mms.com_idx"<?php echo get_selected($_GET['sfl'], "mms.com_idx"); ?>>업체번호</option> -->
+	<option value="mms.mmg_idx"<?php echo get_selected($_GET['sfl'], "mms.mmg_idx"); ?>>그룹번호</option>
+	<option value="mms.com_idx"<?php echo get_selected($_GET['sfl'], "mms.com_idx"); ?>>업체번호</option>
     <?php } ?>
 </select>
 <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
@@ -144,8 +136,6 @@ $colspan = 13;
 <form name="form01" id="form01" action="./mms_list_update.php" onsubmit="return form01_submit(this);" method="post">
 <input type="hidden" name="sst" value="<?php echo $sst ?>">
 <input type="hidden" name="sod" value="<?php echo $sod ?>">
-<input type="hidden" name="sst2" value="<?php echo $sst2 ?>">
-<input type="hidden" name="sod2" value="<?php echo $sod2 ?>">
 <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
 <input type="hidden" name="stx" value="<?php echo $stx ?>">
 <input type="hidden" name="page" value="<?php echo $page ?>">
@@ -155,24 +145,47 @@ $colspan = 13;
 <div class="tbl_head01 tbl_wrap">
 	<table class="table table-bordered table-condensed">
 	<caption><?php echo $g5['title']; ?> 목록</caption>
-	<thead class="sticky">
+	<thead>
     <!-- 테이블 항목명 1번 라인 -->
 	<tr>
-		<th scope="col" style="display:<?=(!$member['mb_manager_yn'])?'none':''?>;">
+		<th scope="col" rowspan="2" style="display:<?=(!$member['mb_manager_yn'])?'none':''?>;">
 			<label for="chkall" class="sound_only">항목 전체</label>
 			<input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
 		</th>
-        <th scope="col" id="th_mms_image">이미지</th>
-        <th scope="col" id="th_mms_idx">DB고유번호</th>
-        <th scope="col" id="th_mms_name">설비명</th>
-        <th scope="col" id="th_mms_name">모바일접속<br>QR코드</th>
-        <th scope="col" id="th_trm_idx_category">설비분류</th>
-        <th scope="col" id="th_mms_manual_yn">카운트<br>수동입력여부</th>
-        <th scope="col" id="th_mms_call_yn">설비호출<br>상태</th>
-        <th scope="col" id="th_mms_item_check_yn">설비생산품질<br>확인여부</th>
-        <th scope="col" id="th_mms_testmanual_yn">테스트카운트<br>수동입력여부</th>
-        <th scope="col" id="th_mms_sort">순서</th>
-		<th scope="col" id="th_list_mng">관리</th>
+        <?php
+        $skips = array();
+        if(is_array($items1)) {
+            foreach($items1 as $k1 => $v1) {
+                if(in_array($k1,$skips)) {continue;}
+                $row['colspan'] = ($v1[1]>1) ? ' colspan="'.$v1[1].'"' : '';   // colspan 설정
+                $row['rowspan'] = ($v1[2]>1) ? ' rowspan="'.$v1[2].'"' : '';   // rowspan 설정
+                // 정렬 링크
+                if($v1[3]>0)
+                    echo '<th scope="col" '.$row['colspan'].' '.$row['rowspan'].'>'.subject_sort_link($k1).$v1[0].'</a></th>';
+                else
+                    echo '<th scope="col" '.$row['colspan'].' '.$row['rowspan'].'>'.$v1[0].'</th>';
+            }
+        }
+        ?>
+		<th scope="col" id="mb_list_mng" rowspan="2">관리</th>
+	</tr>
+    <!-- 테이블 항목명 2번 라인 -->
+	<tr>
+        <?php
+        $skips = array();
+        if(is_array($items2)) {
+            foreach($items2 as $k1 => $v1) {
+                if(in_array($k1,$skips)) {continue;}
+                $row['colspan'] = ($v1[1]>1) ? ' colspan="'.$v1[1].'"' : '';   // colspan 설정
+                $row['rowspan'] = ($v1[2]>1) ? ' rowspan="'.$v1[2].'"' : '';   // rowspan 설정
+                // 정렬 링크
+                if($v1[3]>0)
+                    echo '<th scope="col" '.$row['colspan'].' '.$row['rowspan'].'>'.subject_sort_link($k1).$v1[0].'</a></th>';
+                else
+                    echo '<th scope="col" '.$row['colspan'].' '.$row['rowspan'].'>'.$v1[0].'</th>';
+            }
+        }
+        ?>
 	</tr>
 	</thead>
 	<tbody>
@@ -180,79 +193,171 @@ $colspan = 13;
     $fle_width = 100;
     $fle_height = 80;
     for ($i=0; $row=sql_fetch_array($result); $i++) {
+        // print_r2($row);
+        
         // mms_img 타입중에서 대표 이미지 한개만
         $sql = "SELECT * FROM {$g5['file_table']}
                 WHERE fle_db_table = 'mms' AND fle_db_id = '".$row['mms_idx']."'
                     AND fle_type = 'mms_img'
                     AND fle_sort = 0
         ";
+//        echo $sql.'<br>';
         $rs1 = sql_query($sql,1);
         for($j=0;$row1=sql_fetch_array($rs1);$j++) {
 //            print_r2($row1);
-            $thumb_flag = false;
             if( $row1['fle_name'] && is_file(G5_PATH.$row1['fle_path'].'/'.$row1['fle_name']) ) {
-                $thumb_flag = true;
                 $row['img'] = $row[$row1['fle_type']][$row1['fle_sort']]; // 변수명 좀 짧게
-                $row['img']['thumbnail'] = thumbnail($row1['fle_name'], G5_PATH.$row1['fle_path'], G5_PATH.$row1['fle_path'], $fle_width, $fle_width, false, true, 'center', true, $um_value='85/3.4/15');	// is_create, is_crop, crop_mode
-                
+                $row['img']['thumbnail'] = thumbnail($row1['fle_name'], 
+                                G5_PATH.$row1['fle_path'], G5_PATH.$row1['fle_path'],
+                                $fle_width, $fle_width, 
+                                false, true, 'center', true, $um_value='85/3.4/15');	// is_create, is_crop, crop_mode
             }
-            
-            $row['img']['thumbnail_img'] = '<a href="./mms_view_popup.php?&mms_idx='.$row['mms_idx'].'" class="btn_image"><img src="'.G5_URL.$row1['fle_path'].'/'.$row['img']['thumbnail'].'" width="'.$fle_width.'" height="'.$fle_height.'"></a>';
+            else {
+                $row[$row1['fle_type']][$row1['fle_sort']]['thumbnail'] = 'default.png';
+                $row1['fle_path'] = '/data/mms_img';	// 디폴트 경로 결정해야 합니다.
+            }
+            $row['img']['thumbnail_img'] = '<img src="'.G5_URL.$row1['fle_path'].'/'.$row['img']['thumbnail'].'"
+                                                width="'.$fle_width.'" height="'.$fle_height.'">';
         }
+        
+        // 부품 추출
+        $sql = "SELECT count(mmp_idx) AS total_count FROM {$g5['mms_parts_table']}
+                WHERE mms_idx = '".$row['mms_idx']."'
+                    AND mmp_status NOT IN ('trash','delete')
+        ";
+        $row['parts'] = sql_fetch($sql,1);
 
-        if(!$row['img']['thumbnail_img']){
-            $row['img']['thumbnail_img'] = '<span style="display:inline-block;width:'.$fle_width.'px;height:'.$fle_height.'px;line-height:'.$fle_height.'px;border:1px solid #fff;">No Image</span>';
-        }
+        // 기종 추출
+        $sql = "SELECT count(mmi_idx) AS total_count FROM {$g5['mms_item_table']}
+                WHERE mms_idx = '".$row['mms_idx']."'
+                    AND mmi_status NOT IN ('trash','delete')
+        ";
+        $row['item'] = sql_fetch($sql,1);
 
+        // 점검항목 추출
+        $sql = "SELECT count(mmc_idx) AS total_count FROM {$g5['mms_checks_table']}
+                WHERE mms_idx = '".$row['mms_idx']."'
+                    AND mmc_status NOT IN ('trash','delete')
+        ";
+        $row['checks'] = sql_fetch($sql,1);
+
+        // 정비 추출
+        $sql = "SELECT count(mnt_idx) AS total_count FROM {$g5['maintain_table']}
+                WHERE mms_idx = '".$row['mms_idx']."'
+                    AND mnt_status NOT IN ('trash','delete')
+        ";
+        $row['maintain'] = sql_fetch($sql,1);
+
+        // 태그수 (PgSQL에서 추출)
+        $row['tag_count'] = 0;
+        // $sql = "SELECT dta_type, dta_no
+        //         FROM g5_1_data_measure_".$row['mms_idx']."
+        //         GROUP BY dta_type, dta_no
+        //         ORDER BY dta_type, dta_no
+        // ";
+        // $rs1 = sql_query_pg($sql,1);
+        // $row['tag_count'] = sql_num_rows_pg($rs1);
+        // 속도가 너무 느려서 meta 테이블에 등록된 것만 일단 가지고 오는 걸로..
+        $sql = "SELECT mta_value
+                FROM {$g5['meta_table']}
+                WHERE mta_key LIKE 'dta_type_label%' 
+                    AND mta_db_table = 'mms' AND mta_db_id = '".$row['mms_idx']."'
+                ORDER BY mta_key
+        ";
+        // echo $sql.'<br>';
+        $rs1 = sql_query($sql,1);
+        $row['tag_count'] = sql_num_rows($rs1);
+        
         // 관리 버튼
         $s_mod = '<a href="./mms_form.php?'.$qstr.'&amp;w=u&amp;mms_idx='.$row['mms_idx'].'&amp;ser_mms_type='.$ser_mms_type.'&amp;ser_trm_idx_salesarea='.$ser_trm_idx_salesarea.'">수정</a>';
-
-        $row['trm_idx_category'] = ($row['trm_idx_category'])?$g5['mms_type_name'][$row['trm_idx_category']] : '-';
-
+        // $s_view = '<a href="./mms_view.popup.php?&mms_idx='.$row['mms_idx'].'" class="btn_view">보기</a>';
+		//$s_del = '<a href="./mms_form_update.php?'.$qstr.'&amp;w=d&amp;mms_idx='.$row['mms_idx'].'&amp;ser_mms_type='.$ser_mms_type.'&amp;ser_trm_idx_salesarea='.$ser_trm_idx_salesarea.'" onclick="return delete_confirm();" style="color:darkorange;">삭제</a>';
+        
         $bg = 'bg'.($i%2);
-    ?>
-    <tr>
-        <td class="td_chk" style="display:<?=(!$member['mb_manager_yn'])?'none':''?>;">
-            <input type="hidden" name="mms_idx[<?php echo $i ?>]" value="<?php echo $row['mms_idx'] ?>" id="mms_idx_<?php echo $i ?>">
-            <label for="chk_<?php echo $i; ?>" class="sound_only"><?php echo get_text($row['mms_name']); ?></label>
-            <input type="checkbox" name="chk[]" value="<?php echo $i ?>" id="chk_<?php echo $i ?>">
-        </td>
-        <td class="td_mms_image">
-            <?=$row['img']['thumbnail_img']?>
-        </td>
-        <td class="td_mms_idx"><?=$row['mms_idx']?></td>
-        <td class="td_mms_name"><?=$row['mms_name']?></td>
-        <td class="td_mms_qr">
-            <!-- <img src="https://chart.googleapis.com/chart?chs=80x80&cht=qr&chl=<?=G5_USER_ADMIN_MOBILE_URL?>/production_list.php?mms_idx=<?=$row['mms_idx']?>"> -->
-            <a href="./mms_view_qr_popup.php?&mms_idx=<?=$row['mms_idx']?>" class="btn_qr">
-            <i class="fa fa-qrcode" aria-hidden="true" style="font-size:2em;"></i>
-        </td>
-        <td class="td_trm_idx_category"><?=$row['trm_idx_category']?></td>
-        <td class="td_mms_manual_yn">
-            <label for="mms_manual_yn_<?=$i?>" class="sound_only">수동카운트여부</label>
-            <input type="checkbox" name="mms_manual_yn[<?=$i?>]" <?=(($row['mms_manual_yn'])?'checked':'')?> value="1" id="mms_manual_yn_<?=$i?>">
-        </td>
-        <td class="td_mms_call_yn">
-            <label for="mms_call_yn_<?=$i?>" class="sound_only">설비호출여부</label>
-            <input type="checkbox" name="mms_call_yn[<?=$i?>]" <?=(($row['mms_call_yn'])?'checked':'')?> value="1" id="mms_call_yn_<?=$i?>">
-        </td>
-        <td class="td_mms_item_check_yn">
-            <label for="mms_item_check_yn_<?=$i?>" class="sound_only">설비생산품질확인여부</label>
-            <input type="checkbox" name="mms_item_check_yn[<?=$i?>]" <?=(($row['mms_item_check_yn'])?'checked':'')?> value="1" id="mms_item_check_yn_<?=$i?>">
-        </td>
-        <td class="td_mms_testmanual_yn">
-            <label for="mms_testmanual_yn_<?=$i?>" class="sound_only">테스트카운트입력여부</label>
-            <input type="checkbox" name="mms_testmanual_yn[<?=$i?>]" <?=(($row['mms_testmanual_yn'])?'checked':'')?> value="1" id="mms_testmanual_yn_<?=$i?>">
-        </td>
-        <td class="td_mms_sort">
-            <input type="text" name="mms_sort[<?=$i?>]" value="<?=number_format($row['mms_sort'])?>" onclick="javascript:numtoprice(this)" class="frm_input mmms_sort wg_wdx60 wg_right">
-        </td>
-        <td class="td_list_mng"><?=$s_mod?></td>
-    </tr>
-    <?php
+
+        // 1번 라인 ================================================================================
+        echo '<tr class="'.$bg.' tr_'.$row['mms_status'].'" tr_id="'.$row['mms_idx'].'">'.PHP_EOL;
+        ?>
+		<td class="td_chk" rowspan="2" style="display:<?=(!$member['mb_manager_yn'])?'none':''?>;">
+			<input type="hidden" name="mms_idx[<?php echo $i ?>]" value="<?php echo $row['mms_idx'] ?>" id="mms_idx_<?php echo $i ?>">
+			<label for="chk_<?php echo $i; ?>" class="sound_only"><?php echo get_text($row['mms_name']); ?></label>
+			<input type="checkbox" name="chk[]" value="<?php echo $i ?>" id="chk_<?php echo $i ?>">
+		</td>
+        <?php
+        $skips = array();
+        if(is_array($items1)) {
+        //    print_r2($items1);
+            foreach($items1 as $k1 => $v1) {
+                if(in_array($k1,$skips)) {continue;}
+                // echo $k1.'<br>';
+                // print_r2($v1);
+                // 변수 재설정
+                if($k1=='mms_image') {
+                    $row[$k1] = '<a href="./mms_view.popup.php?&mms_idx='.$row['mms_idx'].'" class="btn_image">'.$row['img']['thumbnail_img'].'</a>';
+                }
+                else if($k1=='mms_reg_dt') {
+                    $row[$k1] = substr($row[$k1],0,10);
+                }
+                else if($k1=='mms_parts') {
+                    $row[$k1] = '<a href="./mms_parts_list.php?mms_idx='.$row['mms_idx'].'" class="btn_parts">'.$row['parts']['total_count'].'</a>';
+                }
+                else if($k1=='mms_maintain') {
+                    $row[$k1] = '<a href="./maintain_list.php?mms_idx='.$row['mms_idx'].'" class="btn_maintain">'.$row['maintain']['total_count'].'</a>';
+                }
+                else if($k1=='mms_graph_tag') {
+                    $row[$k1] = '<a href="./mms_graph_setting.php?mms_idx='.$row['mms_idx'].'" class="btn_graph_tag">'.$row['tag_count'].'</a>';
+                }
+                else if($k1=='trm_idx_category') {
+                    $row[$k1] = ($row[$k1]) ? $g5['mms_type_name'][$row[$k1]] : '-';
+                }
+
+                $row['colspan'] = ($v1[1]>1) ? ' colspan="'.$v1[1].'"' : '';   // colspan 설정
+                $row['rowspan'] = ($v1[2]>1) ? ' rowspan="'.$v1[2].'"' : '';   // rowspan 설정
+                echo '<td class="td_'.$k1.'" '.$row['colspan'].' '.$row['rowspan'].'>'.$row[$k1].'</td>';
+            }
+        }
+        echo '<td class="td_mngsmall" rowspan="2">'.$s_mod.'<br>'.$s_view.'</td>'.PHP_EOL;
+		//echo $td_items[$i];
+        echo '</tr>'.PHP_EOL;
+
+
+        // 2번 라인 ================================================================================
+        echo '<tr class="'.$bg.' tr_'.$row['mms_status'].'" tr_id="'.$row['mms_idx'].'">'.PHP_EOL;
+        $skips = array();
+        if(is_array($items2)) {
+            foreach($items2 as $k1 => $v1) {
+                if(in_array($k1,$skips)) {continue;}
+                // 변수 재설정
+                if($k1=='mms_checks') {
+                    $row[$k1] = '<a href="./mms_checks_list.php?mms_idx='.$row['mms_idx'].'" class="btn_checks">'.$row['checks']['total_count'].'</a>';
+                }
+                else if($k1=='mms_price') {
+                    $row[$k1] = number_format($row[$k1]);
+                }
+                else if($k1=='mms_item') {
+                    $row[$k1] = '<a href="./mms_item_list.php?mms_idx='.$row['mms_idx'].'" class="btn_checks">'.$row['item']['total_count'].'</a>';
+                }
+                else if($k1=='mms_set_output') {
+                    $row[$k1] = (!$row[$k1]) ? $g5['set_mms_set_data_value']['shift'] : $g5['set_mms_set_data_value'][$row[$k1]];
+                }
+                else if($k1=='mms_set_error') {
+                    $row[$k1] = (!$row[$k1]) ? $g5['set_mms_set_data_value']['shift'] : $g5['set_mms_set_data_value'][$row[$k1]];
+                }
+                else if($k1=='mms_status') {
+                    $row[$k1] = $g5['set_status_value'][$row[$k1]];
+                }
+
+                $row['colspan'] = ($v1[1]>1) ? ' colspan="'.$v1[1].'"' : '';   // colspan 설정
+                $row['rowspan'] = ($v1[2]>1) ? ' rowspan="'.$v1[2].'"' : '';   // rowspan 설정
+                echo '<td class="td_'.$k1.'" '.$row['colspan'].' '.$row['rowspan'].'>'.$row[$k1].'</td>';
+            }
+        }
+        echo '</tr>'.PHP_EOL;
+
+
     }
 	if ($i == 0)
-		echo '<tr><td colspan="'.$colspan.'" class="empty_table">자료가 없습니다.</td></tr>';
+		echo '<tr><td colspan="20" class="empty_table">자료가 없습니다.</td></tr>';
 	?>
 	</tbody>
 	</table>
@@ -261,7 +366,7 @@ $colspan = 13;
 <div class="btn_fixed_top">
     <?php ;//if($member['mb_manager_yn']) { ?>
     <?php if(!auth_check($auth[$sub_menu],'w',1)) { ?>
-        <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn_02 btn">
+        <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn_02 btn" style="display:none;">
         <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn_02 btn">
         <a href="./mms_form.php" id="btn_add" class="btn_01 btn">추가하기</a>
     <?php } ?>
@@ -294,16 +399,7 @@ $(function(e) {
 	$(document).on('click','.btn_view, .btn_image',function(e){
         e.preventDefault();
         var href = $(this).attr('href');
-        winMMSView = window.open(href, "winMMSView", "left=100,top=100,width=700,height=450,scrollbars=1");
-        winMMSView.focus();
-        return false;
-    });
-
-    // 모바일접속 QR코드보기 클릭
-	$(document).on('click','.btn_view, .btn_qr',function(e){
-        e.preventDefault();
-        var href = $(this).attr('href');
-        winMMSView = window.open(href, "winMMSView", "left=100,top=100,width=700,height=1000,scrollbars=1");
+        winMMSView = window.open(href, "winMMSView", "left=100,top=100,width=520,height=600,scrollbars=1");
         winMMSView.focus();
         return false;
     });
