@@ -21,7 +21,9 @@ $sql = " SELECT prd.prd_idx
             , cst.cst_name
             , pri_value
             , pri.mms_idx
+            , mms.mms_name
             , mms.mms_call_yn
+            , mms.mms_manual_yn
             , pri.mb_id
             , pri_memo
             , pri_ing
@@ -46,12 +48,14 @@ $result = sql_query($sql,1);
 $g5['title'] = '생산작업설정(Production Setting)';
 $g5['box_title'] = $member['mb_name'].'님의 '.statics_date(G5_TIME_YMDHIS).' 생산설정';
 $g5['box_title'] .= '<br>Prodution for '.$member['mb_name'].' at '.statics_date(G5_TIME_YMDHIS);
+$mms_manual_yn = 0;
 include_once('./_head.php');
 ?>
 <div id="plt_list">
     <h4 id="plt_ttl"><?=(($mms_name)?'['.$mms_name.']설비에서의 ':'')?>생산제품</h4>
     <ul class="ul_item">
         <?php for($i=0;$row=sql_fetch_array($result);$i++){ 
+            if($i == 0) $mms_manual_yn = $row['mms_manual_yn'];
             /*
             $prf_tbl = ($row['bom_type'] == 'product') ? $g5['item_table'] : $g5['material_table'];
             $prf = ($row['bom_type'] == 'product') ? 'itm' : 'mtr';
@@ -103,13 +107,12 @@ include_once('./_head.php');
             $goal_url = G5_URL.$frow['fle_path'];
             $fle_name = $frow['fle_name'];
             $thumb_img = $goal_url.'/'.thumbnail($fle_name,$orig_path,$goal_path,$twd,$tht,false,true,'center');
+            $thumb_path = $goal_path.'/'.thumbnail($fle_name,$orig_path,$goal_path,$twd,$tht,false,true,'center');
             $noimg_img = G5_USER_ADMIN_MOBILE_IMG_URL.'/no_image.png';
-            $thumb_url = (!$frow) ? $noimg_img : $thumb_img;
+            $thumb_url = (!is_file($thumb_path)) ? $noimg_img : $thumb_img;
         ?>
         <li class="li_desc">
-            <dt class="dt_ttl">설비명(Equipment name)</dt>
             <dd class="dd_des dd_mms">
-                <?=$g5['mms_arr'][$row['mms_idx']]?>
                 <?php if(!$row['mms_call_yn']){ ?>
                     <?php if($row['pri_ing']){ ?>
                         <strong class="st_ing">Running!</strong>
@@ -118,22 +121,27 @@ include_once('./_head.php');
                     <strong class="st_call">Calling!</strong>
                 <?php } ?>
             </dd>
-            <dt class="dt_ttl">고객사(Cutomer)</dt>
-            <dd class="dd_des"><?=$row['cst_name']?></dd>
-            <dt class="dt_ttl">품번(Item number)</dt>
-            <dd class="dd_des"><?=$row['bom_part_no']?></dd>
-            <dt class="dt_ttl">품명(Item name)</dt>
-            <dd class="dd_des"><?=$row['bom_name']?></dd>
-            <dt class="dt_ttl">유형(Item type)</dt>
-            <dd class="dd_des"><?=$g5['set_bom_type_value'][$row['bom_type']]?>(<?=$row['bom_type']?>)</dd>
-            <dt class="dt_ttl">나의 생산목표(Production goal)</dt>
-            <dd class="dd_des"><?=$row['pri_value']?></dd>
-            <dt class="dt_ttl">현재 나의생산량(Current my count)</dt>
-            <dd class="dd_des"><?=$ptotal?></dd>
-            <dt class="dt_ttl">현재 전체생산량(Current total count)</dt>
-            <dd class="dd_des"><?=$total?></dd>
+            <dd class="dd_des">
+                <?=$row['bom_name']?><br>
+                <strong class="part_no">[ <?=$row['bom_part_no']?> ]</strong>
+                <span class="part_nm"><?=$g5['set_bom_type_value'][$row['bom_type']]?></span>
+            </dd>
+            <div class="num_box">
+                <div class="num">
+                    <span>Goal Count</span>
+                    <strong><?=$row['pri_value']?></strong>
+                </div>
+                <div class="num">
+                    <span>My Count</span>
+                    <strong><?=$ptotal?></strong>
+                </div>
+                <div class="num">
+                    <span>Total Count</span>
+                    <strong><?=$total?></strong>
+                </div>
+            </div>
             <dt class="dt_ttl">제품이미지(Item image)</dt>
-            <dd class="dd_des"><img src="<?=$thumb_url?>" alt="<?=$row['bom_name']?>_이미지"></dd>
+            <dd class="dd_des dd_img"><img src="<?=$thumb_url?>" alt="<?=$row['bom_name']?>_이미지"></dd>
             <div class="btn_box">
                 <form name="formA<?=$i?>" class="formA" id="formA<?=$i?>" action="./production_list_update.php" onsubmit="return form01_submit(this);" method="post">
                     <input type="hidden" name="call" value="0">
@@ -154,6 +162,8 @@ include_once('./_head.php');
                 <form name="formB<?=$i?>" class="formB" id="formB<?=$i?>" action="./production_list_update.php" onsubmit="return form01_submit(this);" method="post">
                     <input type="hidden" name="call" value="1">
                     <input type="hidden" name="mms_idx" value="<?=$row['mms_idx']?>">
+                    <input type="hidden" name="mb_name" value="<?=$member['mb_name']?>">
+                    <input type="hidden" name="mms_name" value="<?=$row['mms_name']?>">
                     <input type="hidden" name="prd_idx" value="<?=$row['prd_idx']?>">
                     <input type="hidden" name="pri_idx" value="<?=$row['pri_idx']?>">
                     <input type="hidden" name="bom_idx" value="<?=$row['bom_idx']?>">
@@ -164,13 +174,19 @@ include_once('./_head.php');
         </li>
         <?php } ?>
         <?php if($i == 0){ ?>
-        <li class="li_empty">데이터가 존재하지 않습니다.</li>
+        <li class="li_empty">데이터가 존재하지 않습니다.<br>설비고유번호를 입력박스에<br>입력하고 검색해 주세요.</li>
+        <li>
+        <form id="fmms_idx" method="GET">
+            <input type="text" name="mms_idx" value="<?=$mms_idx?>">
+            <input type="submit" value="검색">
+        </form>
+        </li>
         <?php } ?>
     </ul>
 </div>
 <script>
 var url = '<?=G5_USER_ADMIN_MOBILE_URL?>/production_list.php<?=(($mms_idx)?'?mms_idx='.$mms_idx:'')?>';
-
+var mms_manual_yn = <?=$mms_manual_yn?>;
 
 $('.tooltip_close').on('click',function(){
     $(this).siblings('input').val('');
@@ -187,22 +203,8 @@ function form01_submit(f){ //inp
     var num = 0;
     var flag = true;
     if(document.pressed == 'END'){
-        var ajax_stock_check_url = '<?=G5_USER_ADMIN_MOBILE_URL?>/ajax/end_stock_check.php';
-        $.ajax({
-            type: "POST",
-            url: ajax_stock_check_url,
-            dataType: "text",
-            data: {"pri_idx":f.pri_idx.value,"mb_id": '<?=$member['mb_id']?>'},
-            async: false,
-            success: function(res){
-                num = Number(res);
-            },
-            error: function(xmlReq){
-                alert('Status: ' + xmlReq.status + ' \n\rstatusText: ' + xmlReq.statusText + ' \n\rresponseText: ' + xmlReq.responseText);
-            }
-        });
-        //종료시점에 재고가 0이면 수기입력하자
-        if(num == 0 && !f.pri_cnt.value){
+        
+        if(mms_manual_yn && !f.pri_cnt.value){
             $(f).find('.tooltip').addClass('focus');
             flag = false;
             return flag;
@@ -244,8 +246,6 @@ function form01_submit(f){ //inp
     }
     return flag;
 }
-
-
 
 </script>
 <?php
