@@ -135,6 +135,7 @@ $g5['set_bom_type_displays'] = explode(',', preg_replace("/\s+/", "", $g5['setti
 $mms_sql = " SELECT mms_idx,mms_name FROM {$g5['mms_table']}
                 WHERE mms_status = 'ok'
                     AND com_idx = '{$g5['setting']['set_com_idx']}'
+                ORDER BY mms_sort, mms_idx
 ";
 $mms_res = sql_query($mms_sql,1);
 $g5['mms_arr'] = array();
