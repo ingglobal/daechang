@@ -14,7 +14,7 @@ if [ $cpu_percentage_php -ge 100 ]; then
     systemctl restart php7.4-fpm.service
 fi
 
-if [ [ $cpu_percentage_mysql -ge 100 ] ]; then
+if [ $cpu_percentage_mysql -ge 100 ]; then
     systemctl restart mysql.service
 fi
 
