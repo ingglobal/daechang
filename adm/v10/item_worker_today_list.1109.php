@@ -211,9 +211,6 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
     .tr_total td {
         background-color: #162037;
     }
-
-    .btn_pri_ing{background:#61677A;border:0px;color:#ddd;height:26px;line-height:26px;padding:0 3px;border-radius:3px;}
-    .btn_ing{background:#4E4FEB;}
 </style>
 
 <div class="local_ov01 local_ov">
@@ -275,6 +272,8 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
 </form>
 
 
+
+
 <form name="form01" id="form01" action="./<?= $g5['file_name'] ?>_update.php" onsubmit="return form01_submit(this);" method="post">
     <input type="hidden" name="sst" value="<?php echo $sst ?>">
     <input type="hidden" name="sod" value="<?php echo $sod ?>">
@@ -297,9 +296,8 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                     <th scope="col" style="min-width:200px;">품번/품명</th>
                     <th scope="col">구분</th>
                     <th scope="col">차종</th>
-                    <th scope="col">설비</th>
                     <th scope="col">작업자</th>
-                    <th scope="col">작업상태</th>
+                    <th scope="col">설비</th>
                     <th scope="col">생산시간</th>
                     <th scope="col">비가동</th>
                     <th scope="col">UPH</th>
@@ -350,11 +348,25 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                         // 실제 적용시간 범위
                         $row['dta_start_his'] = preg_replace("/:/", "", substr($row['dt']['pic_min_dt'], 11));
                         $row['dta_end_his'] = preg_replace("/:/", "", substr($row['dt']['pic_max_dt'], 11));
-                        
+                        // if($row['mms_idx']==139) {
+                        //     echo $i.BR;
+                        //     echo $row['dta_start_his'].'~'.$row['dta_end_his'].' 적용시간범위<br>';
+                        // }
+
+                        // // text print <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 89311-S8530, 유말, 50호기
+                        // if($row['bom_idx'] == 240 && $row['mms_idx'] == 144 && $row['mb_id'] == '01021634581') {
+                        //     print_r2($row['dt']);
+                        // }
 
                         // 계획정지 (일단은 설비 상관없이 전체 적용), 위에서 만들어둔 배열 활용
                         for ($j = 0; $j < @sizeof($offwork); $j++) {
-                            
+                            // print_r2($offwork[$j]);
+                            // echo $offwork[$j]['start'].'~'.$offwork[$j]['end'].' 원본<br>';
+                            // // // text print <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 89311-S8530, 유말, 50호기
+                            // if($row['bom_idx'] == 240 && $row['mms_idx'] == 144 && $row['mb_id'] == '01021634581') {
+                            //                 echo $offwork[$j]['start'].'~'.$offwork[$j]['end'].' 원본<br>';
+                            //                 echo num2seconds($offwork[$j]['end']).'~'.num2seconds($offwork[$j]['start']).' times<br>';
+                            // }
                             // 같은 값도 있네요. (통과)
                             if ($row['dta_start_his'] == $row['dta_end_his']) {
                                 continue;
@@ -371,23 +383,34 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                             }
                             // 걸쳐 있는 경우
                             else if ($row['dta_start_his'] <= $offwork[$j]['end'] && $row['dta_end_his'] >= $offwork[$j]['start']) {
-                               
+                                // echo $j.BR;
+                                // if($row['bom_idx'] == 240 && $row['mms_idx'] == 144 && $row['mb_id'] == '01021634581') {
+                                //                     echo $row['dta_start_his'] .'<='. $offwork[$j]['end'] .'&&'. $row['dta_end_his'] .'>='. $offwork[$j]['start'].BR;
+                                // }
                                 if ($row['dta_start_his'] >= $offwork[$j]['start']) {
                                     $row['offwork_arr'][$i][$j]['start'] = $row['dta_start_his'];  // 하단 비가동에서 재활용
                                     $row['offwork_arr'][$i][$j]['end'] = $offwork[$j]['end'];      // 하단 비가동에서 재활용
-                                    
+                                    // $offwork[$j]['start'] = $row['dta_start_his']; // 원본을 바꾸면 안 됨 (for문에서 변경되므로)
                                     $row['offwork_sec'][$i] += num2seconds($offwork[$j]['end']) - num2seconds($row['dta_start_his']);
-                                  
+                                    // if($row['bom_idx'] == 240 && $row['mms_idx'] == 144 && $row['mb_id'] == '01021634581') {
+                                    //                         echo $row['offwork_sec'][$i].BR;
+                                    // }
                                 }
                                 if ($row['dta_end_his'] <= $offwork[$j]['end']) {
                                     $row['offwork_arr'][$i][$j]['start'] = $offwork[$j]['start'];  // 하단 비가동에서 재활용
                                     $row['offwork_arr'][$i][$j]['end'] = $row['dta_end_his'];      // 하단 비가동에서 재활용
                                     // $offwork[$j]['end'] = $row['dta_end_his']; // 원본을 바꾸면 안 됨 (for문에서 변경되므로)
                                     $row['offwork_sec'][$i] += num2seconds($row['dta_end_his']) - num2seconds($offwork[$j]['start']);
+                                    // if($row['bom_idx'] == 240 && $row['mms_idx'] == 144 && $row['mb_id'] == '01021634581') {
+                                    //                         echo $row['offwork_sec'][$i].BR;
+                                    // }
                                 }
                             }
                         }
-                        
+                        // if($row['bom_idx'] == 240 && $row['mms_idx'] == 144 && $row['mb_id'] == '01021634581') {
+                        //             echo '계획정지 공제시간 합(sec): '.$row['offwork_sec'][$i].'<br>';
+                        // }
+                        // echo '계획정지 arr['.$i.']: '.BR.print_r2($row['offwork_arr'][$i]); // 최종 적용된 계획정지 배열 (하단에서 중복 제거용)
                         $row['offwork_hour'][$i] = $row['offwork_sec'][$i] ? $row['offwork_sec'][$i] / 3600 : 0;  // convert to hour unit.
                         $row['pri_work_hour'] -= $row['offwork_hour'][$i];  // 2. 2차 작업시간 계산: 계획정지 시간 제외해 줌 //<-----------
 
@@ -395,12 +418,23 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
 
                         // 비가동정지 (downtime), 위에서 만들어둔 배열 활용
                         for ($j = 0; $j < @sizeof($downtime); $j++) {
+                            // print_r2($downtime[$j]);
+                            // echo $downtime[$j]['start'].'~'.$downtime[$j]['end'].' 원본<br>';
 
                             // 해당 설비인 경우만 적용함
                             if ($downtime[$j]['mms_idx'] == $row['mms_idx']) {
-                                
+                                // echo $downtime[$j]['mms_idx'].'/'.$row['mms_idx'].BR;
+                                // print_r2($downtime[$j]);
+
+                                // text print <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 89311-S8530, 유말, 50호기
                                 if ($row['bom_idx'] == 261 && $row['mms_idx'] == 140 && $row['mb_id'] == '01056058011') {
-                                
+                                    // 결국에는 아래 두개 배열을 비교해서 제거하는 거네요.
+                                    // echo $row['dta_start_his'].'~'.$row['dta_end_his'].' 적용시간범위<br>';
+                                    // print_r2($row['offwork_arr']);
+                                    // print_r2($downtime[$j]);
+                                    // echo $downtime[$j]['start'].'~'.$downtime[$j]['end'].' 원본<br>';
+
+
                                     // 같은 값도 있네요. (통과)
                                     if ($row['dta_start_his'] == $row['dta_end_his']) {
                                         continue;
@@ -536,9 +570,6 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                     // 버튼들
                     $s_mod = '<a href="./' . $fname . '_form.php?' . $qstr . '&amp;w=u&' . $pre . '_idx=' . $row[$pre . '_idx'] . '" class="btn btn_03">수정</a>';
 
-                    $pri_ing_class = ($row['pri_ing'])?' btn_ing':'';
-                    $pri_ing_state = ($row['pri_ing'])?'작업중':'비작업';
-
                     $bg = 'bg' . ($i % 2);
                 ?>
                     <tr class="<?= $bg ?>" tr_id="<?= $row[$pre . '_idx'] ?>">
@@ -551,11 +582,8 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                         </td>
                         <td class="td_pri_type font_size_7"><?= $g5['set_bom_type_value'][$row['bom_type']] ?></td><!-- 구분 -->
                         <td class="td_bct_idx font_size_7"><?= $row['bct']['bct_name'] ?></td><!-- 차종 -->
-                        <td class="td_mms_name"><a href="?ser_mms_idx=<?= $row['mms_idx'] ?>"><?= $g5['mms'][$row['mms_idx']]['mms_name'] ?></a></td><!-- 설비 -->
                         <td class="td_mb_name"><a href="?ser_mb_id=<?= $row['mb_id'] ?>"><?= $row['mb1']['mb_name'] ?></a></td><!-- 작업자 -->
-                        <td class="td_pri_ing">
-                            <button class="btn_pri_ing<?=$pri_ing_class?>"><?=$pri_ing_state?></button>
-                        </td><!--작업상태-->
+                        <td class="td_mms_name"><a href="?ser_mms_idx=<?= $row['mms_idx'] ?>"><?= $g5['mms'][$row['mms_idx']]['mms_name'] ?></a></td><!-- 설비 -->
                         <td class="td_pri_hours font_size_7"><?= $row['pri_hours'] ?><?= $row['pri_work_min_text'] ?></td><!-- 생산시간 -->
                         <td class="td_pri_offdown font_size_7"><?= $row['offdown_text'] ?></td><!-- 비가동 -->
                         <td class="td_pri_uph"><?= $row['pri_uph'] ?></td><!-- UPH -->

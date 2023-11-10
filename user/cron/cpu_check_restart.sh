@@ -10,8 +10,16 @@ cpu_percentage_php=${cpu_usage_php%.*}
 cpu_percentage_mysql=${cpu_usage_mysql%.*}
 cpu_percentage_postgres=${cpu_usage_postgres%.*}
 
-if [ $cpu_percentage_php -ge 100 ] || [ $cpu_percentage_mysql -ge 100 ] || [ $cpu_percentage_postgres -ge 100 ]; then
+if [ $cpu_percentage_php -ge 100 ]; then
     sudo systemctl restart php7.4-fpm.service
-    # sudo systemctl restart mysql.service
-    # sudo systemctl restart postgresql.service
 fi
+
+if [ [ $cpu_percentage_mysql -ge 100 ] ]; then
+    sudo systemctl restart mysql.service
+fi
+
+if [ $cpu_percentage_postgres -ge 100 ]; then
+    sudo systemctl restart postgresql.service
+fi
+
+
