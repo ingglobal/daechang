@@ -275,7 +275,8 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
 </form>
 
 
-<form name="form01" id="form01" action="./<?= $g5['file_name'] ?>_update.php" onsubmit="return form01_submit(this);" method="post">
+<!-- <form name="form01" id="form01" action="./<?= $g5['file_name'] ?>_update.php" onsubmit="return form01_submit(this);" method="post"> -->
+<div name="form01" id="form01">
     <input type="hidden" name="sst" value="<?php echo $sst ?>">
     <input type="hidden" name="sod" value="<?php echo $sod ?>">
     <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
@@ -554,7 +555,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                         <td class="td_mms_name"><a href="?ser_mms_idx=<?= $row['mms_idx'] ?>"><?= $g5['mms'][$row['mms_idx']]['mms_name'] ?></a></td><!-- 설비 -->
                         <td class="td_mb_name"><a href="?ser_mb_id=<?= $row['mb_id'] ?>"><?= $row['mb1']['mb_name'] ?></a></td><!-- 작업자 -->
                         <td class="td_pri_ing">
-                            <button class="btn_pri_ing<?=$pri_ing_class?>"><?=$pri_ing_state?></button>
+                            <button pri_idx="<?=$row['pri_idx']?>" class="btn_pri_ing<?=$pri_ing_class?>"><?=$pri_ing_state?></button>
                         </td><!--작업상태-->
                         <td class="td_pri_hours font_size_7"><?= $row['pri_hours'] ?><?= $row['pri_work_min_text'] ?></td><!-- 생산시간 -->
                         <td class="td_pri_offdown font_size_7"><?= $row['offdown_text'] ?></td><!-- 비가동 -->
@@ -609,7 +610,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
         <a href="<?= G5_USER_URL ?>/cron/socket_read.php?sync=1" class="btn btn_02 btn_production_sync">생산현황동기화</a>
     </div>
 
-</form>
+</div><!--#form01-->
 
 <?php echo get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, '?' . $qstr . '&amp;page='); ?>
 
@@ -633,6 +634,39 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
             maxDate: "+0d"
         });
     });
+
+    $('.btn_pri_ing').on('click',function(){
+        var btn_obj = $(this);
+        var pri_idx = $(this).attr('pri_idx');
+        var ing_flag = $(this).hasClass('btn_ing') ? 0 : 1;
+        pri_ing_update(btn_obj, pri_idx, ing_flag);
+    });
+
+    function pri_ing_update(btn_obj, pri_idx, ing_flag){
+        var ajx_url = '<?=G5_USER_ADMIN_AJAX_URL?>/pri_ing_update.php';
+        $.ajax({
+            type: "POST",
+            url: ajx_url,
+            dataType: "text",
+            data: {
+                "pri_idx": pri_idx,
+                "ing_flag": ing_flag
+            },
+            async: false,
+            success: function(res){
+                if(res == 'ok_1'){
+                    btn_obj.addClass('btn_ing').text('작업중');
+                } else if(res == 'ok_0'){
+                    btn_obj.removeClass('btn_ing').text('비작업');
+                } else {
+                    alert(res);
+                }
+            },
+            error: function(xmlReq){
+                alert('Status: ' + xmlReq.status + ' \n\rstatusText: ' + xmlReq.statusText + ' \n\rresponseText: ' + xmlReq.responseText);
+            }
+        });
+    }
 
 
     function form01_submit(f) {
