@@ -34,6 +34,7 @@ function reSize() {
         <div class="in_box">
             <img src="https://chart.googleapis.com/chart?chs=<?=$qr_width?>x<?=$qr_height?>&cht=qr&chl=<?=G5_USER_ADMIN_MOBILE_URL?>/production_list.php?mms_idx=<?=$mms_idx?>">
             <h2>설비명 : <?=$mms['mms_name']?></h2>
+            <h3>S/N : <?=(($mms['mms_serial_no'])?$mms['mms_serial_no']:'Undefined')?></h3>
             <h3>No. <?=$mms['mms_idx']?></h3>
         </div>
     </div>
