@@ -256,6 +256,7 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
                 $row['parts_list'][] = '<div class="div_part" bom_idx="'.$row1['bom_idx'].'" bit_idx="'.$row1['bit_idx'].'">
                                             <span class="span_bom_part_no '.$row1['bit_main_class'].' font_size_7 font_color_white">'.$row1['nbsp'].$row1['len'].$row1['bom_part_no'].'</span>
                                             <span class="span_bom_name">'.$row1['bom_name'].'</span>
+                                            <spna class="sp_main_flag font_size_8">MAIN</spna>
                                             <span class="span_bom_type font_size_7">'.$g5['set_bom_type_value'][$row1['bom_type']].'</span>
                                             <span class="span_cst_name font_size_8">'.$row1['cst_name'].'</span>
                                             <span class="span_bom_price font_size_8">'.number_format($row1['bom_price']).'원</span>

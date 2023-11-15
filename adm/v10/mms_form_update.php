@@ -27,6 +27,7 @@ $sql_common = "  com_idx = '{$_POST['com_idx']}'
                 , mms_name = '{$_POST['mms_name']}'
                 , mms_name_ref = '{$_POST['mms_name_ref']}'
                 , mms_model = '{$_POST['mms_model']}'
+                , mms_serial_no = '{$_POST['mms_serial_no']}'
                 , mms_price = '{$mms_price}'
                 , mms_install_date = '{$_POST['mms_install_date']}'
                 , mms_set_error = '{$_POST['mms_set_error']}'
@@ -187,6 +188,7 @@ for($i=0; $row=sql_fetch_array($result); $i++) {
     $list[$row['mms_idx']]['com_idx'] = $row['com_idx'];
     $list[$row['mms_idx']]['mmg_idx'] = $row['mmg_idx'];
     $list[$row['mms_idx']]['mms_name'] = $row['mms_name'];
+    $list[$row['mms_idx']]['mms_serial_no'] = $row['mms_serial_no'];
     $list[$row['mms_idx']]['output'] = $row['mms_set_output'];
     $list[$row['mms_idx']]['imp_idx'] = $row['imp_idx'];
     $list[$row['mms_idx']]['trm_idx_category'] = $row['trm_idx_category'];

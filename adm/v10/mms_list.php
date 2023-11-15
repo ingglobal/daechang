@@ -106,7 +106,10 @@ $colspan = 13;
 <style>
 .tbl_head01 thead.sticky th{position:sticky;top:134px;z-index:1;}
 .td_mms_image {width:120px;}
-.no_img{display:inline-block;width:100px;height:80px;text-align:center;line-height:80px;}
+.no_img{display:inline-block;width:100px;height:80px;text-align:center;
+line-height:80px;}
+.sp_notice{color:yellow;margin-left:10px;}
+.sp_notice.sp_error,#sp_ex_notice.sp_error{color:red;}
 </style>
 
 <div class="local_ov01 local_ov">
@@ -164,6 +167,7 @@ $colspan = 13;
 		</th>
         <th scope="col" id="th_mms_image">이미지</th>
         <th scope="col" id="th_mms_idx">DB고유번호</th>
+        <th scope="col" id="th_mms_idx">시리얼번호</th>
         <th scope="col" id="th_mms_name">설비명</th>
         <th scope="col" id="th_mms_name">모바일접속<br>QR코드</th>
         <th scope="col" id="th_trm_idx_category">설비분류</th>
@@ -221,6 +225,7 @@ $colspan = 13;
             <?=$row['img']['thumbnail_img']?>
         </td>
         <td class="td_mms_idx"><?=$row['mms_idx']?></td>
+        <td class="td_mms_serial_no"><?=(($row['mms_serial_no'])?$row['mms_serial_no']:'-')?></td>
         <td class="td_mms_name"><?=$row['mms_name']?></td>
         <td class="td_mms_qr">
             <!-- <img src="https://chart.googleapis.com/chart?chs=80x80&cht=qr&chl=<?=G5_USER_ADMIN_MOBILE_URL?>/production_list.php?mms_idx=<?=$row['mms_idx']?>"> -->
@@ -257,7 +262,9 @@ $colspan = 13;
 	</tbody>
 	</table>
 </div>
+<script>
 
+</script>
 <div class="btn_fixed_top">
     <?php ;//if($member['mb_manager_yn']) { ?>
     <?php if(!auth_check($auth[$sub_menu],'w',1)) { ?>
@@ -397,6 +404,8 @@ function form01_submit(f)
 	}
     return true;
 }
+
+
 </script>
 
 <?php

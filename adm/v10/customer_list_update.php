@@ -80,7 +80,7 @@ else if($w == 'd') {
                 customer_member_update(array(
                     "mb_id_saler"=>$mb_saler_id
                     , "com_idx"=>$_POST['com_idx'][$k]
-                    , "cmm_status"=>"trash"
+                    , "cst_status"=>"trash"
                 ));
             }
         }
