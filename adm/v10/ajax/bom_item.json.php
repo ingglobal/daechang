@@ -25,8 +25,8 @@ $response->result=false;
 
 // change main product among the sub products under specific bom_idx
 if ($aj == "c1") {
-
-    if($bom_idx&&$bit_idx) {
+    $m = ($main_flag) ? '1' : '0';
+    if($bom_idx && $bit_idx && $main_flag == 'on') {
         // 기존 main_yn 값을 제거
         $sql = " UPDATE {$g5['bom_item_table']} SET bit_main_yn = 0 WHERE bom_idx = '".$bom_idx."' ";
         sql_query($sql,1);
@@ -38,7 +38,19 @@ if ($aj == "c1") {
         $response->result = true;
         $response->bom_idx = $bom_idx;
         $response->bit_idx = $bit_idx;
-        $response->msg = "정보 처리 성공!";
+        $response->main_flag = $m;
+        $response->msg = "대표 처리 성공!".$m;
+    }
+    else if($bom_idx && $bit_idx && $main_flag == 'off'){
+        // 새로운 main_yn 설정
+        $sql = " UPDATE {$g5['bom_item_table']} SET bit_main_yn = 0 WHERE bit_idx = '".$bit_idx."' ";
+        sql_query($sql,1);
+        
+        $response->result = true;
+        $response->bom_idx = $bom_idx;
+        $response->bit_idx = $bit_idx;
+        $response->main_flag = $m;
+        $response->msg = "대표 해제 성공!".$m;
     }
     else {
         $response->err_code='E10';

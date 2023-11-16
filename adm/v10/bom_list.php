@@ -118,11 +118,14 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
     display: unset;
     margin: -8px 0 0 -8px;
 }
-.btn_number {padding:1px 5px 2px;margin-right:10px;font-size:0.7em;color:white;background-color:#354667;cursor:pointer;}
+.btn_number {padding:1px 5px 2px;margin-right:10px;font-size:0.7em;color:white;background-color:#354667;}
 .div_part span {margin-right:10px;}
 .div_bom_part_no {position:relative;display:inline-block;}
 .div_bom_part_no_count {position:absolute;top:0px;right:-16px;background-color:red;color:white;border-radius:7px;padding:0px 5px;font-size:10px;height:15px;line-height:13px;}
 .div_part_no_detail {position:absolute;top:7px;left:9px;padding:5px 10px;background-color:#354667;width:max-content;font-size:1.3em;line-height:1.3em;display:none;}
+
+.sp_main_flag {padding:1px 3px;background:#000;color:#777;cursor:pointer;border:1px solid #888;}
+.sp_main_flag.bit_main2 {background:#3c2899;color:yellow;}
 </style>
 
 <div class="local_ov01 local_ov">
@@ -250,13 +253,14 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
             for ($j=0; $row1=sql_fetch_array($rs1); $j++) {
                 // print_r2($row1);
                 $row1['bit_main_class'] = $row1['bit_main_yn'] ? 'bit_main' : ''; // 대표제품 색상
+                $row1['bit_main_class2'] = $row1['bit_main_yn'] ? 'bit_main2' : ''; // 대표제품 색상
                 $len = strlen($row1['bit_reply'])/2+1;
                 $row1['len'] = '<span class="btn_number">'.$len.'</span>';
                 for ($k=2; $k<$len; $k++) { $row1['nbsp'] .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; } // 들여쓰기공백
                 $row['parts_list'][] = '<div class="div_part" bom_idx="'.$row1['bom_idx'].'" bit_idx="'.$row1['bit_idx'].'">
                                             <span class="span_bom_part_no '.$row1['bit_main_class'].' font_size_7 font_color_white">'.$row1['nbsp'].$row1['len'].$row1['bom_part_no'].'</span>
+                                            <spna class="sp_main_flag '.$row1['bit_main_class2'].' font_size_8">대표제품</spna>
                                             <span class="span_bom_name">'.$row1['bom_name'].'</span>
-                                            <spna class="sp_main_flag font_size_8">MAIN</spna>
                                             <span class="span_bom_type font_size_7">'.$g5['set_bom_type_value'][$row1['bom_type']].'</span>
                                             <span class="span_cst_name font_size_8">'.$row1['cst_name'].'</span>
                                             <span class="span_bom_price font_size_8">'.number_format($row1['bom_price']).'원</span>
@@ -387,19 +391,26 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
 
 <script>
 // 대표제품 
-$(document).on('click','.btn_number',function(e){
-    if(confirm('선택하신 항목을 대표제품으로 변경하시겠습니까?')) {
+$(document).on('click','.sp_main_flag',function(e){
+    var main_flag = 'on';
+    if($(this).hasClass('bit_main2')) main_flag = 'off';
+    else main_flag = 'on';
+    // alert(main_flag);return;
+    var msg = main_flag == 'on' ? '선택하신 항목을 대표제품으로 변경하시겠습니까?' : '선택하신 항목의 대표제품 설정을 해제하시겠습니까?';
+
+    if(confirm(msg)) {
         var bom_idx = $(this).closest('.div_part').attr('bom_idx');
         var bit_idx = $(this).closest('.div_part').attr('bit_idx');
-        console.log(bom_idx+'/'+bit_idx);
+        // console.log(bom_idx+'/'+bit_idx);
+        // return false;
         //-- 디버깅 Ajax --//
         $.ajax({
             url:g5_user_admin_url+'/ajax/bom_item.json.php',
-            data:{"aj":"c1","bom_idx":bom_idx,"bit_idx":bit_idx},
+            data:{"aj":"c1","bom_idx":bom_idx,"bit_idx":bit_idx,"main_flag":main_flag},
             dataType:'json', 
             timeout:10000, 
             success:function(res){
-                // alert(res);
+                // alert(res.main_flag);
                 self.location.reload();
             },
             error:function(req) {
