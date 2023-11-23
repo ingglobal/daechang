@@ -31,6 +31,18 @@ $mb_nick = isset($_POST['mb_nick']) ? trim(strip_tags($_POST['mb_nick'])) : '';
 
 if ($msg = valid_mb_nick($mb_nick))     alert($msg, "", true, true);
 
+if($_POST['mb_8'] != null){
+    $chk_sql = " SELECT COUNT(*) AS cnt FROM {$g5['member_table']} 
+                        WHERE mb_8 = '{$_POST['mb_8']}' 
+                            AND mb_leave_date = '' 
+                            AND mb_intercept_date = '' 
+                            AND mb_7 = 'ok' 
+                            AND mb_id != '{$_POST['mb_id']}' ";
+    $chk_res = sql_fetch($chk_sql);
+    if($chk_res['cnt'])
+        alert('이 작업자번호를 사용하고 있는 작업자가 이미 존재합니다.\\n중복되지 않는 작업자번호로 등록해 주세요.');
+}
+
 $sql_common = "  mb_name = '{$_POST['mb_name']}',
                  mb_nick = '{$mb_nick}',
                  mb_email = '{$mb_email}',
@@ -49,6 +61,7 @@ $sql_common = "  mb_name = '{$_POST['mb_name']}',
                  mb_5 = '{$_POST['mb_5']}',
                  mb_6 = '{$_POST['mb_6']}',
                  mb_7 = '{$_POST['mb_7']}',
+                 mb_8 = '{$_POST['mb_8']}',
                  mb_9 = '{$_POST['mb_9']}',
                  mb_10 = '{$_POST['mb_10']}'
 ";

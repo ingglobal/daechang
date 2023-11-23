@@ -10,10 +10,13 @@ $sql_common = " FROM {$g5['member_table']} AS mb
 
 $where = array();
 $where[] = " mb_level = 4 ";   // 디폴트 검색조건
+// 탈퇴 및 차단되지 않는 멤버만 표시
+$where[] = " mb_leave_date = '' ";   // 탈퇴되지 않은 맴법
+$where[] = " mb_intercept_date = '' ";   // 차단되지 않은 맴법
 
 // 해당 업체만
 $where[] = " mb_4 = '".$_SESSION['ss_com_idx']."' ";
-$where[] = " mb_9 = '' ";
+$where[] = " mb_7 = 'ok' "; // 현장작업자
 
 // // 생산팀관리자가 접속할 경우 관리권한이 없는 회원만 관리가능
 // if($member['mb_9'] == 'admin_production') {
@@ -47,18 +50,23 @@ $sql_group = " GROUP BY mb.mb_id ";
 
 
 if (!$sst) {
-    $sst = "mb_datetime";
-    $sod = "desc";
+    $sst = "mb_8";
+    $sod = "";
 }
 
-$sql_order = " order by {$sst} {$sod} ";
+if (!$sst2) {
+    $sst2 = ", mb_datetime";
+    $sod2 = "desc";
+}
+
+$sql_order = " order by {$sst} {$sod} {$sst2} {$sod2} ";
 
 $sql = " SELECT count(*) AS cnt FROM (select cmm_idx as cnt {$sql_common} {$sql_search} {$sql_group}) AS db1 ";
 $row = sql_fetch($sql,1);
 $total_count = $row['cnt'];
 //print_r3($sql).'<br>';
 
-$rows = $config['cf_page_rows'];
+$rows = 200;$config['cf_page_rows'];
 $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
 if ($page < 1) $page = 1; // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
@@ -66,7 +74,7 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
 $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목록</a>';
 
-$g5['title'] = '사원관리';
+$g5['title'] = '작업자관리';
 include_once('./_head.php');
 
 $sql = "select mb.*, cmm.com_idx, cmm.cmm_title 
@@ -76,7 +84,7 @@ $sql = "select mb.*, cmm.com_idx, cmm.cmm_title
 // print_r3($sql);
 $result = sql_query($sql);
 
-$colspan = 16;
+$colspan = 8;
 ?>
 
 <div class="local_ov01 local_ov">
@@ -100,14 +108,15 @@ $colspan = 16;
 </form>
 
 <div class="local_desc01 local_desc" style="display:no ne;">
-    <p>생산직 작업자 등록 엑셀 표준양식은 구글시트를 참고하세요. <a href="https://docs.google.com/spreadsheets/d/1QoZpIhkXd9mAm89F28xQg-752WWm-3wa6NKxmvVJWMw/edit?usp=sharing" target="_blank">[바로가기]</a></p>
-    <p>임직원 등록 엑셀 표준양식은 구글시트를 참고하세요. <a href="https://docs.google.com/spreadsheets/d/1TaG-G8mplyXvSHdTOqA0go1MOj-LfcdpQ8GTrKxVI-U/edit?usp=sharing" target="_blank">[바로가기]</a></p>
+    <p>동일한 숫자의 작업자 번호가 있으면 그 번호는 저장되지 않습니다.</p>
 </div>
 
 
-<form name="fmemberlist" id="fmemberlist" action="./employee_list_update.php" onsubmit="return fmemberlist_submit(this);" method="post">
+<form name="fmemberlist" id="fmemberlist" action="./worker_list_update.php" onsubmit="return fmemberlist_submit(this);" method="post" autocomplete="off">
 <input type="hidden" name="sst" value="<?php echo $sst ?>">
 <input type="hidden" name="sod" value="<?php echo $sod ?>">
+<input type="hidden" name="sst2" value="<?php echo $sst2 ?>">
+<input type="hidden" name="sod2" value="<?php echo $sod2 ?>">
 <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
 <input type="hidden" name="stx" value="<?php echo $stx ?>">
 <input type="hidden" name="page" value="<?php echo $page ?>">
@@ -123,13 +132,12 @@ $colspan = 16;
             <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
         </th>
         <th scope="col"><?php echo subject_sort_link('mb_name') ?>이름</a></th>
-        <th scope="col"><?php echo subject_sort_link('cmm_title') ?>직함</a></th>
-        <th scope="col"><?=($member['mb_manager_yn'])?'업체명':'사원번호'?></a></th>
+        <th scope="col"><?php echo subject_sort_link('mb_8') ?>작업자번호</a></th>
         <th scope="col"><?php echo subject_sort_link('mb_id') ?>아이디</a></th>
         <th scope="col">휴대폰</th>
         <th scope="col">이메일</th>
         <th scope="col" style="width:100px;"><?php echo subject_sort_link('mb_datetime', '', 'desc') ?>등록일</a></th>
-        <th scope="col">관리</th>
+        <!-- <th scope="col">관리</th> -->
     </tr>
     <tr>
     </tr>
@@ -164,15 +172,16 @@ $colspan = 16;
             <input type="checkbox" name="chk[]" value="<?php echo $i ?>" id="chk_<?php echo $i ?>">
         </td>
         <td class="td_mb_name"><?php echo get_text($row['mb_name']); ?></td>
-        <td class="td_cmm_title"><?php echo $g5['set_mb_ranks_value'][$row['cmm']['cmm_title']] ?></td>
-        <td class="td_com_name"><?=($member['mb_manager_yn'])?$row['cmm']['com_name']:$row['mb_5']?></td> <!-- 업체명/사원번호 -->
+        <td class="td_mb_8" style="width:70px;">
+            <input type="text" name="mb_8[<?=$i?>]" value="<?=$row['mb_8']?>" class="frm_input" onclick="chk_Number(this);" style="width:50px;text-align:right;">    
+        </td> <!-- 작업자번호 -->
         <td class="td_mb_id"><?php echo $row['mb_id']; ?></td>
         <td class="td_hp"><?php echo get_text($row['mb_hp']); ?></td>
         <td class="td_mb_email"><?php echo $row['mb_email']; ?></td>
         <td class="td_date"><?php echo substr($row['mb_datetime'],2,8); ?></td>
-        <td class="td_mng td_mng_s">
-			<?php echo $s_mod ?><!-- 수정 -->
-		</td>
+        <!-- td class="td_mng td_mng_s">
+			<?php echo $s_mod ?>수정 
+		</td-->
     </tr>
 
     <?php
@@ -185,18 +194,8 @@ $colspan = 16;
 </div>
 
 <div class="btn_fixed_top">
-    <?php if (!auth_check($auth[$sub_menu],"r,w",1)) { ?>
-       <a href="javascript:" id="btn_excel_upload2" class="btn btn_02">임직원엑셀등록</a>
-       <a href="javascript:" id="btn_excel_upload" class="btn btn_02" style="margin-right:50px;">작업자엑셀등록</a>
-    <?php } ?>
-    <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02" style="display:none;">
-    <?php if (!auth_check($auth[$sub_menu],'w',1)) { //($member['mb_manager_yn']) { ?>
-    <input type="submit" name="act_button" value="선택탈퇴" onclick="document.pressed=this.value" class="btn btn_02">
-    <?php } ?>
-    <?php if (!auth_check($auth[$sub_menu],'w',1)) { ?>
-    <a href="./employee_form.php" id="member_add" class="btn btn_01">추가하기</a>
-    <?php } ?>
-
+    <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02" style="">
+    <!-- <input type="submit" name="act_button" value="선택탈퇴" onclick="document.pressed=this.value" class="btn btn_02"> -->
 </div>
 </form>
 

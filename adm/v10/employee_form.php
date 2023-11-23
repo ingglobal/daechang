@@ -288,6 +288,10 @@ this.form.mb_intercept_date.value=this.form.mb_intercept_date.defaultValue; }">
             <script>$('#mb_10').val('<?=(($mb['mb_10'])?$mb['mb_10']:'')?>');</script>
         </td>
     </tr>
+    <tr>
+        <th scope="row">작업자번호</th>
+        <td colspan="3"><input type="text" name="mb_8" value="<?php echo $mb['mb_8'] ?>" id="mb_8" class="frm_input" size="4" onclick="chk_Number(this);" style="text-align:right;"></td>
+    </tr>
     <?php if($member['mb_level'] || $mb['mb_8'] == 'admin'){ ?>
     <tr>
         <th scope="row">메뉴권한</th>
