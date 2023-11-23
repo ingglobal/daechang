@@ -262,12 +262,30 @@ this.form.mb_intercept_date.value=this.form.mb_intercept_date.defaultValue; }">
     <tr style="display:<?php if(!$member['mb_manager_yn']) echo 'none';?>;">
         <th scope="row"><label for="mb_nick">닉네임<strong class="sound_only">필수</strong></label></th>
         <td><input type="text" name="mb_nick" value="<?php echo $mb['mb_nick'] ?>" id="reg_mb_nick" required class="required frm_input" size="15"  maxlength="20" <?php if(auth_check($auth[$sub_menu],'d',1)) echo 'readonly';?>></td>
-        <th scope="row"><label for="cmm_type">사원유형</label></th>
+        <th scope="row"><label for="cmm_type">운송기사여부</label></th>
         <td>
             <select name="cmm_type" id="cmm_type">
                 <?=$g5['set_cmm_type_value_options']?>
             </select>
             <script>$('#cmm_type').val('<?=(($row['cmm']['cmm_type'])?$row['cmm']['cmm_type']:'normal')?>');</script>
+        </td>
+    </tr>
+    <tr>
+        <th scope="row"><label for="mb_7">현장작업자여부</label></th>
+        <td>
+            <select name="mb_7" id="mb_7">
+                <option value="">아니오</option>
+                <option value="ok">현장작업자</option>
+            </select>
+            <script>$('#mb_7').val('<?=(($mb['mb_7'])?$mb['mb_7']:'')?>');</script>
+        </td>
+        <th scope="row"><label for="mb_7">외국인여부</label></th>
+        <td>
+            <select name="mb_10" id="mb_10">
+                <option value="">내국인</option>
+                <option value="ok">외국인</option>
+            </select>
+            <script>$('#mb_10').val('<?=(($mb['mb_10'])?$mb['mb_10']:'')?>');</script>
         </td>
     </tr>
     <?php if($member['mb_level'] || $mb['mb_8'] == 'admin'){ ?>

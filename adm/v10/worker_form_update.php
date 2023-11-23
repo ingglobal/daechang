@@ -1,5 +1,5 @@
 <?php
-$sub_menu = "940110";
+$sub_menu = "940112";
 include_once("./_common.php");
 include_once(G5_LIB_PATH."/register.lib.php");
 include_once(G5_LIB_PATH.'/thumbnail.lib.php');
@@ -48,9 +48,7 @@ $sql_common = "  mb_name = '{$_POST['mb_name']}',
                  mb_1 = '{$_POST['mb_1']}',
                  mb_5 = '{$_POST['mb_5']}',
                  mb_6 = '{$_POST['mb_6']}',
-                 mb_7 = '{$_POST['mb_7']}',
-                 mb_9 = '{$_POST['mb_9']}',
-                 mb_10 = '{$_POST['mb_10']}'
+                 mb_9 = '{$_POST['mb_9']}'
 ";
 
 if ($w == '') {
