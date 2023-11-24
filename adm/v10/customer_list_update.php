@@ -32,7 +32,7 @@ else if($w == 'd') {
         sql_query($sql,1);
 
         $csql = " UPDATE {$g5['customer_member_table']} SET ctm_status = 'trash' WHERE cst_idx = '{$_POST['cst_idx'][$k]}' ";
-        sql_query)$csql,1);
+        sql_query($csql,1);
     }
 }
 
