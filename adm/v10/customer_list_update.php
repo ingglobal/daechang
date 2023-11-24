@@ -30,6 +30,9 @@ else if($w == 'd') {
         // 레코드 삭제
         $sql = " UPDATE {$g5['customer_table']} SET cst_status = 'trash' WHERE cst_idx = '{$_POST['cst_idx'][$k]}' ";
         sql_query($sql,1);
+
+        $csql = " UPDATE {$g5['customer_member_table']} SET ctm_status = 'trash' WHERE cst_idx = '{$_POST['cst_idx'][$k]}' ";
+        sql_query)$csql,1);
     }
 }
 
