@@ -50,14 +50,10 @@ $sql_group = " GROUP BY mb.mb_id ";
 
 
 if (!$sst) {
-    $sst = "mb_8";
+    $sst = "CAST(mb_8 AS SIGNED)";
     $sod = "";
 }
 
-if (!$sst2) {
-    $sst2 = ", mb_datetime";
-    $sod2 = "desc";
-}
 
 $sql_order = " order by {$sst} {$sod} {$sst2} {$sod2} ";
 

@@ -128,6 +128,8 @@ $colspan = 16;
         <th scope="col"><?php echo subject_sort_link('mb_id') ?>아이디</a></th>
         <th scope="col">휴대폰</th>
         <th scope="col">이메일</th>
+        <th scope="col" style="width:100px;"><?php echo subject_sort_link('mb_leave_date', '', 'desc') ?>탈퇴일</a></th>
+        <th scope="col" style="width:100px;"><?php echo subject_sort_link('mb_intercept_date', '', 'desc') ?>차단일</a></th>
         <th scope="col" style="width:100px;"><?php echo subject_sort_link('mb_datetime', '', 'desc') ?>등록일</a></th>
         <th scope="col">관리</th>
     </tr>
@@ -169,6 +171,8 @@ $colspan = 16;
         <td class="td_mb_id"><?php echo $row['mb_id']; ?></td>
         <td class="td_hp"><?php echo get_text($row['mb_hp']); ?></td>
         <td class="td_mb_email"><?php echo $row['mb_email']; ?></td>
+        <td class="td_date"><?php echo substr($row['mb_leave_date'],2,8); ?></td>
+        <td class="td_date"><?php echo substr($row['mb_intercept_date'],2,8); ?></td>
         <td class="td_date"><?php echo substr($row['mb_datetime'],2,8); ?></td>
         <td class="td_mng td_mng_s">
 			<?php echo $s_mod ?><!-- 수정 -->
