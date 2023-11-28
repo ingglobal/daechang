@@ -54,6 +54,10 @@ if (!$sst) {
     $sod = "";
 }
 
+if (!$sst2) {
+    $sst2 = ", mb_datetime";
+    $sod2 = "desc";
+}
 
 $sql_order = " order by {$sst} {$sod} {$sst2} {$sod2} ";
 
