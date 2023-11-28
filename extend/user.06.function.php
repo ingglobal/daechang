@@ -1132,6 +1132,53 @@ function get_bom_reply($idx, $parent, $depth) {
 }
 }
 
+//인수값이 없으면 1차분류의 생성가능한 다음 bct_idx를 반환
+//인수값이 있으면 그 인수값의 자식으로 생성가능한 다음 bct_idx를 반환
+if(!function_exists('get_next_bct')){
+function get_next_bct($idx='', $child=0) {
+    $cats = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+    $total_idx = count($cats) - 1;
+    $fix_idx = '';
+    $bct_idx = $idx;
+
+    if ($idx === '') {
+        $bct_idx = '10';
+    } else if ($idx !== '' && $child){
+        //인수로 홀수자리의 코드가 들어오면 강제로 끝에 0을 붙이자
+        if(strlen($idx)%2 != 0)
+            $bct_idx = $idx.'0';
+        $bct_idx = $bct_idx.'10';
+    } else {
+        //인수로 홀수자리의 코드가 들어오면 강제로 끝에 0을 붙이자
+        if(strlen($bct_idx)%2 != 0)
+            $bct_idx = $bct_idx.'0';
+        $fix_idx = substr($bct_idx, 0, strlen($bct_idx)-2);
+        
+        $front_char = $bct_idx[strlen($bct_idx) - 2];
+        $front_idx = array_search($front_char,$cats);
+        $end_char = $bct_idx[strlen($bct_idx) - 1];
+        $end_idx = array_search($end_char,$cats);
+        $front_ja = null;
+        $end_ja = '';
+
+        if($end_idx < $total_idx){
+            $front_ja = $front_char;
+            $end_ja = $cats[$end_idx + 1];
+            $bct_idx = $fix_idx.$front_ja.$end_ja;
+        } else {
+            $end_ja = $cats[0];
+            if ($front_idx < $total_idx) $front_ja = $cats[$front_idx + 1];
+            
+            if($front_ja == null) $bct_idx = null;
+            else {
+                $bct_idx = $fix_idx.$front_ja.$end_ja;
+            }
+        }
+    }
+
+    return $bct_idx;
+}
+}
 
 // Get the pressure and temperature arrays for specific machine. 
 if(!function_exists('get_graph_array')){

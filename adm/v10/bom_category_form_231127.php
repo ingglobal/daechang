@@ -3,7 +3,7 @@ $sub_menu = "940120";
 include_once('./_common.php');
 auth_check_menu($auth, $sub_menu, "w");
 
-$bct_idx = isset($_GET['bct_id']) ? preg_replace('/[^0-9a-z]/i', '', $_GET['bct_id']) : '';
+$bct_idx = isset($_GET['bct_idx']) ? preg_replace('/[^0-9a-z]/i', '', $_GET['bct_idx']) : '';
 $bct = array(
     'bct_name'=>'',
     'bct_order'=>''
@@ -16,33 +16,26 @@ if ($w == "")
     $len = strlen($bct_idx);
     if ($len == 10)
         alert("분류를 더 이상 추가할 수 없습니다.\\n\\n5단계 분류까지만 가능합니다.");
-    //1단계
-    // echo $bct_idx;exit;
-    if(!$len){
-        $sql = " SELECT bct_idx FROM {$g5['bom_category_table']} 
-                    WHERE bct_idx REGEXP '^.{2}$' 
-                    ORDER BY bct_idx 
-                    DESC LIMIT 1 ";
-        $res = sql_fetch($sql);
-        // echo $sql;exit;
-        $next_bct_idx = $res['bct_idx'] ? get_next_bct($res['bct_idx']) : get_next_bct();
-        if(!$next_bct_idx)
-            alert('1단계 분류를 더이상 추가할 수 없습니다.');
-        $subid = $next_bct_idx;
+
+    $len2 = $len + 1;
+
+    $sql = "SELECT MAX(SUBSTRING(bct_idx,$len2,2)) as max_subid
+            FROM {$g5['bom_category_table']}
+            WHERE SUBSTRING(bct_idx,1,$len) = '$bct_idx' AND com_idx = '".$_SESSION['ss_com_idx']."'
+    ";
+    $row = sql_fetch($sql);
+    echo get_next_bct('29');exit;
+    $subid = base_convert($row['max_subid'], 36, 10);
+    $subid += 36;
+    if ($subid >= 36 * 36)
+    {
+        //alert("분류를 더 이상 추가할 수 없습니다.");
+        // 빈상태로
+        $subid = "  ";
     }
-    //2단계이상
-    else{
-        $sql = " SELECT bct_idx FROM {$g5['bom_category_table']} 
-                    WHERE bct_idx LIKE '".$bct_idx."__'
-                    ORDER BY bct_idx 
-                    DESC LIMIT 1 ";
-        $res = sql_fetch($sql);
-        // echo $sql;exit;
-        $next_bct_idx = $res['bct_idx'] ? get_next_bct($res['bct_idx']) : get_next_bct($bct_idx, 1);
-        if(!$next_bct_idx)
-            alert('1단계 분류를 더이상 추가할 수 없습니다.');
-        $subid = $next_bct_idx;
-    }
+    $subid = base_convert($subid, 10, 36);
+    $subid = substr("00" . $subid, -2);
+    $subid = $bct_idx . $subid;
 
     $sublen = strlen($subid);
 

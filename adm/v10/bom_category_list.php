@@ -47,7 +47,7 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
 if (!$sst)
 {
-    $sst  = "convert(bct_idx, decimal)";
+    $sst  = "bct_idx";
     $sod = "asc";
 }
 $sql_order = "order by $sst $sod";
@@ -167,7 +167,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
 </div>
 
 <div class="btn_fixed_top">
-    <?php if($member['mb_level'] >= 10){ ?>
+    <?php if(false){ //($member['mb_level'] >= 10){ ?>
     <input type="submit" name="act_button" value="분류환경변수설정반영" onclick="document.pressed=this.value" class="btn_02 btn">
     <?php } ?>
     <input type="submit" name="act_button2" value="일괄수정" class="btn_02 btn">
