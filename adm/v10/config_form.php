@@ -151,6 +151,13 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
 			</td>
 		</tr>
 		<tr>
+			<th scope="row">거래처상태값 설정</th>
+			<td colspan="3">
+				<?php echo help('ok=정상,pending=대기,trash=삭제,hide=숨김,prohibit=거래금지업체') ?>
+				<input type="text" name="set_cst_status" value="<?php echo $g5['setting']['set_cst_status']; ?>" class="frm_input" style="width:60%;">
+			</td>
+		</tr>
+		<tr>
 			<th scope="row">업체상태값 설정</th>
 			<td colspan="3">
 				<?php echo help('ok=정상,pending=대기,trash=휴지통,delete=삭제,hide=숨김,prohibit=영업금지업체') ?>
