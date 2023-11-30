@@ -168,9 +168,10 @@ $qstr .= '&sca='.$sca.'&ser_cod_type='.$ser_cod_type; // 추가로 확장해서 
                         , SUM(itm_value) AS itm_sum
                     FROM {$g5['item_table']} itm
                     LEFT JOIN {$g5['bom_table']} bom ON itm.bom_idx = bom.bom_idx
-                    WHERE plt_idx = '{$row['plt_idx']}'
+                    WHERE itm.plt_idx = '{$row['plt_idx']}'
                     GROUP BY itm.bom_idx
         ";
+        // echo $itm_sql."<br>";
         $itm_res = sql_query($itm_sql,1);
         // print_r2($row);
         $bg = 'bg'.($i%2);

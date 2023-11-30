@@ -45,6 +45,8 @@ $html_title = ($w=='c')?'복제':$html_title;
 $g5['title'] = '생산계획 '.$html_title;
 
 $qstr .= ($calendar)?'&start_date='.$first_date.'&end_date='.$last_date:'';
+$qstr .= ($st_date)?'&st_date='.$st_date:'';
+$qstr .= ($en_date)?'&en_date='.$en_date:'';
 
 $readonly = ' readonly';
 $required = ' required';
@@ -67,12 +69,13 @@ include_once('./_head.php');
 <input type="hidden" name="sms_pri_idx" value="">
 <input type="hidden" name="sms_pri_mmw" value="">
 <input type="hidden" name="sms_pri_memo" value="">
+<input type="hidden" name="st_date" value="<?=$st_date?>">
+<input type="hidden" name="en_date" value="<?=$en_date?>">
 <?php if($calendar){ ?>
 <input type="hidden" name="calendar" value="1">
 <input type="hidden" name="start_date" value="<?=$start_date?>">
 <input type="hidden" name="end_date" value="<?=$end_date?>">
 <?php } ?>
-
 <div class="local_desc01 local_desc" style="display:no ne;">
     <p>'지시량' 항목은 수정 불가능합니다.(최초 등록 시에만 가능함) 하단 리스트중에서 최상위 완제품의 지시수량을 변경해 주시면 자동으로 계산됩니다.</p>
     <p>상단의 [초기화] 버튼을 클릭하면 완제품 기준으로 모든 정보가 초기화됩니다. 초기 상태에서 새롭게 설정하시면 됩니다.</p>

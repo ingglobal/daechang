@@ -111,4 +111,6 @@ else if($w == 'u'){
 }
 
 // exit;
+$qstr .= ($st_date)?'&st_date='.$st_date:'';
+$qstr .= ($en_date)?'&en_date='.$en_date:'';
 goto_url('./production_form.php?'.$qstr.'&w=u&prd_idx='.$prd_idx, false);
