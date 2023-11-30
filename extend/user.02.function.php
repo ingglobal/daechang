@@ -2551,4 +2551,48 @@ function key_array_shuffle($arr){
 }
 
 
+// 업체명 변경
+if(!function_exists('change_com_names')){
+function change_com_names($com_idx,$new_com_name){
+	global $g5;
+
+	if(!$com_idx||!$new_com_name)
+		return;
+
+	$com = get_table_meta('company','com_idx',$com_idx);
+
+	// I intended to change keys info of order_table. cart_table, sales.
+	// But it could break data integrity and have to change all data each time changing.
+	// So trying to join tables.
+
+	// Change all board info if needed.
+	echo 55;
+
+
+	return true;
+}
+}
+
+// 거래처 변경
+if(!function_exists('change_cst_names')){
+function change_cst_names($cst_idx,$new_cst_name){
+	global $g5;
+
+	if(!$cst_idx||!$new_cst_name)
+		return;
+
+	$com = get_table_meta('customer','cst_idx',$cst_idx);
+
+	// I intended to change keys info of order_table. cart_table, sales.
+	// But it could break data integrity and have to change all data each time changing.
+	// So trying to join tables.
+
+	// Change all board info if needed.
+	echo 55;
+
+
+	return true;
+}
+}
+
 ?>

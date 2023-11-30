@@ -12,6 +12,8 @@ auth_check($auth[$sub_menu], 'w');
 
 check_admin_token();
 
+$tpy = ($_POST['act_button'] == '선택재고입고')?'input':'delete';
+
 foreach($_POST['chk'] as $bom_idx_v) {
     if(!$input_cnt[$bom_idx_v]){
         alert('입고량을 입력해 주세요.');

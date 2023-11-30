@@ -187,7 +187,8 @@ if ($i == 0)
 
 <div class="btn_fixed_top">
     <?php if (!auth_check($auth[$sub_menu],'w')) { ?>
-    <input type="submit" name="act_button" value="선택제품입고" onclick="document.pressed=this.value" class="btn wg_btn_success">
+    <input type="submit" name="act_button" value="선택재고입고" onclick="document.pressed=this.value" class="btn wg_btn_success">
+    <input type="submit" name="act_button" value="선택재고차감" onclick="document.pressed=this.value" class="btn wg_btn_danger">
     <?php } ?>
 </div>
 </form>

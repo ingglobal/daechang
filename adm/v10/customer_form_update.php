@@ -40,6 +40,7 @@ if($cst['cst_name'] != $cst_name) {
 	$cst_names = $cst['cst_names'].', '.$cst_name.'('.substr(G5_TIME_YMD,2).'~)';
     if($w == 'u')
         change_cst_names($cst_idx,$cst['cst_name']);
+        // change_cst_nazmes($cst_idx,$cst['cst_name']);
 }
 else {
 	$cst_names = $_POST['cst_names'];
