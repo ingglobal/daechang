@@ -145,7 +145,7 @@ $colspan = 8;
     <th scope="col">차종</th>
     <th scope="col">품명</th>
     <th scope="col">품번</th>
-    <th scope="col">입고수량</th>
+    <th scope="col">수량</th>
     <th scope="col">현재고량</th>
 </tr>
 </thead><!--//thead-->

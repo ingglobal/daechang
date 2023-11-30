@@ -17,7 +17,7 @@ $ctm_sql = " SELECT cst_idx, ctm_title FROM {$g5['customer_member_table']}
 ";    
 $cst = sql_fetch($ctm_sql);
 //협력업체idx != 대창공업idx && 업체직함 != '기사' => '공급업체담당자'
-$provider_member_yn = ($member['mb_8'] && $member['mb_8'] != $_SESSION['ss_com_idx'] && $cst['ctm_title'] != '13') ? true : false;
+$provider_member_yn = ($member['mb_6'] && $member['mb_6'] != $_SESSION['ss_com_idx'] && $cst['ctm_title'] != '13') ? true : false;
 
 if($mtyp == 'mto'){
     $sql_common = " FROM {$g5['material_order_table']} mto
@@ -174,7 +174,7 @@ $colspan = ($provider_member_yn) ? $colspan - 1 : $colspan;
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get">
     <label for="sfl" class="sound_only">검색대상</label>
     <select name="sfl" id="sfl">
-        <?php if($member['mb_4'] == $_SESSION['ss_com_idx'] && $member['mb_8'] == ''){ ?>
+        <?php if($member['mb_4'] == $_SESSION['ss_com_idx'] && $member['mb_6'] == ''){ ?>
             <option value="cst_name"<?php echo get_selected($_GET['sfl'], "cst_name"); ?>>협력사명</option>
         <?php } ?>
         <?php if($mtyp == 'moi'){ ?>
@@ -197,7 +197,7 @@ $colspan = ($provider_member_yn) ? $colspan - 1 : $colspan;
 
     <ul class="view_type">
         <li><a href="<?=(($mtyp == 'moi')?'javascript:':G5_USER_ADMIN_URL.'/material_order_list.php')?>" class="<?=(($mtyp == 'moi')?'focus':'')?>">개별관리</a></li>
-        <?php if($member['mb_4'] == $_SESSION['ss_com_idx'] && !$member['mb_8']){ ?>
+        <?php if($member['mb_4'] == $_SESSION['ss_com_idx'] && !$member['mb_6']){ ?>
         <li><a href="<?=(($mtyp == 'mto')?'javascript:':G5_USER_ADMIN_URL.'/material_order_list.php?mtyp=mto')?>" class="<?=(($mtyp == 'mto')?'focus':'')?>">묶음관리</a></li>
         <?php } ?>
     </ul>
@@ -429,7 +429,7 @@ $colspan = ($provider_member_yn) ? $colspan - 1 : $colspan;
 </div>
 
 <div class="btn_fixed_top">
-    <?php if (!auth_check($auth[$sub_menu],'w') && !$member['mb_8']) { ?>
+    <?php if (!auth_check($auth[$sub_menu],'w') && !$member['mb_6']) { ?>
     <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02">
     <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn btn_02">
         <?php if($mtyp == 'moi'){ ?>

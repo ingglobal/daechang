@@ -48,6 +48,7 @@ else {
 
 
 $sql_common = "	cst_name = '".addslashes($_POST['cst_name'])."'
+				, com_idx = '".$_SESSION['ss_com_idx']."'
                 , cst_names = '".addslashes($cst_names)."'
                 , cst_homepage = '{$_POST['cst_homepage']}'
                 , cst_type = '{$_POST['cst_type']}'
@@ -103,6 +104,9 @@ else if ($w=="d") {
 		// 자료 삭제
 		$sql = " UPDATE {$g5['customer_table']} SET cst_status = 'trash' WHERE cst_idx = $cst_idx ";
 		sql_query($sql,1);
+
+		$sql = " UPDATE {$g5['customer_member_table']} SET ctm_status = 'trash' WHERE cst_idx = $cst_idx ";
+		sql_query($sql,1);
 	}
 	
 	goto_url('./customer_list.php?'.$qstr, false);
@@ -135,11 +139,11 @@ for($i=0;$i<count($_FILES[$fle_type2.'_file']['name']);$i++) {
 	// 삭제인 경우
 	if (${$fle_type2.'_del'}[$i] == 1) {
 		if($mb_id) {
-			delete_jt_file(array("fle_db_table"=>"company", "fle_db_id"=>$cst_idx, "fle_type"=>$fle_type2, "fle_sort"=>$i, "fle_delete"=>1));
+			delete_jt_file(array("fle_db_table"=>"customer", "fle_db_id"=>$cst_idx, "fle_type"=>$fle_type2, "fle_sort"=>$i, "fle_delete"=>1));
 		}
 		else {
 			// fle_db_id를 던져서 바로 삭제할 수도 있고 $fle_db_table, $fle_db_id, $fle_token 를 던져서 삭제할 수도 있음
-			delete_jt_file(array("fle_db_table"=>"company"
+			delete_jt_file(array("fle_db_table"=>"customer"
 								,"fle_db_id"=>$cst_idx
 								,"fle_type"=>$fle_type2
 								,"fle_sort"=>$i
@@ -222,7 +226,7 @@ foreach($_REQUEST as $key => $value ) {
 	//-- 해당 테이블에 있는 필드 제외하고 테이블 prefix 로 시작하는 변수들만 업데이트 --//
 	if(!in_array($key,$db_fields) && substr($key,0,3)==$db_prefix) {
 		//echo $key."=".$_REQUEST[$key]."<br>";
-		meta_update(array("mta_db_table"=>"company","mta_db_id"=>$cst_idx,"mta_key"=>$key,"mta_value"=>$value));
+		meta_update(array("mta_db_table"=>"customer","mta_db_id"=>$cst_idx,"mta_key"=>$key,"mta_value"=>$value));
 	}
 }
 

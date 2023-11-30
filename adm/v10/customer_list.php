@@ -13,13 +13,14 @@ include_once('./_head.php');
 
 $sql_common = " FROM {$g5['customer_table']} AS cst 
                 LEFT JOIN {$g5['customer_member_table']} AS ctm ON ctm.cst_idx = cst.cst_idx AND ctm_status = 'ok'
-                LEFT JOIN {$g5['member_table']} AS mb ON mb.mb_id = ctm.mb_id AND mb_level >= 4
+                LEFT JOIN {$g5['member_table']} AS mb ON mb.mb_id = ctm.mb_id AND mb_level >= 4 AND mb_leave_date = '' AND mb_intercept_date = ''
 "; 
 
 //-- 업종 검색
 $sql_cst_type = ($ser_cst_type) ? " AND cst_type IN ('".$ser_cst_type."') " : "";
 
 $where = array();
+$where[] = " com_idx = '{$_SESSION['ss_com_idx']}' ";   // 디폴트 검색조건
 $where[] = " cst_status NOT IN ('trash','delete') ";   // 디폴트 검색조건
 //print_r3($member['mb_manager_yn']);
 if ($stx) {
@@ -31,7 +32,7 @@ if ($stx) {
             $where[] = " ({$sfl} = '{$stx}') ";
             break;
 		case ($sfl == 'mb_hp') :
-            $where[] = " REGEXP_REPLACE(mb_hp,'-','') LIKE '".preg_replace("/-/","",$stx)."' ";
+            $where[] = " REGEXP_REPLACE(mb_hp,'-','') LIKE '".preg_replace("/\-/","",$stx)."' ";
             break;
 		case ($sfl == 'mb_id_saler' || $sfl == 'mb_name_saler' ) :
             $where[] = " (mb_id_salers LIKE '%^{$stx}^%') ";

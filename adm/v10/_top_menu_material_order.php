@@ -10,7 +10,7 @@ if($member['mb_manager_yn']) {
     //                     <a href="./config_schedule.php" class="btn_top_menu '.$active_config_schedule.'">프로젝트일정</a>
     // ';
 }
-$ex_member_yn = ($member['mb_8'] && $member['mb_8'] != $_SESSION['ss_com_idx']) ? true : false;
+$ex_member_yn = ($member['mb_6'] && $member['mb_6'] != $_SESSION['ss_com_idx']) ? true : false;
 $g5['container_sub_title'] = ($ex_member_yn) ? '
 <h2 id="container_sub_title">
     '.$sub_title_list.'

@@ -147,7 +147,7 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
         <th scope="row"><label for="mb_password">비밀번호<?php echo $sound_only ?></label></th>
         <td>
             <?php echo help('비밀번호는 반드시 영문으로 시작해야하고 이 후 영문숫자 조합으로 6글자이상 입력해 주세요.') ?>
-            <?php if($w==''|| $member['mb_manager_yn'] || $member['mb_8'] == 'admin') { ?>
+            <?php if($w==''|| $member['mb_manager_yn'] || $member['mb_9'] == 'admin') { ?>
             <input type="password" name="mb_password" id="mb_password" <?php //echo $required_mb_password ?> class="frm_input <?php //echo $required_mb_password ?>" size="15" maxlength="20">
             <?php } else { ?>
             <span style="color:#aaa;">비밀번호 수정 불가</span>
@@ -292,7 +292,7 @@ this.form.mb_intercept_date.value=this.form.mb_intercept_date.defaultValue; }">
         <th scope="row">작업자번호</th>
         <td colspan="3"><input type="text" name="mb_8" value="<?php echo $mb['mb_8'] ?>" id="mb_8" class="frm_input" size="4" onclick="chk_Number(this);" style="text-align:right;"></td>
     </tr>
-    <?php if($member['mb_level'] || $mb['mb_8'] == 'admin'){ ?>
+    <?php if($member['mb_level'] || $mb['mb_9'] == 'admin'){ ?>
     <tr>
         <th scope="row">메뉴권한</th>
         <td colspan="3">

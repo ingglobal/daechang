@@ -26,7 +26,7 @@ $cont = '
 $cont_head = str_replace("\n", "", $cont_head);
 $cont = str_replace("\n", "", $cont);
 
-$customer_member_yn = (!$member['mb_8']) ? false : true;
+$customer_member_yn = (!$member['mb_6']) ? false : true;
 ?>
 <script src="<?=G5_USER_URL?>/temp/node_modules/gridstack/dist/gridstack-all.js"></script>
 <link href="<?=G5_USER_URL?>/temp/node_modules/gridstack/dist/gridstack.min.css" rel="stylesheet"/>

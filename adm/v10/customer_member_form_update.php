@@ -13,6 +13,22 @@ if(!$cst['cst_idx'])
 $cst = get_table_meta('customer','cst_idx',$cst['cst_idx']);
 //	print_r2($cst);
 
+$m_hp = preg_replace("/\-/","",$_POST['mb_hp']);
+
+// if ($w == '') {
+//     $chksql = " SELECT COUNT(mb_id) AS cnt, mb_id, mb_6 
+//                     FROM {$g5['member_table']}
+//                     WHERE REGEXP_REPLACE(mb_hp,'-','') = '{$m_hp}' 
+//                         AND mb_6 = '{$_POST['cst_idx']}'
+//                         AND mb_leave_date = ''
+//                         AND mb_intercept_date = ''
+//     ";
+//     $chkres = sql_fetch($chksql);
+//     if($chkres['cnt']){
+//         alert('이미 해당 휴대폰번호으로 등록된 담당자가 존재합니다.\n관리자에게 문의하시기 바랍니다. ');
+//     }
+// }
+
 
 // 회원정보
 $sql_common1 = " mb_name = '{$_POST['mb_name']}'
@@ -20,7 +36,7 @@ $sql_common1 = " mb_name = '{$_POST['mb_name']}'
                 , mb_email = '{$_POST['mb_email']}'
                 , mb_memo = '{$_POST['mb_memo']}'
                 , mb_4 = '".$_SESSION['ss_com_idx']."'
-                , mb_8 = '".$_POST['cst_idx']."'
+                , mb_6 = '".$_POST['cst_idx']."'
 ";
 
 // 업체담당자 테이블 정보
@@ -32,8 +48,8 @@ $sql_common2 = " cst_idx = '{$_POST['cst_idx']}'
 if ($w == '') {
     
     // 휴대폰 번호 or 이메일로 중복회원 체크 (중복회원이 있으면 회원정보 생성 안함)
-    //$mb1 = sql_fetch(" SELECT mb_id FROM {$g5['member_table']} WHERE REGEXP_REPLACE(mb_hp,'-','') = '".preg_replace("/-/","",$_POST['mb_hp'])."' ");
-    $msql = " SELECT mb_id FROM {$g5['member_table']} WHERE REGEXP_REPLACE(mb_hp,'-','') = '".preg_replace("/-/","",$_POST['mb_hp'])."' OR mb_email = '{$_POST['mb_email']}' ";
+    $mb1 = sql_fetch(" SELECT mb_id FROM {$g5['member_table']} WHERE REGEXP_REPLACE(mb_hp,'-','') = '".$m_hp."' AND mb_leave_date = '' AND mb_intercept_date = '' ");
+    // $msql = " SELECT mb_id FROM {$g5['member_table']} WHERE REGEXP_REPLACE(mb_hp,'-','') = '".preg_replace("/-/","",$_POST['mb_hp'])."' OR mb_email = '{$_POST['mb_email']}' ";
     
     //echo $msql;exit;
 
@@ -59,9 +75,9 @@ if ($w == '') {
         $mb_no = sql_insert_id();
     }
     //echo $mb_id;exit;
-    $cmrslt = sql_fetch(" SELECT COUNT(*) AS same_cnt FROM {$g5['customer_member_table']} WHERE mb_id = '{$mb_id}' AND cst_idx = '{$_POST['cst_idx']}' ");
+    $cmrslt = sql_fetch(" SELECT COUNT(*) AS same_cnt FROM {$g5['customer_member_table']} WHERE mb_id = '{$mb_id}' AND cst_idx = '{$_POST['cst_idx']}' AND ctm_status = 'ok' ");
     if($cmrslt['same_cnt']){
-        alert('해당 업체에 동일한 연락처정보를 가진 사원이 이미 존재합니다.');
+        alert('해당 업체에 동일한 연락처정보를 가진 담당자가 이미 존재합니다.');
     }else{
 
         $sql = " INSERT INTO {$g5['customer_member_table']} SET
