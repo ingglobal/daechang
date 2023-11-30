@@ -107,7 +107,7 @@ include_once('./_head.sub.php');
 			<tr>
 				<th scope="row">이메일</th>
 				<td>
-                    <input type="text" name="mb_email" value="<?=$mb['mb_email']?>" required class="frm_input required" style="width:100%;">
+                    <input type="text" name="mb_email" value="<?=$mb['mb_email']?>" class="frm_input" style="width:100%;">
 				</td>
 			</tr>
 			<tr>
@@ -168,11 +168,11 @@ function form01_check(f) {
 		return false;
 	}
 
-    if (f.mb_email.value=='') {
-		alert("이메일을 입력하세요.");
-		f.mb_email.select();
-		return false;
-	}
+    // if (f.mb_email.value=='') {
+	// 	alert("이메일을 입력하세요.");
+	// 	f.mb_email.select();
+	// 	return false;
+	// }
 
     return true;
 }
