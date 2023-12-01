@@ -172,6 +172,7 @@ $qstr .= $qstr.'&ser_trm_idxs='.$ser_trm_idxs.'&ser_cst_type='.$ser_cst_type.'&s
 		// 메타 분리
         if($row['cst_namagers_info']) {
             $pieces = explode(',', $row['cst_namagers_info']);
+            //print_r2($pieces);
             for ($j1=0; $j1<sizeof($pieces); $j1++) {
                 $sub_item = explode('^', $pieces[$j1]);
                 for ($j2=0; $j2<sizeof($sub_item); $j2++) {
