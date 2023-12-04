@@ -34,12 +34,8 @@ if($stx != '') {
     }
 }
 
-if($cst_idx_provider){
-    $where[] = " bom.cst_idx_provider = '{$cst_idx_provider}' ";
-}
-
-if($bct_idx){
-    $where[] = " bom.bct_idx = '{$bct_idx}' ";
+if($ser_cst_idx_provider){
+    $where[] = " mto.cst_idx = '{$ser_cst_idx_provider}' ";
 }
 
 //최종 WHERE 분리정리
@@ -73,23 +69,23 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
 
 $sql = " SELECT moi.moi_idx
             ,moi.mto_idx
-            ,bom.cst_idx_provider
-            ,bom.cst_idx_customer
-            ,bct_idx
+            ,mto.cst_idx
             ,bom.bom_idx
             ,bom.bom_name
             ,bom.bom_part_no
             ,bom.bom_price
             ,moi.moi_count
             ,moi.moi_input_date
-            ,SUM(mtr_value) AS mtr_sum
+            ,SUM(CASE WHEN mtr.moi_idx = moi.moi_idx AND mtr.mtr_status = 'ok' THEN mtr.mtr_value ELSE 0 END) AS moi_sum
+            ,SUM(CASE WHEN mtr.mtr_status = 'ok' THEN mtr.mtr_value ELSE 0 END) AS mtr_sum
         {$sql_common} {$sql_search} {$sql_group} {$sql_order}
         limit {$from_record}, {$rows}
 ";
 // print_r3($sql);
 $result = sql_query($sql);
 
-$colspan = 11;
+$colspan = 12;
+$qstr .= '&ser_cst_idx_provider='.$ser_cst_idx_provider;
 ?>
 <div class="local_ov01 local_ov">
     <?php echo $listall ?>
@@ -103,23 +99,14 @@ $colspan = 11;
         <option value="bom_name"<?php echo get_selected($_GET['sfl'], "bom_name"); ?>>품명</option>
         <option value="bom_idx"<?php echo get_selected($_GET['sfl'], "bom_idx"); ?>>품번</option>
     </select>
-    <select name="cst_idx_provider" id="cst_idx_provider">
+    <select name="ser_cst_idx_provider" id="cst_idx_provider">
         <option value="">::공급업체::</option>
         <?php foreach($g5['provider_key_val'] as $pk => $pv){ ?>
         <option value="<?=$pk?>"><?=$pv?></option>
         <?php } ?>
     </select>
     <script>
-        $('#cst_idx_provider').val('<?=$cst_idx_provider?>');
-    </script>
-    <select name="bct_idx" id="bct_idx">
-        <option value="">::차종::</option>
-        <?php foreach($g5['cats_key_val'] as $ck => $cv){ ?>
-        <option value="<?=$ck?>"><?=$cv?></option>
-        <?php } ?>
-    </select>
-    <script>
-        $('#bct_idx').val('<?=$bct_idx?>');
+        $('#cst_idx_provider').val('<?=$ser_cst_idx_provider?>');
     </script>
     <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
     <input type="text" name="stx" value="<?php echo $stx ?>" id="stx" class="frm_input">
@@ -139,6 +126,7 @@ $colspan = 11;
 <input type="hidden" name="page" value="<?php echo $page ?>">
 <input type="hidden" name="token" value="">
 <input type="hidden" name="qstr" value="<?php echo $qstr ?>">
+<input type="hidden" name="ser_cst_idx_provider" value="<?php echo $ser_cst_idx_provider ?>">
 
 <div class="tbl_head01 tbl_wrap">
 <table>
@@ -152,12 +140,12 @@ $colspan = 11;
     <th scope="col">발주제품ID</th>
     <th scope="col">발주ID</th>
     <th scope="col">공급업체</th>
-    <th scope="col">차종</th>
     <th scope="col">제품ID</th>
     <th scope="col">품명</th>
     <th scope="col">품번</th>
-    <th scope="col">입고수량</th>
+    <th scope="col">수량</th>
     <th scope="col">발주량</th>
+    <th scope="col">발주재고</th>
     <th scope="col">현재고량</th>
     <th scope="col">입고예정일</th>
 </tr>
@@ -188,14 +176,12 @@ for($i=0;$row=sql_fetch_array($result);$i++){
         <input type="hidden" name="bom_idx[<?=$row['moi_idx']?>]" value="<?=$row['bom_idx']?>">
         <input type="hidden" name="bom_name[<?=$row['moi_idx']?>]" value="<?=$row['bom_name']?>">
         <input type="hidden" name="bom_part_no[<?=$row['moi_idx']?>]" value="<?=$row['bom_part_no']?>">
-        <input type="hidden" name="cst_idx_provider[<?=$row['moi_idx']?>]" value="<?=$row['cst_idx_provider']?>">
-        <input type="hidden" name="cst_idx_customer[<?=$row['moi_idx']?>]" value="<?=$row['cst_idx_customer']?>">
+        <input type="hidden" name="cst_idx[<?=$row['moi_idx']?>]" value="<?=$row['cst_idx']?>">
         <input type="hidden" name="bom_price[<?=$row['moi_idx']?>]" value="<?=$row['bom_price']?>">
     </td><!--체크박스-->
     <td class="td_moi_idx"><?=$row['moi_idx']?></td>
     <td class="td_mto_idx"><?=$row['mto_idx']?></td>
-    <td class="td_cst_name"><?=$g5['provider_key_val'][$row['cst_idx_provider']]?></td>
-    <td class="td_bct_idx"><?=$g5['cats_key_val'][$row['bct_idx']]?></td>
+    <td class="td_cst_name"><?=$g5['provider_key_val'][$row['cst_idx']]?></td>
     <td class="td_bom_idx"><?=$row['bom_idx']?></td>
     <td class="td_bom_name"><?=$row['bom_name']?></td>
     <td class="td_bom_part_no"><?=$row['bom_part_no']?></td>
@@ -203,6 +189,7 @@ for($i=0;$row=sql_fetch_array($result);$i++){
         <input type="text" name="input_cnt[<?=$row['moi_idx']?>]" onclick="javascript:numtoprice(this)" class="frm_input input_cnt wg_wdx60 wg_right">
     </td>
     <td class="td_moi_count"><?=$row['moi_count']?></td>
+    <td class="td_moi_sum"><?=$row['moi_sum']?></td>
     <td class="td_mtr_sum"><?=$row['mtr_sum']?></td>
     <td class="td_moi_input_date"><?=$row['moi_input_date']?></td>
 </tr>
@@ -217,6 +204,7 @@ if ($i == 0)
 <div class="btn_fixed_top">
     <?php if (!auth_check($auth[$sub_menu],'w')) { ?>
     <input type="submit" name="act_button" value="선택발주제품입고" onclick="document.pressed=this.value" class="btn wg_btn_success">
+    <input type="submit" name="act_button" value="선택발주제품차감" onclick="document.pressed=this.value" class="btn wg_btn_danger">
     <?php } ?>
 </div>
 </form>
@@ -232,14 +220,14 @@ function form01_submit(f){
     }
 
     if(!is_exist_input_count()){
-        alert("선택된 항목의 입고량을 반드시 입력하셔야 합니다.");
+        alert("선택된 항목의 수량을 반드시 입력하셔야 합니다.");
         return false;
     }
 
     return true;
 }
 
-//선택된 품목중에 입고수량을 입력하지 않은 항목이 있는지 확인하는 함수
+//선택된 품목중에 수량을 입력하지 않은 항목이 있는지 확인하는 함수
 function is_exist_input_count(){
     var blank_exist = true;
     var chk = $('input[name="chk[]"]:checked');
