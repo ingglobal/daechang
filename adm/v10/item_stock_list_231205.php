@@ -30,27 +30,29 @@ foreach($_REQUEST as $key => $value ) {
 }
 // print_r3($qstr);
 
-$g5['title'] = '완제품재고관리';
+$g5['title'] = '재고관리';
 @include_once('./_top_menu_item.php');
 include_once('./_head.php');
 echo $g5['container_sub_title'];
 
-$sql_common = " FROM {$g5_table_name} bom
-                LEFT JOIN {$g5['material_table']} mtr ON bom.bom_idx = mtr.bom_idx
+$sql_common = " FROM {$g5_table_name} AS ".$pre."
+                LEFT JOIN {$g5['bom_category_table']} AS bct USING(bct_idx)
 ";
 
 $where = array();
 //$where[] = " (1) ";   // 디폴트 검색조건
-$where[] = " bom.bom_status = 'ok' ";
-$where[] = " bom_type = 'product' ";
+$where[] = " ".$pre."_status NOT IN ('delete', 'trash') AND bom_type IN ('".implode("','",$g5['set_itm_type_key'])."') ";
 
 // 해당 업체만
 $where[] = " bom.com_idx = '".$_SESSION['ss_com_idx']."' ";
 
 if ($stx) {
     switch ($sfl) {
-		case ( $sfl == 'bom.bom_idx' || $sfl == 'bom_part_no' ) :
+		case ( $sfl == $pre.'_id' || $sfl == $pre.'_idx' ) :
             $where[] = " ({$sfl} = '{$stx}') ";
+            break;
+		case ($sfl == $pre.'_hp') :
+            $where[] = " REGEXP_REPLACE(itm_hp,'-','') LIKE '".preg_replace("/-/","",$stx)."' ";
             break;
         default :
             $where[] = " ({$sfl} LIKE '%{$stx}%') ";
@@ -59,13 +61,41 @@ if ($stx) {
 }
 
 
+// 기간 검색
+if ($ser_st_date)	// 시작일 있는 경우
+    $where[] .= " bom_reg_dt >= '{$ser_st_date} 00:00:00' ";
+if ($ser_en_date)	// 종료일 있는 경우
+    $where[] .= " bom_reg_dt <= '{$ser_en_date} 23:59:59' ";
+
+// 고객사
+if ($ser_cst_idx_customer) {
+    $where[] = " cst_idx_customer = '".$ser_cst_idx_customer."' ";
+}
+// 공급사
+if ($ser_cst_idx_provider) {
+    $where[] = " cst_idx_provider = '".$ser_cst_idx_provider."' ";
+}
+
+// 단가
+if ($ser_st_price) {
+    $where[] = " bom_price >= '".preg_replace(",","",$ser_st_price)."' ";
+}
+if ($ser_en_price) {
+    $where[] = " bom_price <= '".preg_replace(",","",$ser_en_price)."' ";
+}
+
+// 상태
+if($ser_bom_status) {
+    $where[] = " bom_status = '".$ser_bom_status."' ";
+}
+
 // 최종 WHERE 생성
 if ($where)
     $sql_search = ' WHERE '.implode(' AND ', $where);
 
 
 if (!$sst) {
-	$sst = "bom.bom_idx";
+	$sst = "bom_idx";
     //$sst = "bom_sort, ".$pre."_reg_dt";
     $sod = "DESC";
 }
@@ -75,23 +105,13 @@ $rows = $g5['setting']['set_'.$fname.'_page_rows'] ? $g5['setting']['set_'.$fnam
 if (!$page) $page = 1; // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
-$sql = " SELECT bom.bom_idx
-            , bct_idx
-            , bom_part_no
-            , bom_name
-            , bom_spec
-            , bom_usage
-            , bom_lead_time
-            , bom_price
-            , bom_safe_stock
-            , bom_min_cnt
-            , bom_stock
+$sql = " SELECT *
 		{$sql_common}
 		{$sql_search}
         {$sql_order}
 		LIMIT {$from_record}, {$rows}
 ";
-// echo $sql.BR;
+echo $sql.BR;
 $result = sql_query($sql,1);
 
 // 전체 게시물 수
@@ -139,7 +159,150 @@ $pending_count = $row['cnt'];
 <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
 <input type="text" name="stx" value="<?php echo $stx ?>" id="stx" class="frm_input">
 <input type="submit" class="btn_submit btn_submit2" value="검색">
+<div class="detaile_search <?=($_SESSION['ss_'.$fname.'_open'])?'on':'';?>">
+	<?=($_SESSION['ss_'.$fname.'_open'])?'닫기':'상세';?>
+</div>
+<div class="detaile_box <?=($_SESSION['ss_'.$fname.'_open'])?'open':'';?>">
+	<div class="tbl_frm01 tbl_wrap">
+		<table>
+			<caption><?php echo $g5['title']; ?></caption>
+			<colgroup>
+				<col class="grid_4" style="width:8%;">
+				<col style="width:38%;">
+				<col class="grid_4" style="width:8%;">
+				<col style="width:45%;">
+			</colgroup>
+			<tbody>
+				<tr>
+                    <th>고객사선택</th>
+                    <td>
+                        <?php
+                        if($ser_cst_idx_customer) {
+                            $cst_customer = get_table_meta('customer','cst_idx',$ser_cst_idx_customer);
+                        }
+                        ?>
+                        <input type="hidden" name="ser_cst_idx_customer" value="<?=$ser_cst_idx_customer?>" class="frm_input">
+                        <input type="text" name="cst_name_customer" value="<?=$cst_customer['cst_name']?>" class="frm_input" style="width:300px;" readonly>
+                        <a href="./customer_select.php?file_name=<?=$g5['file_name']?>&item=customer" class="btn btn_02 btn_customer">찾기</a>
+                    </td>
+                    <th>공급사선택</th>
+                    <td>
+                        <?php
+                        if($ser_cst_idx_provider) {
+                            $cst_provider = get_table_meta('customer','cst_idx',$ser_cst_idx_provider);
+                        }
+                        ?>
+                        <input type="hidden" name="ser_cst_idx_provider" value="<?=$ser_cst_idx_provider?>" class="frm_input">
+                        <input type="text" name="cst_name_provider" value="<?=$cst_provider['cst_name']?>" class="frm_input" style="width:300px;" readonly>
+                        <a href="./customer_select.php?file_name=<?=$g5['file_name']?>&item=provider" class="btn btn_02 btn_customer">찾기</a>
+                    </td>
+				</tr>
+				<tr>
+					<th>작업자선택</th>
+					<td>
+                        <?php
+                        if($ser_mb_id) {
+                            $mb1 = get_table_meta('member','mb_id',$ser_mb_id);
+                        }
+                        ?>
+                        <input type="hidden" name="ser_mb_id" value="<?=$ser_mb_id?>" class="frm_input" style="width:100px">
+                        <input type="text" name="ser_mb_name" value="<?=$mb1['mb_name']?>" id="mb_name" class="frm_input" style="width:100px;" readonly>
+                        <a href="./member_select.php?file_name=<?=$g5['file_name']?>" class="btn btn_02 btn_member">찾기</a>
+                    </td>
+					<th>단가</th>
+					<td>
+						<input type="text" name="ser_st_price" value="<?=$ser_st_price?>" class="frm_input" style="width:70px">원
+						~
+						<input type="text" name="ser_en_price" value="<?=$ser_en_price?>" class="frm_input" style="width:70px">원
+					</td>
+				</tr>
+				<tr>
+                    <th>상태</th>
+					<td colspan="3">
+						<input type="radio" name="ser_bom_status" id="ser_bom_status_all" value="" checked=""><label for="ser_bom_status_all">관계없음</label>
+						<?php
+                        if(is_array($g5['set_bom_status_value'])) {
+                            foreach ($g5['set_bom_status_value'] as $k1=>$v1) {
+                                if(in_array($k1,array('trash'))) {continue;}
+                                echo '<input type="radio" name="ser_bom_status" id="ser_bom_status_'.$k1.'" value="'.$k1.'">
+                                      <label for="ser_bom_status_'.$k1.'">'.$v1.'</label>'.PHP_EOL;
+                            }
+                        }
+						?>
+						<script>$('#ser_bom_status_<?=$ser_bom_status?>').attr('checked','checked');</script>
+                    </td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="search_btn">
+		<input type="submit" value="검색" class="search_btns search_btn01" accesskey="">
+		<span class="search_btns search_btn02">닫기</span>
+	</div>
+</div>
+<script>
+// 업체 찾기
+$(document).on('click','.btn_customer',function(e){
+    e.preventDefault();
+    var href = $(this).attr('href');
+    winLanding = window.open(href, "winLanding", "left=100,top=100,width=520,height=600,scrollbars=1");
+    winLanding.focus();
+    return false;
+
+});
+
+// 회원 찾기
+$(document).on('click','.btn_member',function(e){
+    e.preventDefault();
+    var href = $(this).attr('href');
+    winMember = window.open(href, "winMember", "left=100,top=100,width=520,height=600,scrollbars=1");
+    winMember.focus();
+    return false;
+
+});
+
+// 검색 부분 상세, 닫기 버튼 클릭
+$(".detaile_search").click(function(){	
+	if($(".detaile_box").hasClass("open") === true) {
+		$(".detaile_box").removeClass("open");
+		$(this).removeClass("on");
+		$(this).html('상세');
+		search_detail('close');
+	} else {
+		$(".detaile_box").addClass("open");
+		$(this).addClass("on");
+		$(this).html('닫기');
+		search_detail('open');
+	};
+});
+// 취소 버튼 클릭
+$(".search_btn .search_btn02").click(function(){
+	$(".detaile_box").removeClass("open");
+	$(this).removeClass("on");
+	$(".detaile_search").html('상세');
+	search_detail('close');
+});
+function search_detail(flag) {
+	$.getJSON(g5_user_admin_url+'/ajax/session_set.php',{"fname":"<?=$fname?>","flag":flag},function(res) {
+		if(res.result == true) {
+			// console.log(res.flag);
+			// console.log(res.msg);
+		}
+	});
+}
+</script>
 </form>
+
+
+
+
+
+
+
+
+
+
+
 
 <form name="form01" id="form01" action="./<?=$g5['file_name']?>_update.php" onsubmit="return form01_submit(this);" method="post">
 <input type="hidden" name="sst" value="<?php echo $sst ?>">
@@ -160,13 +323,14 @@ $pending_count = $row['cnt'];
             <label for="chkall" class="sound_only">전체</label>
             <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
         </th>
-        <th scope="col">ID</th>
         <th scope="col" style="width:100px;">품번</th>
         <th scope="col">품명</th>
+        <th scope="col">구분</th>
         <th scope="col">차종</th>
         <th scope="col" style="width:50px;">사양</th>
         <th scope="col" style="width:60px;">U/S</th>
         <th scope="col" style="width:60px;">리드타임</th>
+        <th scope="col">납품처</th>
         <th scope="col">판매가</th>
         <th scope="col">재료비</th>
         <th scope="col">안전재고</th>
@@ -238,13 +402,14 @@ $pending_count = $row['cnt'];
             <input type="hidden" name="<?=$pre?>_idx[<?=$i?>]" value="<?=$row[$pre.'_idx']?>" id="<?=$pre?>_idx_<?=$i?>">
             <input type="checkbox" name="chk[]" value="<?=$i?>" id="chk_<?=$i?>">
         </td>
-        <td class="td_bom_idx font_size_7"><?=$row['bom_idx']?></td><!-- ID번호 -->
         <td class="td_bom_part_no font_size_7"><?=$row['bom_part_no']?></td><!-- 품번 -->
         <td class="td_bom_name font_size_7"><?=$row['bom_name']?></td><!-- 품명 -->
-        <td class="td_bct_name font_size_7"><?=$g5['cats_key_val'][$row['bct_idx']]?></td><!-- 차종 -->
+        <td class="td_bom_type font_size_7"><?=$g5['set_bom_type_value'][$row['bom_type']]?></td><!-- 구분 -->
+        <td class="td_bct_name font_size_7"><?=$row['bct_name']?></td><!-- 차종 -->
         <td class="td_bom_spec font_size_7"><?=$row['bom_spec']?></td><!-- 사양 -->
         <td class="td_bom_usage font_size_7"><?=$row['bom_usage']?></td><!-- U/S -->
         <td class="td_bom_lead_time font_size_7"><?=$row['bom_lead_time']?></td><!-- 리드타임 -->
+        <td class="td_cst_name_customer font_size_7"><?=$row['cst_customer']['cst_name']?></td><!-- 납품처 -->
         <td class="td_bom_price font_size_7"><?=number_format($row['bom_price'])?></td><!-- 판매가 -->
         <td class="td_bom_price font_size_7"><?=number_format($row['bom_price'])?></td><!-- 재료비 -->
         <td class="td_bom_safe_stock font_size_8"><?=number_format($row['bom_safe_stock'])?></td><!-- 안전재고 -->

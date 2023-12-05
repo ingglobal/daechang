@@ -54,6 +54,9 @@ if ($stx) {
 		case ( $sfl == $pre.'_id' || $sfl == $pre.'_idx' ) :
             $where[] = " ({$sfl} = '{$stx}') ";
             break;
+		case ($sfl == $pre.'_hp') :
+            $where[] = " REGEXP_REPLACE(mtr_hp,'-','') LIKE '".preg_replace("/-/","",$stx)."' ";
+            break;
         default :
             $where[] = " ({$sfl} LIKE '%{$stx}%') ";
             break;
@@ -70,6 +73,17 @@ if ($ser_en_date)	// 종료일 있는 경우
 // 통계일
 if ($ser_stat_date)
     $where[] = " mtr_date = '{$ser_stat_date}' ";
+    
+// 고객사
+if ($ser_cst_idx_customer) {
+    $where[] = " mtr.cst_idx_customer = '".$ser_cst_idx_customer."' ";
+    $cst_customer = get_table('customer','cst_idx',$ser_cst_idx_customer);
+}
+// 공급사
+if ($ser_cst_idx_provider) {
+    $where[] = " mtr.cst_idx_provider = '".$ser_cst_idx_provider."' ";
+    $cst_provider = get_table('customer','cst_idx',$ser_cst_idx_provider);
+}
 
 // 작업자
 if ($ser_mb_id) {
@@ -77,6 +91,13 @@ if ($ser_mb_id) {
     $mb1 = get_table('member','mb_id',$ser_mb_id,'mb_name');
 }
 
+// 단가
+if ($ser_st_price) {
+    $where[] = " mtr_price >= '".preg_replace("/,/","",$ser_st_price)."' ";
+}
+if ($ser_en_price) {
+    $where[] = " mtr_price <= '".preg_replace("/,/","",$ser_en_price)."' ";
+}
 
 // 상태
 if($ser_mtr_status) {
@@ -100,7 +121,9 @@ if (!$page) $page = 1; // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
 $sql = " SELECT *
-        {$sql_common}
+            , mtr.cst_idx_customer AS cst_idx_customer
+            , mtr.cst_idx_provider AS cst_idx_provider
+		{$sql_common}
 		{$sql_search}
         {$sql_order}
 		LIMIT {$from_record}, {$rows}

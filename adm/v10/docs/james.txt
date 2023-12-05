@@ -55,6 +55,14 @@ CREATE TABLE `g5_1_mms_worker` (
   PRIMARY KEY (`mmw_idx`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+CREATE TABLE `g5_1_bom_customer` (
+  `boc_idx` bigint(20) NOT NULL COMMENT 'BOM업체idx' AUTO_INCREMENT,
+  `bom_idx` bigint(20) DEFAULT NULL COMMENT 'BOMidx',
+  `cst_idx` bigint(20) DEFAULT NULL COMMENT '거래업체idx',
+  `boc_type` varchar(20) DEFAULT '' COMMENT '타입유형',
+  PRIMARY KEY (`boc_idx`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 CREATE TABLE `g5_1_bom_mms_worker` (
   `bmw_idx` bigint(20) NOT NULL COMMENT '업체/작업자idx' AUTO_INCREMENT,
   `bom_idx` bigint(20) DEFAULT NULL COMMENT 'BOMidx',
@@ -3319,12 +3327,13 @@ SELECT mms_idx FROM g5_1_bom_mms_worker WHERE bmw_status NOT IN ('trash','delete
 SELECT mb_id FROM g5_member WHERE mb_name = '타와트' AND mb_leave_date = '';
 SELECT mb_id FROM g5_member WHERE mb_name = '마운' AND mb_leave_date = '';
 
-작업중으로 바뀌는 시점!!
 
+리눅스에서 top 명령어를 통한 CPU 점유율 확인 및 측정하기
+https://www.cubrid.com/tutorial/3794195
 
-그룹복제
-관리자 복제 무제한 가능!!
-
+top -b -n2 -p 1 | fgrep "Cpu(s)" | tail -1 | awk -F'id,' -v prefix="$prefix" '{ split($1, vs, ","); v=vs[length(vs)]; sub("%", "", v); printf "%s%.f%n", prefix, 100 - v }'
+top -bn1 | grep "postgres" | head -n 1 | awk '{print $9}'
+top -bn1 | head -n 12
 
 
 
