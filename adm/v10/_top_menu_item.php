@@ -14,8 +14,8 @@ if($member['mb_manager_yn']) {
 $g5['container_sub_title'] = '
 <h2 id="container_sub_title">
     '.$sub_title_list.'
-    <a href="./item_stock_list.php" class="btn_top_menu '.$active_item_stock_list.'">재고관리</a>
-    <a href="./item_list.php" class="btn_top_menu '.$active_item_list.'">재고현황</a>
+    <a href="./item_stock_list.php" class="btn_top_menu '.$active_item_stock_list.'">완제품재고관리</a>
+    <a href="./item_list.php" class="btn_top_menu '.$active_item_list.'">완제품재고현황</a>
 </h2>
 ';
 ?>
