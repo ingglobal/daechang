@@ -1,0 +1,112 @@
+2023-11-23 11:42:24 - php-fpm7.4 CPU 사용량: 0.0
+2023-11-23 11:42:24 - mysqld CPU 사용량: 0.0
+2023-11-23 11:42:24 - postgres CPU 사용량: 0.0
+2023-11-23 11:42:30 - php-fpm7.4 CPU 사용량: 0.0
+2023-11-23 11:42:30 - mysqld CPU 사용량: 0.0
+2023-11-23 11:42:30 - postgres CPU 사용량: 0.0
+2023-11-23 11:46:37\ntop - 11:46:37 up 1 day, 21:19,  2 users,  load average: 0.46, 0.21, 0.12
+Tasks: 227 total,   1 running, 225 sleeping,   0 stopped,   1 zombie
+%Cpu(s):  1.0 us,  1.0 sy,  0.0 ni, 97.0 id,  1.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :  31761.5 total,  22636.1 free,   2553.7 used,   6571.7 buff/cache
+MiB Swap:   8192.0 total,   8192.0 free,      0.0 used.  27824.7 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 266189 www-data  20   0  342444  20956  13292 S   6.2   0.1   0:00.69 python3
+ 266375 root      20   0    9248   3892   3176 R   6.2   0.0   0:00.01 top
+      1 root      20   0  168744  11832   8416 S   0.0   0.0   0:18.68 systemd
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.06 kthreadd
+      3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp
+2023-11-23 11:48:44
+top - 11:48:44 up 1 day, 21:22,  2 users,  load average: 0.10, 0.15, 0.11
+Tasks: 227 total,   1 running, 225 sleeping,   0 stopped,   1 zombie
+%Cpu(s):  1.0 us,  1.0 sy,  0.0 ni, 96.0 id,  2.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :  31761.5 total,  22637.9 free,   2551.4 used,   6572.3 buff/cache
+MiB Swap:   8192.0 total,   8192.0 free,      0.0 used.  27826.8 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 262769 ing       20   0   10.9g 123420  50636 S   6.2   0.4   0:05.66 node
+ 266620 root      20   0    9248   3888   3176 R   6.2   0.0   0:00.01 top
+      1 root      20   0  168744  11832   8416 S   0.0   0.0   0:18.69 systemd
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.06 kthreadd
+      3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp
+2023-11-23 11:49:05 --------------------------------
+top - 11:49:05 up 1 day, 21:22,  2 users,  load average: 0.07, 0.13, 0.10
+Tasks: 227 total,   1 running, 225 sleeping,   0 stopped,   1 zombie
+%Cpu(s):  1.0 us,  2.0 sy,  0.0 ni, 97.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :  31761.5 total,  22636.6 free,   2552.4 used,   6572.4 buff/cache
+MiB Swap:   8192.0 total,   8192.0 free,      0.0 used.  27825.7 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 266702 postgres  20   0 8427020  31576  28252 S   6.2   0.1   0:00.02 postgres
+ 266724 root      20   0    9248   3944   3232 R   6.2   0.0   0:00.02 top
+      1 root      20   0  168744  11832   8416 S   0.0   0.0   0:18.69 systemd
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.06 kthreadd
+      3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp
+2023-11-23 11:49:39 ----------------------------------------------
+top - 11:49:39 up 1 day, 21:22,  2 users,  load average: 0.04, 0.12, 0.10
+Tasks: 227 total,   1 running, 225 sleeping,   0 stopped,   1 zombie
+%Cpu(s):  1.0 us,  1.0 sy,  0.0 ni, 96.1 id,  1.0 wa,  0.0 hi,  1.0 si,  0.0 st
+MiB Mem :  31761.5 total,  22633.4 free,   2555.4 used,   6572.7 buff/cache
+MiB Swap:   8192.0 total,   8192.0 free,      0.0 used.  27822.6 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 266850 root      20   0    9248   3884   3172 R   6.2   0.0   0:00.01 top
+      1 root      20   0  168744  11832   8416 S   0.0   0.0   0:18.70 systemd
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.06 kthreadd
+      3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp
+      4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_par_gp
+2023-11-23 11:49:50 ---------------------------------------------------------
+top - 11:49:50 up 1 day, 21:23,  2 users,  load average: 0.03, 0.11, 0.09
+Tasks: 227 total,   1 running, 225 sleeping,   0 stopped,   1 zombie
+%Cpu(s):  1.0 us,  1.0 sy,  0.0 ni, 96.0 id,  2.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :  31761.5 total,  22633.5 free,   2555.3 used,   6572.7 buff/cache
+MiB Swap:   8192.0 total,   8192.0 free,      0.0 used.  27822.8 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+     10 root      20   0       0      0      0 I   6.2   0.0   2:44.34 rcu_sched
+ 266701 www-data  20   0  342444  20420  13008 S   6.2   0.1   0:00.93 python3
+ 266933 root      20   0    9248   3964   3248 R   6.2   0.0   0:00.01 top
+      1 root      20   0  168744  11832   8416 S   0.0   0.0   0:18.70 systemd
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.06 kthreadd
+2023-11-23 11:51:52 ---------------------------------------------------------
+top - 11:51:52 up 1 day, 21:25,  2 users,  load average: 0.15, 0.16, 0.11
+Tasks: 227 total,   1 running, 225 sleeping,   0 stopped,   1 zombie
+%Cpu(s):  2.0 us,  0.0 sy,  0.0 ni, 96.0 id,  2.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :  31761.5 total,  22628.8 free,   2557.7 used,   6575.1 buff/cache
+MiB Swap:   8192.0 total,   8192.0 free,      0.0 used.  27819.5 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 243973 ing       20   0  957596  94216  43500 S   6.7   0.3   0:18.13 node
+ 262769 ing       20   0   10.9g 124696  50636 S   6.7   0.4   0:06.35 node
+ 267193 www-data  20   0  342444  21088  13428 S   6.7   0.1   0:00.84 python3
+ 267194 postgres  20   0 8427020  37544  34204 S   6.7   0.1   0:00.22 postgres
+ 267264 root      20   0    9248   3936   3220 R   6.7   0.0   0:00.01 top
+2023-11-23 11:51:52 - php-fpm7.4 CPU 사용량: 0.0
+2023-11-23 11:51:52 - mysqld CPU 사용량: 0.0
+2023-11-23 11:51:52 - postgres CPU 사용량: 0.0
+2023-11-23 11:52:54 ---------------------------------------------------------
+top - 11:52:54 up 1 day, 21:26,  2 users,  load average: 0.05, 0.13, 0.10
+Tasks: 227 total,   1 running, 225 sleeping,   0 stopped,   1 zombie
+%Cpu(s):  1.0 us,  2.0 sy,  0.0 ni, 97.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :  31761.5 total,  22627.8 free,   2558.4 used,   6575.4 buff/cache
+MiB Swap:   8192.0 total,   8192.0 free,      0.0 used.  27818.7 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 267344 postgres  20   0 8427020  37864  34532 S   6.2   0.1   0:00.26 postgres
+ 267497 root      20   0    9248   3840   3128 R   6.2   0.0   0:00.02 top
+      1 root      20   0  168744  11832   8416 S   0.0   0.0   0:18.71 systemd
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.06 kthreadd
+      3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp
+2023-11-23 11:53:10 ---------------------------------------------------------
+top - 11:53:10 up 1 day, 21:26,  2 users,  load average: 0.04, 0.12, 0.10
+Tasks: 227 total,   1 running, 225 sleeping,   0 stopped,   1 zombie
+%Cpu(s):  0.0 us,  1.0 sy,  0.0 ni, 99.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :  31761.5 total,  22626.7 free,   2559.4 used,   6575.4 buff/cache
+MiB Swap:   8192.0 total,   8192.0 free,      0.0 used.  27817.7 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 267600 root      20   0    9248   3932   3220 R   6.2   0.0   0:00.01 top
+      1 root      20   0  168744  11832   8416 S   0.0   0.0   0:18.72 systemd
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.06 kthreadd
+      3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp
+      4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_par_gp
