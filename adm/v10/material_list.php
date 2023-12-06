@@ -158,147 +158,7 @@ $ok_count = $row['cnt'];
 <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
 <input type="text" name="stx" value="<?php echo $stx ?>" id="stx" class="frm_input">
 <input type="submit" class="btn_submit btn_submit2" value="검색">
-<div class="detaile_search <?=($_SESSION['ss_'.$fname.'_open'])?'on':'';?>">
-	<?=($_SESSION['ss_'.$fname.'_open'])?'닫기':'상세';?>
-</div>
-<div class="detaile_box <?=($_SESSION['ss_'.$fname.'_open'])?'open':'';?>">
-	<div class="tbl_frm01 tbl_wrap">
-		<table>
-			<caption><?php echo $g5['title']; ?></caption>
-			<colgroup>
-				<col class="grid_4" style="width:8%;">
-				<col style="width:38%;">
-				<col class="grid_4" style="width:8%;">
-				<col style="width:45%;">
-			</colgroup>
-			<tbody>
-				<tr>
-                    <th>고객사선택</th>
-                    <td>
-                        <?php
-                        if($ser_cst_idx_customer) {
-                            $cst_customer = get_table_meta('customer','cst_idx',$ser_cst_idx_customer);
-                        }
-                        ?>
-                        <input type="hidden" name="ser_cst_idx_customer" value="<?=$ser_cst_idx_customer?>" class="frm_input">
-                        <input type="text" name="cst_name_customer" value="<?=$cst_customer['cst_name']?>" class="frm_input" style="width:300px;" readonly>
-                        <a href="./customer_select.php?file_name=<?=$g5['file_name']?>&item=customer" class="btn btn_02 btn_customer">찾기</a>
-                    </td>
-                    <th>공급사선택</th>
-                    <td>
-                        <?php
-                        if($ser_cst_idx_provider) {
-                            $cst_provider = get_table_meta('customer','cst_idx',$ser_cst_idx_provider);
-                        }
-                        ?>
-                        <input type="hidden" name="ser_cst_idx_provider" value="<?=$ser_cst_idx_provider?>" class="frm_input">
-                        <input type="text" name="cst_name_provider" value="<?=$cst_provider['cst_name']?>" class="frm_input" style="width:300px;" readonly>
-                        <a href="./customer_select.php?file_name=<?=$g5['file_name']?>&item=provider" class="btn btn_02 btn_customer">찾기</a>
-                    </td>
-				</tr>
-				<tr>
-					<th>작업자선택</th>
-					<td>
-                        <?php
-                        if($ser_mb_id) {
-                            $mb1 = get_table_meta('member','mb_id',$ser_mb_id);
-                        }
-                        ?>
-                        <input type="hidden" name="ser_mb_id" value="<?=$ser_mb_id?>" class="frm_input" style="width:100px">
-                        <input type="text" name="ser_mb_name" value="<?=$mb1['mb_name']?>" id="mb_name" class="frm_input" style="width:100px;" readonly>
-                        <a href="./member_select.php?file_name=<?=$g5['file_name']?>" class="btn btn_02 btn_member">찾기</a>
-                    </td>
-					<th>통계일</th>
-					<td>
-                        <input type="text" name="ser_stat_date" value="<?=$ser_stat_date?>" class="frm_input" style="width:90px">
-					</td>
-				</tr>
-				<tr>
-                    <th>상태</th>
-					<td colspan="3">
-						<input type="radio" name="ser_mtr_status" id="ser_mtr_status_all" value="" checked=""><label for="ser_mtr_status_all">관계없음</label>
-						<?php
-                        if(is_array($g5['set_mtr_status_value'])) {
-                            foreach ($g5['set_mtr_status_value'] as $k1=>$v1) {
-                                if(in_array($k1,array('trash'))) {continue;}
-                                echo '<input type="radio" name="ser_mtr_status" id="ser_mtr_status_'.$k1.'" value="'.$k1.'">
-                                      <label for="ser_mtr_status_'.$k1.'">'.$v1.'</label>'.PHP_EOL;
-                            }
-                        }
-						?>
-						<script>$('#ser_mtr_status_<?=$ser_mtr_status?>').attr('checked','checked');</script>
-                    </td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	<div class="search_btn">
-		<input type="submit" value="검색" class="search_btns search_btn01" accesskey="">
-		<span class="search_btns search_btn02">닫기</span>
-	</div>
-</div>
-<script>
-// 업체 찾기
-$(document).on('click','.btn_customer',function(e){
-    e.preventDefault();
-    var href = $(this).attr('href');
-    winLanding = window.open(href, "winLanding", "left=100,top=100,width=520,height=600,scrollbars=1");
-    winLanding.focus();
-    return false;
-
-});
-
-// 회원 찾기
-$(document).on('click','.btn_member',function(e){
-    e.preventDefault();
-    var href = $(this).attr('href');
-    winMember = window.open(href, "winMember", "left=100,top=100,width=520,height=600,scrollbars=1");
-    winMember.focus();
-    return false;
-
-});
-
-// 검색 부분 상세, 닫기 버튼 클릭
-$(".detaile_search").click(function(){	
-	if($(".detaile_box").hasClass("open") === true) {
-		$(".detaile_box").removeClass("open");
-		$(this).removeClass("on");
-		$(this).html('상세');
-		search_detail('close');
-	} else {
-		$(".detaile_box").addClass("open");
-		$(this).addClass("on");
-		$(this).html('닫기');
-		search_detail('open');
-	};
-});
-// 취소 버튼 클릭
-$(".search_btn .search_btn02").click(function(){
-	$(".detaile_box").removeClass("open");
-	$(this).removeClass("on");
-	$(".detaile_search").html('상세');
-	search_detail('close');
-});
-function search_detail(flag) {
-	$.getJSON(g5_user_admin_url+'/ajax/session_set.php',{"fname":"<?=$fname?>","flag":flag},function(res) {
-		if(res.result == true) {
-			// console.log(res.flag);
-			// console.log(res.msg);
-		}
-	});
-}
-</script>
 </form>
-
-
-
-
-
-
-
-
-
-
 
 
 <form name="form01" id="form01" action="./<?=$g5['file_name']?>_update.php" onsubmit="return form01_submit(this);" method="post">
@@ -326,7 +186,6 @@ function search_detail(flag) {
         <th scope="col">설비</th>
         <th scope="col">작업자</th>
         <th scope="col" style="width:50px;">수량</th>
-        <th scope="col" style="width:60px;">교대</th>
         <th scope="col">품질</th>
         <th scope="col">통계일</th>
         <th scope="col">날짜</th>
@@ -423,7 +282,6 @@ function search_detail(flag) {
         <td class="td_mms_name"><?=$row['mms']['mms_name']?></td><!-- 설비 -->
         <td class="td_mb_name"><?=$row['mb1']['mb_name']?></td><!-- 작업자 -->
         <td class="td_mb_name"><?=$row['mtr_value']?></td><!-- 수량 -->
-        <td class="td_shf_name font_size_7"><?=$row['shf']['shf_name']?></td><!-- 교대 -->
         <td class="td_mtr_quality font_size_7"><?=$row['mtr_quality']?></td><!-- 품질 -->
         <td class="td_mtr_date font_size_7"><?=($row['mtr_date']!='0000-00-00')?$row['mtr_date']:''?></td><!-- 통계일 -->
         <td class="td_mtr_dt font_size_7"><?=$row['mtr_dt']?></td><!-- 날짜 -->
