@@ -132,9 +132,10 @@ $seconds_text = array(
 $g5['set_bom_type_displays'] = explode(',', preg_replace("/\s+/", "", $g5['setting']['set_bom_type_display']));
 
 //설비배열
-$mms_sql = " SELECT mms_idx,mms_name FROM {$g5['mms_table']}
+$mms_sql = " SELECT mms_idx,mms_name,mms_serial_no FROM {$g5['mms_table']}
                 WHERE mms_status = 'ok'
                     AND com_idx = '{$g5['setting']['set_com_idx']}'
+                    AND mms_serial_no != ''
                 ORDER BY mms_sort, mms_idx
 ";
 $mms_res = sql_query($mms_sql,1);
@@ -145,7 +146,8 @@ for($j=0;$mrow=sql_fetch_array($mms_res);$j++){
     if(!array_key_exists($mrow['mms_idx'],$g5['mms_arr'])){
         $g5['mms_arr'][$mrow['mms_idx']] = $mrow['mms_name'];
         $g5['mms_options'] .= '<option value="'.$mrow['mms_idx'].'">'.$mrow['mms_name'].'</option>'.PHP_EOL;
-        $g5['mms_options_idx'] .= '<option value="'.$mrow['mms_idx'].'">'.$mrow['mms_name'].'('.$mrow['mms_idx'].')</option>'.PHP_EOL;
+        $g5['mms_options_idx'] .= '<option value="'.$mrow['mms_idx'].'">'.$mrow['mms_name'].' ('.$mrow['mms_idx'].')</option>'.PHP_EOL;
+        $g5['mms_options_no'] .= '<option value="'.$mrow['mms_idx'].'">'.$mrow['mms_name'].' ('.$mrow['mms_serial_no'].')</option>'.PHP_EOL;
     }
 }
 
@@ -162,6 +164,7 @@ $mmw_sql = " SELECT mmw.mms_idx
                 -- AND mms_name REGEXP '([^포장] | [^검사])$'
                 AND mmw.mb_id NOT IN ('없음', '')
                 AND mb.mb_name != ''
+                AND mb.mb_8 != ''
             ORDER BY mmw.mms_idx, mmw_sort
             ";
 $mmw_res = sql_query($mmw_sql,1);
@@ -187,7 +190,35 @@ unset($mms_sql);
 unset($mms_res);
 unset($mmw_sql);
 unset($mmw_res);
+unset($mrow);
+unset($wrow);
+unset($l);
 // print_r2($g5['mmw_arr']);
+
+//현장 작업자배열
+$mbw_sql = " SELECT mb_id
+                    , mb_name
+                    , mb_8
+            FROM {$g5['member_table']}
+            WHERE mb_leave_date = ''
+                AND mb_intercept_date = ''
+                AND mb_7 = 'ok'
+                AND mb_8 != ''
+            -- ORDER BY CAST(mb_8 AS UNSIGNED)
+            ORDER BY mb_name
+ ";
+$mbw_res = sql_query($mbw_sql,1);
+$g5['mbw_options'] = '';
+$g5['mbw_options_no'] = '';
+for($i=0;$mrow=sql_fetch_array($mbw_res);$i++){
+    $g5['mbw_options'] .= '<option value="'.$mrow['mb_id'].'">'.$mrow['mb_name'].'</option>'.PHP_EOL;
+    $g5['mbw_options_no'] .= '<option value="'.$mrow['mb_id'].'">'.$mrow['mb_name'].' ('.$mrow['mb_8'].')</option>'.PHP_EOL;
+}
+
+unset($mbw_sql);
+unset($mbw_res);
+unset($mrow);
+unset($i);
 
 //카테고리 관련 배열
 $cat_sql = " SELECT bct_idx, bct_name FROM {$g5['bom_category_table']} WHERE com_idx = '{$_SESSION['ss_com_idx']}' ORDER BY bct_order,bct_idx ";

@@ -62,21 +62,32 @@ if ($stx) {
 
 
 // 기간 검색
-if ($ser_st_date)	// 시작일 있는 경우
-    $where[] = " mtr_reg_dt >= '{$ser_st_date} 00:00:00' ";
-if ($ser_en_date)	// 종료일 있는 경우
-    $where[] = " mtr_reg_dt <= '{$ser_en_date} 23:59:59' ";
-
-// 통계일
-if ($ser_stat_date)
-    $where[] = " mtr_date = '{$ser_stat_date}' ";
-
-// 작업자
-if ($ser_mb_id) {
-    $where[] = " mb_id = '".$ser_mb_id."' ";
-    $mb1 = get_table('member','mb_id',$ser_mb_id,'mb_name');
+if($ser_dt == 'dt_reg'){
+    if ($ser_st_date)	// 시작일 있는 경우
+        $where[] = " mtr_reg_dt >= '{$ser_st_date} 00:00:00' ";
+    if ($ser_en_date)	// 종료일 있는 경우
+        $where[] = " mtr_reg_dt <= '{$ser_en_date} 23:59:59' ";
+} else if($ser_dt == 'dt_stat'){
+    if ($ser_st_date)	// 시작일 있는 경우
+        $where[] = " mtr_date >= '{$ser_st_date}' ";
+    if ($ser_en_date)	// 종료일 있는 경우
+        $where[] = " mtr_date <= '{$ser_en_date}' ";
 }
 
+// 작업자
+if ($ser_mms) {
+    $where[] = " mms_idx = '".$ser_mms."' ";
+}
+
+// 작업자
+if ($ser_mbw) {
+    $where[] = " mb_id = '".$ser_mbw."' ";
+}
+
+// 구분
+if($ser_mtr_type) {
+    $where[] = " mtr_type = '".$ser_mtr_type."' ";
+}
 
 // 상태
 if($ser_mtr_status) {
@@ -146,10 +157,15 @@ $ok_count = $row['cnt'];
 </div>
 
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get" style="width:100%;">
-<label for="sfl" class="sound_only">검색대상</label>
+<label for="ser_dt" class="sound_only">날짜선택</label>
+<select name="ser_dt" id="ser_dt">
+    <option value="dt_stat" <?=get_selected($ser_dt, 'dt_stat')?>>통계일</option>
+    <option value="dt_reg" <?=get_selected($ser_dt, 'dt_reg')?>>처리일</option>
+</select>
 기간: 
 <input type="text" name="ser_st_date" value="<?=$ser_st_date ?>" id="ser_st_date" class="frm_input" style="width:80px;"> ~
 <input type="text" name="ser_en_date" value="<?=$ser_en_date ?>" id="ser_en_date" class="frm_input" style="width:80px;">
+<label for="sfl" class="sound_only">검색대상</label>
 <select name="sfl" id="sfl">
     <option value="">검색항목</option>
     <option value="bom_part_no" <?=get_selected($sfl, 'bom_part_no')?>>품번</option>
@@ -157,9 +173,25 @@ $ok_count = $row['cnt'];
 </select>
 <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
 <input type="text" name="stx" value="<?php echo $stx ?>" id="stx" class="frm_input">
+<select name="ser_mms" id="ser_mms">
+    <option value="">::설비::</option>
+    <?=$g5['mms_options_no']?>
+</select>
+<select name="ser_mbw" id="ser_mbw">
+    <option value="">::작업자::</option>
+    <?=$g5['mbw_options_no']?>
+</select>
+<select name="ser_mtr_status" id="ser_mtr_status">
+    <option value="">::상태::</option>
+	<?=$g5['set_mtr_status_value_options']?>
+</select>
 <input type="submit" class="btn_submit btn_submit2" value="검색">
 </form>
-
+<script>
+$('#ser_mms').val('<?=$ser_mms?>');
+$('#ser_mbw').val('<?=$ser_mbw?>');
+$('#ser_mtr_status').val('<?=$ser_mtr_status?>');
+</script>
 
 <form name="form01" id="form01" action="./<?=$g5['file_name']?>_update.php" onsubmit="return form01_submit(this);" method="post">
 <input type="hidden" name="sst" value="<?php echo $sst ?>">
@@ -185,10 +217,9 @@ $ok_count = $row['cnt'];
         <th scope="col">구분</th>
         <th scope="col">설비</th>
         <th scope="col">작업자</th>
-        <th scope="col" style="width:50px;">수량</th>
         <th scope="col">품질</th>
         <th scope="col">통계일</th>
-        <th scope="col">날짜</th>
+        <th scope="col">처리일시</th>
         <th scope="col" style="width:55px;">상태</th>
         <th scope="col">관리</th>
     </tr>
@@ -203,51 +234,6 @@ $ok_count = $row['cnt'];
         $row['mb1'] = get_table('member','mb_id',$row['mb_id'],'mb_name');
         $row['shf'] = get_table('shift','shf_idx',$row['shf_idx'],'shf_name');
         // print_r2($row['mb1']);
-
-		$fle_width = '30';
-		$fle_height = '30';
-		// 관련 파일 추출
-		$sql = "SELECT * FROM {$g5['file_table']}
-				WHERE fle_db_table = 'item' AND fle_db_id = '".$row['mtr_idx']."'
-                ORDER BY fle_sort, fle_reg_dt DESC
-        ";
-		$rs = sql_query($sql,1);
-        // echo $sql;
-		for($j=0;$row1=sql_fetch_array($rs);$j++) {
-			$row[$row1['fle_type']][$row1['fle_sort']]['file'] = (is_file(G5_PATH.$row1['fle_path'].'/'.$row1['fle_name'])) ?
-								'&nbsp;&nbsp;'.$row1['fle_name_orig'].'&nbsp;&nbsp;<a href="'.G5_USER_ADMIN_URL.'/lib/download.php?file_fullpath='.urlencode(G5_PATH.$row1['fle_path'].'/'.$row1['fle_name']).'&file_name_orig='.$row1['fle_name_orig'].'">파일다운로드</a>'
-								.'&nbsp;&nbsp;<input type="checkbox" name="'.$row1['fle_type'].'_del['.$row1['fle_sort'].']" value="1"> 삭제'
-								:'';
-			$row[$row1['fle_type']][$row1['fle_sort']]['fle_name'] = (is_file(G5_PATH.$row1['fle_path'].'/'.$row1['fle_name'])) ?
-								$row1['fle_name'] : '' ;
-			$row[$row1['fle_type']][$row1['fle_sort']]['fle_path'] = (is_file(G5_PATH.$row1['fle_path'].'/'.$row1['fle_name'])) ?
-								$row1['fle_path'] : '' ;
-			$row[$row1['fle_type']][$row1['fle_sort']]['exists'] = (is_file(G5_PATH.$row1['fle_path'].'/'.$row1['fle_name'])) ?
-								1 : 0 ;
-		}
-		// 대표이미지
-		$fle_type3 = "item_list";
-		if($row[$fle_type3][0]['fle_name']) {
-			$row[$fle_type3][0]['thumbnail'] = thumbnail($row[$fle_type3][0]['fle_name'],
-							G5_PATH.$row[$fle_type3][0]['fle_path'], G5_PATH.$row[$fle_type3][0]['fle_path'],
-							200, 200,
-							false, true, 'center', true, $um_value='85/3.4/15'
-			);	// is_create, is_crop, crop_mode
-			$row[$fle_type3][0]['thumbnail_img'] = '<img src="'.G5_URL.$row[$fle_type3][0]['fle_path'].'/'.$row[$fle_type3][0]['thumbnail'].'" width="'.$fle_width.'" height="'.$fle_height.'">';
-		}
-		else {
-			$row[$fle_type3][0]['thumbnail'] = 'no_image.gif';
-			$row[$fle_type3][0]['fle_path'] = '/theme/v10/img';
-			$row[$fle_type3][0]['thumbnail_img'] = '<img src="'.G5_URL.$row[$fle_type3][0]['fle_path'].'/'.$row[$fle_type3][0]['thumbnail'].'" width="'.$fle_width.'" height="'.$fle_height.'">';
-		}
-        // print_r2($row);
-
-        // 레벨 bom_item 
-		$sql = "SELECT * FROM {$g5['bom_item_table']} WHERE bom_idx_child = '".$row['bom_idx']."' ORDER BY bit_reg_dt DESC ";
-		$rs = sql_query($sql,1);
-        // echo $sql.BR;
-		for($j=0;$row1=sql_fetch_array($rs);$j++) {
-        }
 
         // 처리일자 (히스토리가 있으면 처리날짜)
         $row['mtr_dt'] = $row['mtr_reg_dt'];
@@ -281,10 +267,9 @@ $ok_count = $row['cnt'];
         <td class="td_mtr_type font_size_7"><?=$g5['set_mtr_type_value'][$row['mtr_type']]?></td><!-- 구분 -->
         <td class="td_mms_name"><?=$row['mms']['mms_name']?></td><!-- 설비 -->
         <td class="td_mb_name"><?=$row['mb1']['mb_name']?></td><!-- 작업자 -->
-        <td class="td_mb_name"><?=$row['mtr_value']?></td><!-- 수량 -->
         <td class="td_mtr_quality font_size_7"><?=$row['mtr_quality']?></td><!-- 품질 -->
         <td class="td_mtr_date font_size_7"><?=($row['mtr_date']!='0000-00-00')?$row['mtr_date']:''?></td><!-- 통계일 -->
-        <td class="td_mtr_dt font_size_7"><?=$row['mtr_dt']?></td><!-- 날짜 -->
+        <td class="td_mtr_dt font_size_7"><?=$row['mtr_update_dt']?></td><!-- 날짜 -->
         <td class="td_mtr_status"><!-- 상태 -->
 			<select name="mtr_status[<?php echo $i; ?>]" id="mtr_status_<?=$row['mtr_idx']?>" style="width:100px;">
 				<option value="">상태선택</option>
