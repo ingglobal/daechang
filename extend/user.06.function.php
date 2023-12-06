@@ -168,7 +168,7 @@ function production_count($arr)
                 $ar['pri_idx'] = $arr['pri_idx'];
                 $ar['bom_idx'] = $row1['bom_idx'];
                 $ar['shf_idx'] = $arr['shf_idx'];
-                $ar['mb_id'] = '';
+                $ar['mb_id'] = $pri['mb_id'];
                 $ar['mtr_part_no'] = $row1['bom_part_no'];
                 $ar['mtr_name'] = $row1['bom_name'];
                 $ar['mtr_type'] = $row1['bom_type'];

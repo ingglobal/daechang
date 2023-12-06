@@ -459,8 +459,8 @@ if(is_array($sck_idx_last)) {
     }
 }
 
-// pgsql은 일주일치만 가지고 있는다.
-$sql = " DELETE FROM g5_1_socket WHERE sck_dt < '".date("Y-m-d H:i:s", G5_SERVER_TIME-86400*10)."' ";
+// pgsql은 1일치만 가지고 있는다.
+$sql = " DELETE FROM g5_1_socket WHERE sck_dt < '".date("Y-m-d H:i:s", G5_SERVER_TIME-86400*1)."' ";
 // echo $sql.BR.BR;
 sql_query_pg($sql,1);
 

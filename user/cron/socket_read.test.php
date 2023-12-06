@@ -23,7 +23,7 @@ $fields1 = sql_field_names_pg($table1);
 
 
 // prev 비교를 위해서 이전값 2번째 앞에서부터 시작해야 함
-$sql_where = " WHERE sck_idx BETWEEN 18946659 AND 18946667 AND sck_ip = '192.168.100.143' ";
+$sql_where = " WHERE sck_idx BETWEEN 28035426 AND 28035432 AND sck_ip = '192.168.100.143' ";
 $sql = " SELECT * FROM g5_1_socket {$sql_where} ORDER BY sck_dt ";
 // echo $sql.BR;
 // exit;
@@ -428,13 +428,6 @@ if(is_array($sck_idx_last)) {
         sql_query($sql);
     }
 }
-
-// pgsql은 일주일치만 가지고 있는다.
-$sql = " DELETE FROM g5_1_socket WHERE sck_dt < '".date("Y-m-d H:i:s", G5_SERVER_TIME-86400*10)."' ";
-// echo $sql.BR.BR;
-sql_query_pg($sql,1);
-
-
 
 ?>
 <script>
