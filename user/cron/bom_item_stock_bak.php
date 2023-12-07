@@ -6,9 +6,8 @@ $demo = 0; //demo mode = 1
 $g5['title'] = 'BOM재고량 업데이트';
 include_once('./_head.sub.php');
 
-// $yesterday = get_dayAddDate(G5_TIME_YMD,-1);
-// $oneweekday = get_dayAddDate(G5_TIME_YMD,-14);
-
+$yesterday = get_dayAddDate(G5_TIME_YMD,-1);
+$oneweekday = get_dayAddDate(G5_TIME_YMD,-14);
 // $yesterday = G5_TIME_YMD;
 // echo $yesterday;
 // exit;
@@ -25,13 +24,6 @@ $bom_sql = " SELECT pri.bom_idx, bom.bom_type FROM {$g5['production_item_table']
         AND prd_start_date >= DATE('{$oneweekday}')
     GROUP BY pri.bom_idx
 ";
-// $bom_sql = " SELECT pri.bom_idx, bom.bom_type FROM {$g5['production_item_table']} pri
-//                 LEFT JOIN {$g5['production_table']} prd ON pri.prd_idx = prd.prd_idx
-//                 LEFT JOIN {$g5['bom_table']} bom ON pri.bom_idx = bom.bom_idx
-//     WHERE pri_status IN ('confirm','done')
-//         AND prd_start_date >= (NOW() - INTERVAL 14 DAY)
-//     GROUP BY pri.bom_idx
-// ";
 $bom_res = sql_query($bom_sql,1);
 echo $bom_sql;
 exit;

@@ -191,7 +191,6 @@ $pending_count = $row['cnt'];
         <th scope="col" style="width:50px;">사양</th>
         <th scope="col" style="width:60px;">U/S</th>
         <th scope="col" style="width:60px;">리드타임</th>
-        <th scope="col">공급처</th>
         <th scope="col">판매가</th>
         <th scope="col">재료비</th>
         <th scope="col">안전재고</th>
@@ -217,6 +216,14 @@ $pending_count = $row['cnt'];
         // print_r2($row['mtr']);
         $row['bom_stock'] = $row['mtr']['mtr_sum'];
 
+        //재료비
+        $sql3 = " SELECT SUM(bit_count * bom_price) AS bit_sum
+                    FROM {$g5['v_bom_item_table']} boi
+                WHERE bom_idx_product = '{$row['bom_idx']}'
+                GROUP BY bom_idx_product
+        ";
+        $res3 = sql_fetch($sql3);
+        $row['mtr_prices'] = $res3['bit_sum'];
 
         // 버튼들
         $s_mod = '<a href="./'.$fname.'_form.php?'.$qstr.'&amp;w=u&'.$pre.'_idx='.$row[$pre.'_idx'].'" class="btn btn_03">수정</a>';
@@ -231,9 +238,8 @@ $pending_count = $row['cnt'];
         <td class="td_bom_spec font_size_7"><?=$row['bom_spec']?></td><!-- 사양 -->
         <td class="td_bom_usage font_size_7"><?=$row['bom_usage']?></td><!-- U/S -->
         <td class="td_bom_lead_time font_size_7"><?=$row['bom_lead_time']?></td><!-- 리드타임 -->
-        <td class="td_cst_name_provider font_size_7"><?=$row['cst_provider']['cst_name']?></td><!-- 공급처 -->
         <td class="td_bom_price font_size_7"><?=number_format($row['bom_price'])?></td><!-- 판매가 -->
-        <td class="td_bom_price font_size_7"><?=number_format($row['bom_price'])?></td><!-- 재료비 -->
+        <td class="td_mtr_prices font_size_7"><?=number_format($row['mtr_prices'])?></td><!-- 재료비 -->
         <td class="td_bom_safe_stock font_size_8"><?=number_format($row['bom_safe_stock'])?></td><!-- 안전재고 -->
         <td class="td_bom_min_cnt font_size_8"><?=number_format($row['bom_min_cnt'])?></td><!-- 재고알림 -->
         <td class="td_bom_stock font_size_8"><?=number_format($row['bom_stock'])?></td><!-- 현재고 -->
@@ -241,7 +247,7 @@ $pending_count = $row['cnt'];
     <?php
     }
     if ($i == 0)
-        echo '<tr><td colspan="20" class="empty_table">자료가 없습니다.</td></tr>';
+        echo '<tr><td colspan="12" class="empty_table">자료가 없습니다.</td></tr>';
     ?>
     </tbody>
     </table>

@@ -187,7 +187,7 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
 	</tr>
     <tr>
         <th scope="row"><label for="mb_email">E-mail<strong class="sound_only">필수</strong></label></th>
-        <td><input type="text" name="mb_email" value="<?php echo $mb['mb_email'] ?>" id="reg_mb_email" maxlength="100" required class="required frm_input email" size="30"></td>
+        <td><input type="text" name="mb_email" value="<?php echo $mb['mb_email'] ?>" id="reg_mb_email" maxlength="100" class="frm_input email" size="30"></td>
         <th scope="row"><label for="mb_tel">전화번호</label></th>
         <td><input type="text" name="mb_tel" value="<?php echo $mb['mb_tel'] ?>" id="reg_mb_tel" class="frm_input" size="15" maxlength="20"></td>
     </tr>
