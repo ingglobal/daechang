@@ -411,6 +411,34 @@ if(is_array($level_qty)) {
 
 
 
+//계층구조를 확인할 수 있는 뷰테이블을 기존테이블 있으면 삭제하고 다시 생성
+$drop_v_sql = " DROP VIEW {$g5['v_bom_item_table']} ";
+@sql_query($drop_v_sql);
+
+$create_v_sql = " CREATE VIEW IF NOT EXISTS {$g5['v_bom_item_table']} 
+    AS
+    SELECT bom.bom_idx
+        , cst_idx_provider
+        , bom.bom_name
+        , bom_part_no
+        , bom_type
+        , bom_price
+        , bom_status
+        , cst_name
+        , bit.bit_idx
+        , bit.bom_idx AS bom_idx_product
+        , bit.bit_main_yn
+        , bit.bom_idx_child
+        , bit.bit_reply
+        , bit.bit_count
+    FROM {$g5['bom_item_table']} AS bit
+        LEFT JOIN {$g5['bom_table']} bom ON bom.bom_idx = bit.bom_idx_child
+        LEFT JOIN {$g5['customer_table']} cst ON cst.cst_idx = bom.cst_idx_provider
+    ORDER BY bit.bom_idx, bit.bit_reply
+";
+@sql_query($create_v_sql);
+
+
 // 관리자 디버깅 메시지
 if( is_array($g5['debug_msg']) ) {
     for($i=0;$i<sizeof($g5['debug_msg']);$i++) {

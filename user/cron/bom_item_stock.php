@@ -6,8 +6,8 @@ $demo = 0; //demo mode = 1
 $g5['title'] = 'BOM재고량 업데이트';
 include_once('./_head.sub.php');
 
-// $yesterday = get_dayAddDate(G5_TIME_YMD,-1);
-// $oneweekday = get_dayAddDate(G5_TIME_YMD,-14);
+$yesterday = get_dayAddDate(G5_TIME_YMD,-1);
+$oneweekday = get_dayAddDate(G5_TIME_YMD,-14);
 
 // $yesterday = G5_TIME_YMD;
 // echo $yesterday;
