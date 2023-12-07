@@ -233,7 +233,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     // 조건에 맞는 해당 라인만 추출
     if( preg_match("/[-0-9A-Z]/",$arr['bom_part_no'])
         && $arr['bom_name']
-        && is_numeric($arr['bct_idx']) )
+        && $arr['bct_idx'] )
     {
         // print_r3($arr);
 
