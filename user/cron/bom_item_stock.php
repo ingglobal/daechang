@@ -6,35 +6,29 @@ $demo = 0; //demo mode = 1
 $g5['title'] = 'BOM재고량 업데이트';
 include_once('./_head.sub.php');
 
-$yesterday = get_dayAddDate(G5_TIME_YMD,-1);
-$oneweekday = get_dayAddDate(G5_TIME_YMD,-14);
-
-// $yesterday = G5_TIME_YMD;
-// echo $yesterday;
-// exit;
-// $bom_sql = " SELECT bom_idx, bom_part_no, bom_type, bom_name FROM {$g5['bom_table']}
-//     WHERE bom_status = 'ok'
-// ";
-// 불필요하게 최근 작업하지도 않는 bom데이터의 bom_stock데이터를 업데이트할 필요가 없으므로
-// 최근 일주일 동안에 작업된 bom데이터들만 확인해서 bom_stock을 업데이트 해 준다.
-$bom_sql = " SELECT pri.bom_idx, bom.bom_type FROM {$g5['production_item_table']} pri
-                LEFT JOIN {$g5['production_table']} prd ON pri.prd_idx = prd.prd_idx
-                LEFT JOIN {$g5['bom_table']} bom ON pri.bom_idx = bom.bom_idx
-    WHERE pri_status IN ('confirm','done')
-        AND prd_start_date <= DATE('{$yesterday}')
-        AND prd_start_date >= DATE('{$oneweekday}')
-    GROUP BY pri.bom_idx
+$days = 30;
+$bom_sql = " SELECT bom_idx
+                , itm_type AS bom_type
+                , itm_reg_dt AS bom_reg_dt
+                , SUM(itm_value) AS bom_cnt
+            FROM {$g5['item_table']}
+                WHERE itm_reg_dt >= (NOW() - INTERVAL {$days} DAY)
+                    AND itm_status IN ('ok','finish')
+            GROUP BY bom_idx
+            UNION ALL
+            SELECT bom_idx
+                , mtr_type AS bom_type
+                , mtr_reg_dt AS bom_reg_dt
+                , SUM(mtr_value) AS bom_cnt
+            FROM {$g5['material_table']}
+                WHERE mtr_reg_dt >= (NOW() - INTERVAL {$days} DAY)
+                    AND mtr_status IN ('ok','finish')
+            GROUP BY bom_idx
+            ORDER BY bom_reg_dt DESC, bom_idx
 ";
-// $bom_sql = " SELECT pri.bom_idx, bom.bom_type FROM {$g5['production_item_table']} pri
-//                 LEFT JOIN {$g5['production_table']} prd ON pri.prd_idx = prd.prd_idx
-//                 LEFT JOIN {$g5['bom_table']} bom ON pri.bom_idx = bom.bom_idx
-//     WHERE pri_status IN ('confirm','done')
-//         AND prd_start_date >= (NOW() - INTERVAL 14 DAY)
-//     GROUP BY pri.bom_idx
-// ";
 $bom_res = sql_query($bom_sql,1);
-echo $bom_sql;
-exit;
+// echo $bom_sql;
+// exit;
 ?>
 <div class="" style="padding:10px;">
     <span>
@@ -59,25 +53,9 @@ $result = $bom_res->num_rows;
 // exit;
 for($i=0;$row=sql_fetch_array($bom_res);$i++){
     $cnt++;
-    
-    if($row['bom_type'] == 'product'){
-        $stock_sql = " SELECT SUM(itm_value) AS cnt FROM {$g5['item_table']} 
-            WHERE bom_idx = '{$row['bom_idx']}'
-                AND itm_status = ('ok','finish')
-            GROUP BY bom_idx
-        ";
-    }
-    else{
-        $stock_sql = " SELECT SUM(mtr_value) AS cnt FROM {$g5['material_table']} 
-            WHERE bom_idx = '{$row['bom_idx']}'
-                AND mtr_status IN ('ok','finish')
-            GROUP BY bom_idx
-        ";
-    }
-    $stock = sql_fetch($stock_sql);
 
     $stock_update_sql = " UPDATE {$g5['bom_table']} SET
-            bom_stock = '{$stock['cnt']}'
+            bom_stock = '{$row['bom_cnt']}'
             , bom_update_dt = '".G5_TIME_YMDHIS."'
         WHERE bom_idx = '{$row['bom_idx']}'
     ";
