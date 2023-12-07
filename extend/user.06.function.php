@@ -1,6 +1,63 @@
 <?php
 if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 
+// BOM-업체 업데이트
+if(!function_exists('update_bom_customer')){
+function update_bom_customer($arr)
+{
+	global $g5;
+	
+	if(!$arr['bom_idx']||!$arr['cst_idx']||!$arr['boc_type']) {
+		return false;
+    }
+    
+    $arr['com_idx'] = $arr['com_idx'] ?: $_SESSION['ss_com_idx'];
+
+    $g5_table_name = $g5['bom_customer_table'];
+    $fields = sql_field_names($g5_table_name);
+    $pre = substr($fields[0],0,strpos($fields[0],'_'));
+    
+    // 건너뛸 변수 배열
+    $skips[] = $pre.'_idx';
+    // 공통쿼리
+    for($i=0;$i<sizeof($fields);$i++) {
+        if(in_array($fields[$i],$skips)) {continue;}
+        $sql_commons[] = " ".$fields[$i]." = '".$arr[$fields[$i]]."' ";
+    }
+
+    // after sql_common value setting
+    // $sql_commons[] = " com_idx = '".$_SESSION['ss_com_idx']."' ";
+
+    // 공통쿼리 생성
+    $sql_common = (is_array($sql_commons)) ? implode(",",$sql_commons) : '';
+    
+    // 중복 조건은 함수마다 다르게 설정!!
+    $sql = "SELECT * FROM {$g5_table_name} 
+            WHERE bom_idx = '".$arr['bom_idx']."' AND cst_idx = '".$arr['cst_idx']."' AND boc_type = '".$arr['boc_type']."'
+    ";
+    // echo $sql.'<br>';
+    $row = sql_fetch($sql,1);
+	if($row[$pre."_idx"]) {
+		$sql = "UPDATE {$g5_table_name} SET 
+                    {$sql_common} 
+				WHERE ".$pre."_idx = '".$row[$pre."_idx"]."'
+        ";
+		sql_query($sql,1);
+	}
+	else {
+		$sql = "INSERT INTO {$g5_table_name} SET 
+                    {$sql_common}
+        ";
+		sql_query($sql,1);
+        $row[$pre."_idx"] = sql_insert_id();
+	}
+    // echo $sql.BR;
+
+    return $row[$pre."_idx"];
+}
+}
+
+
 if(!function_exists('sql_query2')){
 function sql_query2($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
 {
@@ -416,8 +473,9 @@ function update_production_item($arr)
     $arr[$pre.'_update_dt'] = G5_TIME_YMDHIS;
     // $arr[$pre.'_end_ym'] = $arr[$pre.'_end_year'].'-'.$arr[$pre.'_end_month'];   // 년월
 
+    // 건너뛸 변수 배열
+    $skips[] = $pre.'_idx';
     // 공통쿼리
-    $skips[] = $pre.'_idx';	// 건너뛸 변수 배열
     $skips[] = $pre.'_reg_dt';
     for($i=0;$i<sizeof($fields);$i++) {
         if(in_array($fields[$i],$skips)) {continue;}

@@ -3336,5 +3336,5 @@ top -bn1 | grep "postgres" | head -n 1 | awk '{print $9}'
 top -bn1 | head -n 12
 
 
-
-
+SELECT SUBSTRING('10',1,2) -> 10
+SELECT SUBSTRING('1010',3,2) -> 10

@@ -254,9 +254,9 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
                 // print_r2($row1);
                 $row1['bit_main_class'] = $row1['bit_main_yn'] ? 'bit_main' : ''; // 대표제품 색상
                 $row1['bit_main_class2'] = $row1['bit_main_yn'] ? 'bit_main2' : ''; // 대표제품 색상
-                $len = strlen($row1['bit_reply'])/2+1;
+                $len = strlen($row1['bit_reply'])/2;
                 $row1['len'] = '<span class="btn_number">'.$len.'</span>';
-                for ($k=2; $k<$len; $k++) { $row1['nbsp'] .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; } // 들여쓰기공백
+                for ($k=1; $k<$len; $k++) { $row1['nbsp'] .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; } // 들여쓰기공백
                 $row['parts_list'][] = '<div class="div_part" bom_idx="'.$row1['bom_idx'].'" bit_idx="'.$row1['bit_idx'].'">
                                             <span class="span_bom_part_no '.$row1['bit_main_class'].' font_size_7 font_color_white">'.$row1['nbsp'].$row1['len'].$row1['bom_part_no'].'</span>
                                             <spna class="sp_main_flag '.$row1['bit_main_class2'].' font_size_8">대표제품</spna>

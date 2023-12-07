@@ -40,7 +40,7 @@ echo $g5['container_sub_title'];
         <td>
             <input type="hidden" name="excel_type" value="01">
             <?=help('표준 엑셀과 동일한 구조의 파일을 등록해 주셔야 합니다. 표준엑셀은 아래에서 확인하세요.')?>
-            <a href="https://docs.google.com/spreadsheets/d/1mRRe3spJ_atzQwNR2t8aJ1k8gm-BMgB4pHt682XuQ0o/edit?usp=sharing" target="_blank">LX2</a>
+            <a href="https://docs.google.com/spreadsheets/d/1Lp2MOrDCxrt3N9jhHtCkKn6dViA9ebj57QaD29kLWiA/edit?usp=sharing" target="_blank">1. LX2 BOM(231123)</a>
             <!-- <select name="excel_type" id="excel_type">
                 <option value="">엑셀 선택</option>
                 <option value="01">대창공업 ITEM LIST_REV1(22.12.22)-개발이범희GJ_REV6.xlxs</option>
