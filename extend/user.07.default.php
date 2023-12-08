@@ -228,6 +228,7 @@ $g5['cats_val_key'] = array();
 for($i=0;$row=sql_fetch_array($cat_res);$i++){
     $g5['cats_key_val'][$row['bct_idx']] = $row['bct_name'];
     $g5['cats_val_key'][$row['bct_name']] = $row['bct_idx'];
+    $g5['cats_options'] .= '<option value="'.$row['bct_idx'].'">'.$row['bct_name'].'</option>'.PHP_EOL;
 }
 unset($cat_sql);
 unset($cat_res);

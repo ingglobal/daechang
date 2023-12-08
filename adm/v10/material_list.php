@@ -213,6 +213,7 @@ $('#ser_mtr_status').val('<?=$ser_mtr_status?>');
             <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
         </th>
         <th scope="col" style="width:100px;">품번</th>
+        <th scope="col">제품ID</th>
         <th scope="col">품명</th>
         <th scope="col">구분</th>
         <th scope="col">설비</th>
@@ -263,6 +264,7 @@ $('#ser_mtr_status').val('<?=$ser_mtr_status?>');
             <input type="checkbox" name="chk[]" value="<?=$i?>" id="chk_<?=$i?>">
         </td>
         <td class="td_mtr_part_no font_size_7"><?=$row['mtr_part_no']?></td><!-- 품번 -->
+        <td class="td_bom_bom font_size_7"><?=$row['bom_idx']?></td><!-- 제품ID -->
         <td class="td_mtr_name font_size_7"><?=$row['mtr_name']?></td><!-- 품명 -->
         <td class="td_mtr_type font_size_7"><?=$g5['set_mtr_type_value'][$row['mtr_type']]?></td><!-- 구분 -->
         <td class="td_mms_name"><?=$row['mms']['mms_name']?></td><!-- 설비 -->

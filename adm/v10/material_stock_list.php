@@ -159,16 +159,6 @@ $pending_count = $row['cnt'];
 </form>
 
 
-
-
-
-
-
-
-
-
-
-
 <form name="form01" id="form01" action="./<?=$g5['file_name']?>_update.php" onsubmit="return form01_submit(this);" method="post">
 <input type="hidden" name="sst" value="<?php echo $sst ?>">
 <input type="hidden" name="sod" value="<?php echo $sod ?>">
@@ -184,6 +174,7 @@ $pending_count = $row['cnt'];
     <caption><?php echo $g5['title']; ?> 목록</caption>
     <thead>
     <tr>
+        <th scope="col">제품ID</th>
         <th scope="col" style="width:100px;">품번</th>
         <th scope="col">품명</th>
         <th scope="col">구분</th>
@@ -231,6 +222,7 @@ $pending_count = $row['cnt'];
         $bg = 'bg'.($i%2);
     ?>
     <tr class="<?=$bg?>" tr_id="<?=$row[$pre.'_idx']?>">
+        <td class="td_bom_idx font_size_7"><?=$row['bom_idx']?></td><!-- 제품ID -->
         <td class="td_bom_part_no font_size_7"><?=$row['bom_part_no']?></td><!-- 품번 -->
         <td class="td_bom_name font_size_7"><?=$row['bom_name']?></td><!-- 품명 -->
         <td class="td_bom_type font_size_7"><?=$g5['set_bom_type_value'][$row['bom_type']]?></td><!-- 구분 -->
@@ -247,7 +239,7 @@ $pending_count = $row['cnt'];
     <?php
     }
     if ($i == 0)
-        echo '<tr><td colspan="12" class="empty_table">자료가 없습니다.</td></tr>';
+        echo '<tr><td colspan="13" class="empty_table">자료가 없습니다.</td></tr>';
     ?>
     </tbody>
     </table>

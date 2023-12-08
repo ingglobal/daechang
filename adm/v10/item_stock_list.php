@@ -58,6 +58,10 @@ if ($stx) {
     }
 }
 
+if($ser_cats){
+    $where[] = " bct_idx = ".$ser_cats;
+}
+
 
 // 최종 WHERE 생성
 if ($where)
@@ -125,12 +129,14 @@ $pending_count = $row['cnt'];
 </div>
 
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get" style="width:100%;">
+<select name="ser_cats" id="ser_cats">
+    <option value="">::차종::</option>
+    <?=$g5['cats_options']?>
+</select>
+<script>
+$('#ser_cats').val('<?=$ser_cats?>');
+</script>
 <label for="sfl" class="sound_only">검색대상</label>
-<div style="display:none;">
-기간: 
-<input type="text" name="ser_st_date" value="<?=$ser_st_date ?>" id="ser_st_date" class="frm_input" style="width:80px;"> ~
-<input type="text" name="ser_en_date" value="<?=$ser_en_date ?>" id="ser_en_date" class="frm_input" style="width:80px;">
-</div>
 <select name="sfl" id="sfl">
     <option value="">검색항목</option>
     <option value="bom_part_no" <?=get_selected($sfl, 'bom_part_no')?>>품번</option>
@@ -156,10 +162,6 @@ $pending_count = $row['cnt'];
     <caption><?php echo $g5['title']; ?> 목록</caption>
     <thead>
     <tr>
-        <th scope="col" id="bom_list_chk">
-            <label for="chkall" class="sound_only">전체</label>
-            <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
-        </th>
         <th scope="col">ID</th>
         <th scope="col" style="width:100px;">품번</th>
         <th scope="col">품명</th>
@@ -234,10 +236,6 @@ $pending_count = $row['cnt'];
         $bg = 'bg'.($i%2);
     ?>
     <tr class="<?=$bg?>" tr_id="<?=$row[$pre.'_idx']?>">
-        <td class="td_chk">
-            <input type="hidden" name="<?=$pre?>_idx[<?=$i?>]" value="<?=$row[$pre.'_idx']?>" id="<?=$pre?>_idx_<?=$i?>">
-            <input type="checkbox" name="chk[]" value="<?=$i?>" id="chk_<?=$i?>">
-        </td>
         <td class="td_bom_idx font_size_7"><?=$row['bom_idx']?></td><!-- ID번호 -->
         <td class="td_bom_part_no font_size_7"><?=$row['bom_part_no']?></td><!-- 품번 -->
         <td class="td_bom_name font_size_7"><?=$row['bom_name']?></td><!-- 품명 -->
@@ -254,7 +252,7 @@ $pending_count = $row['cnt'];
     <?php
     }
     if ($i == 0)
-        echo '<tr><td colspan="20" class="empty_table">자료가 없습니다.</td></tr>';
+        echo '<tr><td colspan="12" class="empty_table">자료가 없습니다.</td></tr>';
     ?>
     </tbody>
     </table>

@@ -124,7 +124,7 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
 .div_bom_part_no_count {position:absolute;top:0px;right:-16px;background-color:red;color:white;border-radius:7px;padding:0px 5px;font-size:10px;height:15px;line-height:13px;}
 .div_part_no_detail {position:absolute;top:7px;left:9px;padding:5px 10px;background-color:#354667;width:max-content;font-size:1.3em;line-height:1.3em;display:none;}
 
-.sp_main_flag {padding:1px 3px;background:#000;color:#777;cursor:pointer;border:1px solid #888;}
+.sp_main_flag {padding:1px 3px;background:#000;color:#555;cursor:pointer;border:1px solid #555;}
 .sp_main_flag.bit_main2 {background:#3c2899;color:yellow;}
 </style>
 
@@ -259,7 +259,7 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
                 for ($k=1; $k<$len; $k++) { $row1['nbsp'] .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; } // 들여쓰기공백
                 $row['parts_list'][] = '<div class="div_part" bom_idx="'.$row1['bom_idx'].'" bit_idx="'.$row1['bit_idx'].'">
                                             <span class="span_bom_part_no '.$row1['bit_main_class'].' font_size_7 font_color_white">'.$row1['nbsp'].$row1['len'].$row1['bom_part_no'].'</span>
-                                            <spna class="sp_main_flag '.$row1['bit_main_class2'].' font_size_8">대표제품</spna>
+                                            <spna class="sp_main_flag '.$row1['bit_main_class2'].' font_size_8">대표제품으로 설정</spna>
                                             <span class="span_bom_name">'.$row1['bom_name'].'</span>
                                             <span class="span_bom_type font_size_7">'.$g5['set_bom_type_value'][$row1['bom_type']].'</span>
                                             <span class="span_cst_name font_size_8">'.$row1['cst_name'].'</span>
