@@ -14,10 +14,8 @@ $fname = preg_replace("/_list/","",$g5['file_name']); // _list을 제외한 파�
 // 추가 변수 생성
 foreach($_REQUEST as $key => $value ) {
     if(substr($key,0,4)=='ser_') {
-    //    print_r3($key.'='.$value);
         if(is_array($value)) {
             foreach($value as $k2 => $v2 ) {
-//                print_r3($key.$k2.'='.$v2);
                 $qstr .= '&'.$key.'[]='.$v2;
                 $form_input .= '<input type="hidden" name="'.$key.'[]" value="'.$v2.'" class="frm_input">'.PHP_EOL;
             }
@@ -36,7 +34,7 @@ include_once('./_head.php');
 echo $g5['container_sub_title'];
 
 $sql_common = " FROM {$g5_table_name} bom
-                LEFT JOIN {$g5['material_table']} mtr ON bom.bom_idx = mtr.bom_idx
+                LEFT JOIN {$g5['item_table']} itm ON bom.bom_idx = itm.bom_idx
 ";
 
 $where = array();
@@ -73,6 +71,7 @@ if (!$sst) {
     //$sst = "bom_sort, ".$pre."_reg_dt";
     $sod = "DESC";
 }
+$sql_group = " GROUP BY bom.bom_idx ";
 $sql_order = " ORDER BY {$sst} {$sod} ";
 
 $rows = $g5['setting']['set_'.$fname.'_page_rows'] ? $g5['setting']['set_'.$fname.'_page_rows'] : $config['cf_page_rows'];
@@ -90,8 +89,12 @@ $sql = " SELECT bom.bom_idx
             , bom_safe_stock
             , bom_min_cnt
             , bom_stock
+            , bom_type
+            , itm.cst_idx_provider
+            , itm.cst_idx_customer
 		{$sql_common}
 		{$sql_search}
+        {$sql_group}
         {$sql_order}
 		LIMIT {$from_record}, {$rows}
 ";
@@ -162,7 +165,11 @@ $('#ser_cats').val('<?=$ser_cats?>');
     <caption><?php echo $g5['title']; ?> 목록</caption>
     <thead>
     <tr>
-        <th scope="col">ID</th>
+        <th scope="col" id="bom_list_chk">
+            <label for="chkall" class="sound_only">전체</label>
+            <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
+        </th>
+        <th scope="col">제품ID</th>
         <th scope="col" style="width:100px;">품번</th>
         <th scope="col">품명</th>
         <th scope="col">차종</th>
@@ -173,6 +180,7 @@ $('#ser_cats').val('<?=$ser_cats?>');
         <th scope="col">재료비</th>
         <th scope="col">안전재고</th>
         <th scope="col">재고알림</th>
+        <th scope="col">수량</th>
         <th scope="col">현재고</th>
     </tr>
     </thead>
@@ -181,54 +189,8 @@ $('#ser_cats').val('<?=$ser_cats?>');
     for ($i=0; $row=sql_fetch_array($result); $i++) {
         // print_r2($row);
         $row['cst_customer'] = get_table('customer','cst_idx',$row['cst_idx_customer'],'cst_name');
-        $row['cst_provider'] = get_table('customer','cst_idx',$row['cst_idx_provider'],'cst_name');
         $row['mb1'] = get_table('member','mb_id',$row['mb_id'],'mb_name');
         // print_r2($row['cst_customer']);
-
-		$fle_width = '30';
-		$fle_height = '30';
-		// 관련 파일 추출
-		$sql = "SELECT * FROM {$g5['file_table']}
-				WHERE fle_db_table = 'item' AND fle_db_id = '".$row['bom_idx']."'
-                ORDER BY fle_sort, fle_reg_dt DESC
-        ";
-		$rs = sql_query($sql,1);
-        // echo $sql;
-		for($j=0;$row1=sql_fetch_array($rs);$j++) {
-			$row[$row1['fle_type']][$row1['fle_sort']]['file'] = (is_file(G5_PATH.$row1['fle_path'].'/'.$row1['fle_name'])) ?
-								'&nbsp;&nbsp;'.$row1['fle_name_orig'].'&nbsp;&nbsp;<a href="'.G5_USER_ADMIN_URL.'/lib/download.php?file_fullpath='.urlencode(G5_PATH.$row1['fle_path'].'/'.$row1['fle_name']).'&file_name_orig='.$row1['fle_name_orig'].'">파일다운로드</a>'
-								.'&nbsp;&nbsp;<input type="checkbox" name="'.$row1['fle_type'].'_del['.$row1['fle_sort'].']" value="1"> 삭제'
-								:'';
-			$row[$row1['fle_type']][$row1['fle_sort']]['fle_name'] = (is_file(G5_PATH.$row1['fle_path'].'/'.$row1['fle_name'])) ?
-								$row1['fle_name'] : '' ;
-			$row[$row1['fle_type']][$row1['fle_sort']]['fle_path'] = (is_file(G5_PATH.$row1['fle_path'].'/'.$row1['fle_name'])) ?
-								$row1['fle_path'] : '' ;
-			$row[$row1['fle_type']][$row1['fle_sort']]['exists'] = (is_file(G5_PATH.$row1['fle_path'].'/'.$row1['fle_name'])) ?
-								1 : 0 ;
-		}
-		// 대표이미지
-		$fle_type3 = "item_list";
-		if($row[$fle_type3][0]['fle_name']) {
-			$row[$fle_type3][0]['thumbnail'] = thumbnail($row[$fle_type3][0]['fle_name'],
-							G5_PATH.$row[$fle_type3][0]['fle_path'], G5_PATH.$row[$fle_type3][0]['fle_path'],
-							200, 200,
-							false, true, 'center', true, $um_value='85/3.4/15'
-			);	// is_create, is_crop, crop_mode
-			$row[$fle_type3][0]['thumbnail_img'] = '<img src="'.G5_URL.$row[$fle_type3][0]['fle_path'].'/'.$row[$fle_type3][0]['thumbnail'].'" width="'.$fle_width.'" height="'.$fle_height.'">';
-		}
-		else {
-			$row[$fle_type3][0]['thumbnail'] = 'no_image.gif';
-			$row[$fle_type3][0]['fle_path'] = '/theme/v10/img';
-			$row[$fle_type3][0]['thumbnail_img'] = '<img src="'.G5_URL.$row[$fle_type3][0]['fle_path'].'/'.$row[$fle_type3][0]['thumbnail'].'" width="'.$fle_width.'" height="'.$fle_height.'">';
-		}
-        // print_r2($row);
-
-        // 레벨 bom_item
-		$sql = "SELECT * FROM {$g5['bom_item_table']} WHERE bom_idx_child = '".$row['bom_idx']."' ORDER BY bit_reg_dt DESC ";
-		$rs = sql_query($sql,1);
-        // echo $sql.BR;
-		for($j=0;$row1=sql_fetch_array($rs);$j++) {
-        }
 
         // 버튼들
         $s_mod = '<a href="./'.$fname.'_form.php?'.$qstr.'&amp;w=u&'.$pre.'_idx='.$row[$pre.'_idx'].'" class="btn btn_03">수정</a>';
@@ -236,7 +198,20 @@ $('#ser_cats').val('<?=$ser_cats?>');
         $bg = 'bg'.($i%2);
     ?>
     <tr class="<?=$bg?>" tr_id="<?=$row[$pre.'_idx']?>">
-        <td class="td_bom_idx font_size_7"><?=$row['bom_idx']?></td><!-- ID번호 -->
+        <td class="td_chk">
+            <label for="chk_<?=$i?>" class="sound_only"><?php echo get_text($row['bom_idx']); ?></label>
+            <input type="checkbox" name="chk[]" value="<?=$row['bom_idx']?>" id="chk_<?=$i?>">
+            <div class="chkdiv_btn" chk_no="<?=$i?>"></div>
+
+            <input type="hidden" name="bom_idx[<?=$row['bom_idx']?>]" value="<?=$row['bom_idx']?>">
+            <input type="hidden" name="bom_name[<?=$row['bom_idx']?>]" value="<?=$row['bom_name']?>">
+            <input type="hidden" name="bom_part_no[<?=$row['bom_idx']?>]" value="<?=$row['bom_part_no']?>">
+            <input type="hidden" name="bom_type[<?=$row['bom_idx']?>]" value="<?=$row['bom_type']?>">
+            <input type="hidden" name="cst_idx_provider[<?=$row['bom_idx']?>]" value="<?=$row['cst_idx_provider']?>">
+            <input type="hidden" name="cst_idx_customer[<?=$row['bom_idx']?>]" value="<?=$row['cst_idx_customer']?>">
+            <input type="hidden" name="bom_price[<?=$row['bom_idx']?>]" value="<?=$row['bom_price']?>">
+        </td>
+        <td class="td_bom_idx font_size_7"><?=$row['bom_idx']?></td><!-- 제품ID -->
         <td class="td_bom_part_no font_size_7"><?=$row['bom_part_no']?></td><!-- 품번 -->
         <td class="td_bom_name font_size_7"><?=$row['bom_name']?></td><!-- 품명 -->
         <td class="td_bct_name font_size_7"><?=$g5['cats_key_val'][$row['bct_idx']]?></td><!-- 차종 -->
@@ -247,23 +222,25 @@ $('#ser_cats').val('<?=$ser_cats?>');
         <td class="td_bom_price font_size_7"><?=number_format($row['bom_price'])?></td><!-- 재료비 -->
         <td class="td_bom_safe_stock font_size_8"><?=number_format($row['bom_safe_stock'])?></td><!-- 안전재고 -->
         <td class="td_bom_min_cnt font_size_8"><?=number_format($row['bom_min_cnt'])?></td><!-- 재고알림 -->
+        <td class="td_input_cnt">
+            <input type="text" name="input_cnt[<?=$row['bom_idx']?>]" onclick="javascript:numtoprice(this)" class="frm_input input_cnt wg_wdx60 wg_right">
+        </td>
         <td class="td_bom_stock font_size_8"><?=number_format($row['bom_stock'])?></td><!-- 현재고 -->
     </tr>
     <?php
     }
     if ($i == 0)
-        echo '<tr><td colspan="12" class="empty_table">자료가 없습니다.</td></tr>';
+        echo '<tr><td colspan="14" class="empty_table">자료가 없습니다.</td></tr>';
     ?>
     </tbody>
     </table>
 </div>
 
 <div class="btn_fixed_top">
-    <input type="submit" name="act_button" value="선택복제" onclick="document.pressed=this.value" class="btn btn_02" style="display:none;">
-    <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02">
-    <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn btn_02">
-    <?php if ($is_admin == 'super') { ?>
-    <a href="./<?=$fname?>_form.php" id="member_add" class="btn btn_01">추가하기</a>
+    
+<?php if (!auth_check($auth[$sub_menu],'w')) { ?>
+    <input type="submit" name="act_button" value="선택재고입고" onclick="document.pressed=this.value" class="btn wg_btn_success">
+    <input type="submit" name="act_button" value="선택재고차감" onclick="document.pressed=this.value" class="btn wg_btn_danger">
     <?php } ?>
 </div>
 
@@ -293,24 +270,25 @@ function form01_submit(f)
         return false;
     }
 
-	if(document.pressed == "선택수정") {
-		$('input[name="w"]').val('u');
-	}
-	else if(document.pressed == "선택삭제") {
-		if (!confirm("선택한 항목(들)을 정말 삭제 하시겠습니까?\n복구가 어려우니 신중하게 결정 하십시오.")) {
-			return false;
-		}
-		// else {
-		// 	$('input[name="w"]').val('d');
-		// }
-	}
-	else if(document.pressed == "선택복제") {
-		if (!confirm("선택한 항목(들)을 정말 복제 하시겠습니까?")) {
-			return false;
-		}
-	}
+    if(!is_exist_input_count()){
+        alert("선택된 항목의 수량을 반드시 입력하셔야 합니다.");
+        return false;
+    }
 
     return true;
+}
+
+//선택된 품목중에 수량을 입력하지 않은 항목이 있는지 확인하는 함수
+function is_exist_input_count(){
+    var blank_exist = true;
+    var chk = $('input[name="chk[]"]:checked');
+    chk.each(function(){
+        if(!$('input[name="input_cnt['+$(this).val()+']"]').val()){
+            blank_exist = false;
+        }
+    });
+    
+    return blank_exist;
 }
 </script>
 
