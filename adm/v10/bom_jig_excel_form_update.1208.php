@@ -11,7 +11,7 @@ if(!$excel_type) {
     alert('엑셀 종류를 선택하세요.');
 }
 
-$demo = 1;  // 데모모드 = 1
+$demo = 0;  // 데모모드 = 1
 
 // print_r2($_REQUEST);
 // exit;
@@ -94,14 +94,11 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     }
     // print_r3($list);
     $arr['image'] = $list[0];
-    $arr['serial'] = trim($list[1]); // 설비 시리얼번호
-    $arr['machine_name'] = trim($list[2]); // 호기
-    $arr['location'] = trim($list[3]);  // 위치
-    $arr['bct_idx'] = addslashes(trim($list[4]));  // 차종ID
-    $arr['bct_name'] = addslashes(trim($list[5]));  // 차종
-    $arr['bom_part_no'] = trim($list[6]);    // 품번
-    $arr['bom_name'] = addslashes(trim($list[7]));  // 품명
-    $arr['count_yn'] = trim($list[8]);  // 카운터
+    $arr['machine_name'] = trim($list[1]); // 호기
+    $arr['location'] = trim($list[2]);  // 위치
+    $arr['bct_name'] = addslashes(trim($list[3]));  // 차종
+    $arr['bom_part_no'] = trim($list[4]);    // 품번
+    $arr['bom_name'] = addslashes(trim($list[5]));  // 품명
     // print_r3($arr);
 
     // 조건에 맞는 해당 라인만 추출
@@ -109,13 +106,21 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
         && $arr['bom_name']
         && $arr['location'] )
     {
+        // print_r3($arr['machine_name']);
+        // if no machine name, it should be the prev one.
+        $arr['machine_name'] = (preg_match("/(SPOT|CO2)/",$arr['machine_name'])) ? '' : $arr['machine_name'];
+        // print_r3($arr['machine_name'].'<<<');
+        $arr['machine_name'] = (!$arr['machine_name']) ? $machine_name : $arr['machine_name'];
+        // print_r3($arr['machine_name'].' !! ---------------');
+        // if no car type, it should be the prev one.
+        $arr['bct_name'] = (!$arr['bct_name']) ? $bct_name : $arr['bct_name'];
 
-        // if no serial, it should be the prev one.
-        $arr['serial'] = $arr['serial'] ?: $serial;
-        $arr['machine_name'] = $arr['machine_name'] ?: $machine_name;
-        
+        // print_r3($arr);
+
         // 설비 찾기 (mms_model에 값을 넣어둬야 함)
-        $sql = " SELECT mms_idx, mms_name FROM {$g5['mms_table']} WHERE mms_serial_no = '".$arr['serial']."' ";
+        $sql = "SELECT mms_idx, mms_name FROM {$g5['mms_table']}
+                WHERE mms_name = '".$arr['machine_name']."' OR mms_name_ref LIKE '%^".$arr['machine_name']."^%'
+        ";
         $mms = sql_fetch($sql);
         // print_r3($mms);
         // 품번 찾기
@@ -127,7 +132,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
         if($mms['mms_idx'] && $bom['bom_idx']) {
 
             // 카운터를 하는 지그 표시
-            $ar['boj_status'] = ($arr['count_yn']) ? 'ok':'no';
+            $ar['boj_status'] = (preg_match("/1EA/",$arr['bom_name'])) ? 'ok':'no';
 
             $ar['table'] = 'g5_1_bom_jig';
             $ar['bom_idx'] = $bom['bom_idx'];
@@ -135,7 +140,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
             $ar['boj_code'] = $arr['location'];
             $ar['boj_plc_ip'] = '192.168.100.143';
             $ar['boj_plc_port'] = '20480';
-            // if($demo) {print_r3($ar);}
+            // if($demo) {print_r3($arr);}
             // if($ar['mms_idx']==140) {print_r3($arr);print_r3($ar);print_r3('-----------------------<br>');}
             $arr['boj_idx'] = update_db($ar);
             unset($ar);
@@ -144,13 +149,15 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
             // 메시지 보임
             if(preg_match("/[-0-9A-Z]/",$arr['bom_part_no'])) {
                 echo "<script> document.all.cont.innerHTML += '".$idx
-                        .". ".$arr['serial']." [".$arr['bom_part_no']."]: ".$arr['bom_name']
+                        .". ".$arr['machine_name']." [".$arr['bom_part_no']."]: ".$arr['bom_name']
                         ." ----------->> 완료<br>'; </script>\n";
             }
         }
         // 호기 정보 저장 (바뀔 때 체크해야 함)
-        $serial = $arr['serial'];
         $machine_name = $arr['machine_name'];
+        // print_r3($machine_name.' $machine_name');
+        // 차종 (없는 경우가 있어서 과거값을 저장)
+        $bct_name = $arr['bct_name'];
 
     }
     else {continue;}

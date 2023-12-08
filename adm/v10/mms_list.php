@@ -131,6 +131,7 @@ line-height:80px;}
     ?>
     <?php if($member['mb_manager_yn']) { ?>
 	<option value="mms.mms_idx"<?php echo get_selected($_GET['sfl'], "mms.mms_idx"); ?>>설비고유번호</option>
+	<option value="mms.mms_serial_no"<?php echo get_selected($_GET['sfl'], "mms.mms_serial_no"); ?>>시리얼번호</option>
 	<!-- <option value="mms.mmg_idx"<?php echo get_selected($_GET['sfl'], "mms.mmg_idx"); ?>>그룹번호</option>
 	<option value="mms.com_idx"<?php echo get_selected($_GET['sfl'], "mms.com_idx"); ?>>업체번호</option> -->
     <?php } ?>
