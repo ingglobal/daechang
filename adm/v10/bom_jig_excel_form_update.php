@@ -11,7 +11,7 @@ if(!$excel_type) {
     alert('엑셀 종류를 선택하세요.');
 }
 
-$demo = 1;  // 데모모드 = 1
+$demo = 0;  // 데모모드 = 1
 
 // print_r2($_REQUEST);
 // exit;
@@ -109,6 +109,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
         && $arr['bom_name']
         && $arr['location'] )
     {
+        // print_r3($arr);
 
         // if no serial, it should be the prev one.
         $arr['serial'] = $arr['serial'] ?: $serial;
