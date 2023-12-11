@@ -68,7 +68,7 @@ include_once ('./_tail.php');
 <?php
 $countgap = 10; // 몇건씩 보낼지 설정
 $sleepsec = 1000;  // 백만분의 몇초간 쉴지 설정, default=200
-$maxscreen = 30; // 몇건씩 화면에 보여줄건지?
+$maxscreen = 100; // 몇건씩 화면에 보여줄건지?
 
 flush();
 ob_flush();
@@ -105,9 +105,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     // print_r3($arr);
 
     // 조건에 맞는 해당 라인만 추출
-    if( preg_match("/[-0-9A-Z]/",$arr['bom_part_no'])
-        && $arr['bom_name']
-        && $arr['location'] )
+    if( preg_match("/[0-9A-Z]/",$arr['serial']) || preg_match("/[-0-9A-Z]/",$arr['bom_part_no']) )
     {
         // print_r3($arr);
 
@@ -125,7 +123,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
         // print_r3($bom);
 
         // if only mms_idx, bom_idx exists.
-        if($mms['mms_idx'] && $bom['bom_idx']) {
+        if( $mms['mms_idx'] && $bom['bom_idx'] &&preg_match("/[-0-9A-Z]/",$arr['bom_part_no']) ) {
 
             // 카운터를 하는 지그 표시
             $ar['boj_status'] = ($arr['count_yn']) ? 'ok':'no';
