@@ -48,13 +48,13 @@ $where[] = " itm.com_idx = '".$_SESSION['ss_com_idx']."' ";
 
 if ($stx) {
     switch ($sfl) {
-		case ( $sfl == 'bom_idx' ) :
-            $where[] = " (itm.{$sfl} = '{$stx}') ";
-            break;
-		case ( $sfl == 'plt_idx' ) :
+		case ( $sfl == $pre.'_id' || $sfl == $pre.'_idx' ) :
             $where[] = " ({$sfl} = '{$stx}') ";
             break;
-		default :
+		case ($sfl == $pre.'_hp') :
+            $where[] = " REGEXP_REPLACE(itm_hp,'-','') LIKE '".preg_replace("/-/","",$stx)."' ";
+            break;
+        default :
             $where[] = " ({$sfl} LIKE '%{$stx}%') ";
             break;
     }
@@ -62,22 +62,10 @@ if ($stx) {
 
 
 // 기간 검색
-if($ser_dt == 'dt_reg'){
-    if ($ser_st_date)	// 시작일 있는 경우
-        $where[] = " itm_reg_dt >= '{$ser_st_date} 00:00:00' ";
-    if ($ser_en_date)	// 종료일 있는 경우
-        $where[] = " itm_reg_dt <= '{$ser_en_date} 23:59:59' ";
-} else if($ser_dt == 'dt_stat') {
-    if ($ser_st_date)	// 시작일 있는 경우
-        $where[] = " itm_date >= '{$ser_st_date}' ";
-    if ($ser_en_date)	// 종료일 있는 경우
-        $where[] = " itm_date <= '{$ser_en_date}' ";
-} else if($ser_dt == 'dt_update') {
-    if ($ser_st_date)	// 시작일 있는 경우
-        $where[] = " itm_update_dt >= '{$ser_st_date} 00:00:00' ";
-    if ($ser_en_date)	// 종료일 있는 경우
-        $where[] = " itm_update_dt <= '{$ser_en_date} 23:59:59' ";
-}
+if ($ser_st_date)	// 시작일 있는 경우
+    $where[] = " itm_reg_dt >= '{$ser_st_date} 00:00:00' ";
+if ($ser_en_date)	// 종료일 있는 경우
+    $where[] = " itm_reg_dt <= '{$ser_en_date} 23:59:59' ";
 
 // 통계일
 if ($ser_stat_date)
@@ -85,22 +73,21 @@ if ($ser_stat_date)
 
 // 고객사
 if ($ser_cst_idx_customer) {
-    $where[] = " itm.cst_idx_customer = '".$ser_cst_idx_customer."' ";
+    $where[] = " mtr.cst_idx_customer = '".$ser_cst_idx_customer."' ";
     $cst_customer = get_table('customer','cst_idx',$ser_cst_idx_customer);
 }
-
-if($ser_cats){
-    $where[] = " bct_idx = ".$ser_cats;
+// 공급사
+if ($ser_cst_idx_provider) {
+    $where[] = " mtr.cst_idx_provider = '".$ser_cst_idx_provider."' ";
+    $cst_provider = get_table('customer','cst_idx',$ser_cst_idx_provider);
 }
 
-// 설비
-if ($ser_mms) {
-    $where[] = " mms_idx = '".$ser_mms."' ";
+// 단가
+if ($ser_st_price) {
+    $where[] = " itm_price >= '".preg_replace(",","",$ser_st_price)."' ";
 }
-
-// 작업자
-if ($ser_mbw) {
-    $where[] = " mb_id = '".$ser_mbw."' ";
+if ($ser_en_price) {
+    $where[] = " itm_price <= '".preg_replace(",","",$ser_en_price)."' ";
 }
 
 // 상태
@@ -167,50 +154,157 @@ $pending_count = $row['cnt'];
 </div>
 
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get" style="width:100%;">
-<label for="ser_dt" class="sound_only">날짜선택</label>
-<select name="ser_dt" id="ser_dt">
-    <option value="dt_stat" <?=get_selected($ser_dt, 'dt_stat')?>>통계일</option>
-    <option value="dt_update" <?=get_selected($ser_dt, 'dt_reg')?>>생산일</option>
-    <option value="dt_reg" <?=get_selected($ser_dt, 'dt_update')?>>처리일</option>
-</select>
+<label for="sfl" class="sound_only">검색대상</label>
 기간: 
 <input type="text" name="ser_st_date" value="<?=$ser_st_date ?>" id="ser_st_date" class="frm_input" style="width:90px;"> ~
 <input type="text" name="ser_en_date" value="<?=$ser_en_date ?>" id="ser_en_date" class="frm_input" style="width:90px;">
-<select name="ser_cats" id="ser_cats">
-    <option value="">::차종::</option>
-    <?=$g5['cats_options']?>
-</select>
-<script>
-$('#ser_cats').val('<?=$ser_cats?>');
-</script>
-<label for="sfl" class="sound_only">검색대상</label>
 <select name="sfl" id="sfl">
     <option value="">검색항목</option>
     <option value="bom_part_no" <?=get_selected($sfl, 'bom_part_no')?>>품번</option>
     <option value="itm_name" <?=get_selected($sfl, 'itm_name')?>>품명</option>
-    <option value="plt_idx" <?=get_selected($sfl, 'plt_idx')?>>파레트번호</option>
 </select>
 <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
 <input type="text" name="stx" value="<?php echo $stx ?>" id="stx" class="frm_input">
-<select name="ser_mms" id="ser_mms">
-    <option value="">::설비::</option>
-    <?=$g5['mms_options_no']?>
-</select>
-<select name="ser_mbw" id="ser_mbw">
-    <option value="">::작업자::</option>
-    <?=$g5['mbw_options_no']?>
-</select>
-<select name="ser_itm_status" id="ser_itm_status">
-    <option value="">::상태::</option>
-	<?=$g5['set_itm_status_value_options']?>
-</select>
 <input type="submit" class="btn_submit btn_submit2" value="검색">
-</form>
+<div class="detaile_search <?=($_SESSION['ss_'.$fname.'_open'])?'on':'';?>">
+	<?=($_SESSION['ss_'.$fname.'_open'])?'닫기':'상세';?>
+</div>
+<div class="detaile_box <?=($_SESSION['ss_'.$fname.'_open'])?'open':'';?>">
+	<div class="tbl_frm01 tbl_wrap">
+		<table>
+			<caption><?php echo $g5['title']; ?></caption>
+			<colgroup>
+				<col class="grid_4" style="width:8%;">
+				<col style="width:38%;">
+				<col class="grid_4" style="width:8%;">
+				<col style="width:45%;">
+			</colgroup>
+			<tbody>
+				<tr>
+                    <th>고객사선택</th>
+                    <td>
+                        <?php
+                        if($ser_cst_idx_customer) {
+                            $cst_customer = get_table_meta('customer','cst_idx',$ser_cst_idx_customer);
+                        }
+                        ?>
+                        <input type="hidden" name="ser_cst_idx_customer" value="<?=$ser_cst_idx_customer?>" class="frm_input">
+                        <input type="text" name="cst_name_customer" value="<?=$cst_customer['cst_name']?>" class="frm_input" style="width:300px;" readonly>
+                        <a href="./customer_select.php?file_name=<?=$g5['file_name']?>&item=customer" class="btn btn_02 btn_customer">찾기</a>
+                    </td>
+                    <th>공급사선택</th>
+                    <td>
+                        <?php
+                        if($ser_cst_idx_provider) {
+                            $cst_provider = get_table_meta('customer','cst_idx',$ser_cst_idx_provider);
+                        }
+                        ?>
+                        <input type="hidden" name="ser_cst_idx_provider" value="<?=$ser_cst_idx_provider?>" class="frm_input">
+                        <input type="text" name="cst_name_provider" value="<?=$cst_provider['cst_name']?>" class="frm_input" style="width:300px;" readonly>
+                        <a href="./customer_select.php?file_name=<?=$g5['file_name']?>&item=provider" class="btn btn_02 btn_customer">찾기</a>
+                    </td>
+				</tr>
+				<tr>
+					<th>작업자선택</th>
+					<td>
+                        <?php
+                        if($ser_mb_id) {
+                            $mb1 = get_table_meta('member','mb_id',$ser_mb_id);
+                        }
+                        ?>
+                        <input type="hidden" name="ser_mb_id" value="<?=$ser_mb_id?>" class="frm_input" style="width:100px">
+                        <input type="text" name="ser_mb_name" value="<?=$mb1['mb_name']?>" id="mb_name" class="frm_input" style="width:100px;" readonly>
+                        <a href="./member_select.php?file_name=<?=$g5['file_name']?>" class="btn btn_02 btn_member">찾기</a>
+                    </td>
+					<th>통계일</th>
+					<td>
+						<input type="text" name="ser_stat_date" value="<?=$ser_stat_date?>" class="frm_input" style="width:90px">
+					</td>
+				</tr>
+				<tr>
+                    <th>상태</th>
+					<td colspan="3">
+						<input type="radio" name="ser_itm_status" id="ser_itm_status_all" value="" checked=""><label for="ser_itm_status_all">관계없음</label>
+						<?php
+                        if(is_array($g5['set_itm_status_value'])) {
+                            foreach ($g5['set_itm_status_value'] as $k1=>$v1) {
+                                if(in_array($k1,array('trash'))) {continue;}
+                                echo '<input type="radio" name="ser_itm_status" id="ser_itm_status_'.$k1.'" value="'.$k1.'">
+                                      <label for="ser_itm_status_'.$k1.'">'.$v1.'</label>'.PHP_EOL;
+                            }
+                        }
+						?>
+						<script>$('#ser_itm_status_<?=$ser_itm_status?>').attr('checked','checked');</script>
+                    </td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="search_btn">
+		<input type="submit" value="검색" class="search_btns search_btn01" accesskey="">
+		<span class="search_btns search_btn02">닫기</span>
+	</div>
+</div>
 <script>
-$('#ser_mms').val('<?=$ser_mms?>');
-$('#ser_mbw').val('<?=$ser_mbw?>');
-$('#ser_itm_status').val('<?=$ser_itm_status?>');
+// 업체 찾기
+$(document).on('click','.btn_customer',function(e){
+    e.preventDefault();
+    var href = $(this).attr('href');
+    winLanding = window.open(href, "winLanding", "left=100,top=100,width=520,height=600,scrollbars=1");
+    winLanding.focus();
+    return false;
+});
+
+// 회원 찾기
+$(document).on('click','.btn_member',function(e){
+    e.preventDefault();
+    var href = $(this).attr('href');
+    winMember = window.open(href, "winMember", "left=100,top=100,width=520,height=600,scrollbars=1");
+    winMember.focus();
+    return false;
+});
+
+// 검색 부분 상세, 닫기 버튼 클릭
+$(".detaile_search").click(function(){	
+	if($(".detaile_box").hasClass("open") === true) {
+		$(".detaile_box").removeClass("open");
+		$(this).removeClass("on");
+		$(this).html('상세');
+		search_detail('close');
+	} else {
+		$(".detaile_box").addClass("open");
+		$(this).addClass("on");
+		$(this).html('닫기');
+		search_detail('open');
+	};
+});
+// 취소 버튼 클릭
+$(".search_btn .search_btn02").click(function(){
+	$(".detaile_box").removeClass("open");
+	$(this).removeClass("on");
+	$(".detaile_search").html('상세');
+	search_detail('close');
+});
+function search_detail(flag) {
+	$.getJSON(g5_user_admin_url+'/ajax/session_set.php',{"fname":"<?=$fname?>","flag":flag},function(res) {
+		if(res.result == true) {
+			// console.log(res.flag);
+			// console.log(res.msg);
+		}
+	});
+}
 </script>
+</form>
+
+
+
+
+
+
+
+
+
+
 
 
 <form name="form01" id="form01" action="./<?=$g5['file_name']?>_update.php" onsubmit="return form01_submit(this);" method="post">
@@ -232,17 +326,15 @@ $('#ser_itm_status').val('<?=$ser_itm_status?>');
             <label for="chkall" class="sound_only">전체</label>
             <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
         </th>
-        <th scope="col">제품ID</th>
         <th scope="col" style="width:100px;">품번</th>
         <th scope="col">품명</th>
         <th scope="col">구분</th>
         <th scope="col">차종</th>
         <th scope="col">납품처</th>
-        <th scope="col">설비</th>
         <th scope="col">작업자</th>
+        <th scope="col">제품위치</th>
         <th scope="col">빠레트번호</th>
-        <th scope="col">등록일시</th>
-        <th scope="col">처리일시</th>
+        <th scope="col">생산일시</th>
         <th scope="col">통계일</th>
         <th scope="col">출하일시</th>
         <th scope="col" style="width:55px;">상태</th>
@@ -306,17 +398,15 @@ $('#ser_itm_status').val('<?=$ser_itm_status?>');
             <input type="hidden" name="<?=$pre?>_idx[<?=$i?>]" value="<?=$row[$pre.'_idx']?>" id="<?=$pre?>_idx_<?=$i?>">
             <input type="checkbox" name="chk[]" value="<?=$i?>" id="chk_<?=$i?>">
         </td>
-        <td class="td_bom_idx font_size_7"><?=$row['bom_idx']?></td><!-- 제품ID -->
         <td class="td_bom_part_no font_size_7"><?=$row['bom_part_no']?></td><!-- 품번 -->
         <td class="td_itm_name font_size_7"><?=$row['bom_name']?></td><!-- 품명 -->
         <td class="td_itm_type font_size_7"><?=$g5['set_itm_type_value'][$row['itm_type']]?></td><!-- 구분 -->
         <td class="td_bct_idx"><?=$row['bct']['bct_name']?></td><!-- 차종 -->
         <td class="td_cst_name_customer font_size_7"><?=$row['cst_customer']['cst_name']?></td><!-- 납품처 -->
-        <td class="td_mms_idx font_size_7"><?=$g5['mms_arr'][$row['mms_idx']]?></td><!-- 설비 -->
         <td class="td_mb_name font_size_7"><?=$row['mb1']['mb_name']?></td><!-- 작업자 -->
+        <td class="td_trm_idx_location"><?=$row['trm_idx_location']?></td><!-- 제품위치 -->
         <td class="td_plt_idx"><?=$row['plt_idx']?></td><!-- 빠레트번호 -->
         <td class="td_itm_reg_dt font_size_7"><?=substr($row['itm_reg_dt'],5,11)?></td><!-- 등록일 -->
-        <td class="td_itm_update_dt font_size_7"><?=substr($row['itm_update_dt'],5,11)?></td><!-- 처리일시 -->
         <td class="td_itm_date font_size_7"><?=substr($row['itm_date'],5)?></td><!-- 생산일 -->
         <td class="td_itm_delivery_dt font_size_7"><?=(check_date($row['itm_delivery_dt']))?substr($row['itm_delivery_dt'],5,11):''?></td><!-- 출하일 -->
         <td class="td_itm_status"><!-- 상태 -->
@@ -333,7 +423,7 @@ $('#ser_itm_status').val('<?=$ser_itm_status?>');
     <?php
     }
     if ($i == 0)
-        echo '<tr><td colspan="16" class="empty_table">자료가 없습니다.</td></tr>';
+        echo '<tr><td colspan="20" class="empty_table">자료가 없습니다.</td></tr>';
     ?>
     </tbody>
     </table>
