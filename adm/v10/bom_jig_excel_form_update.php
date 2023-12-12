@@ -112,6 +112,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
         // if no serial, it should be the prev one.
         $arr['serial'] = $arr['serial'] ?: $serial;
         $arr['machine_name'] = $arr['machine_name'] ?: $machine_name;
+        // print_r3($arr['serial'].' - '.$arr['machine_name']);
         
         // 설비 찾기 (mms_model에 값을 넣어둬야 함)
         $sql = " SELECT mms_idx, mms_name FROM {$g5['mms_table']} WHERE mms_serial_no = '".$arr['serial']."' ";
@@ -124,6 +125,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
 
         // if only mms_idx, bom_idx exists.
         if( $mms['mms_idx'] && $bom['bom_idx'] &&preg_match("/[-0-9A-Z]/",$arr['bom_part_no']) ) {
+            // print_r3($arr);
 
             // 카운터를 하는 지그 표시
             $ar['boj_status'] = ($arr['count_yn']) ? 'ok':'no';
@@ -148,7 +150,8 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
             }
         }
         // 호기 정보 저장 (바뀔 때 체크해야 함)
-        $serial = $arr['serial'];
+        $serial = $arr['serial'] ?: $serial;
+        // $serial = $arr['serial'];
         $machine_name = $arr['machine_name'];
 
     }
