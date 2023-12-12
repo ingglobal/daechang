@@ -1,12 +1,8 @@
 #!/bin/bash
 
 # 로그파일경로
-<<<<<<< HEAD
 log_file="/home/daechang/www/user/log/cpu_check_log.txt"
-# log_file="../log/cpu_check_log.txt"
-=======
-log_file="../log/cpu_check_log.txt"
->>>>>>> 755151928f17191a5d1f65fd383c0fb10a55a6e4
+#log_file="../log/cpu_check_log.txt"
 
 # CPU 사용량 확인
 cpu_usage_php=$(top -bn1 | grep "php-fpm7\.4" | head -n 1 | awk '{print $9}')
@@ -25,16 +21,9 @@ write_log() {
     local timestamp=$(date +"%Y-%m-%d %H:%M:%S")
     # echo "$timestamp - $message" >> $log_file
 }
-<<<<<<< HEAD
 top_15=$(top -bn1 | head -n 15)
 timestamp=$(date +"%Y-%m-%d %H:%M:%S")
 echo -e "$timestamp ---------------------------------------------------------\n$top_15" >> $log_file
-
-=======
-top_15=$(top -bn1 | head -n 12)
-timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-echo -e "$timestamp ---------------------------------------------------------\n$top_15" >> $log_file
->>>>>>> 755151928f17191a5d1f65fd383c0fb10a55a6e4
 
 # 로그 데이터 기록
 write_log "php-fpm7.4 CPU 사용량: $cpu_usage_php"
@@ -56,6 +45,6 @@ fi
 
 # 로그 파일 최근 1000줄만 남기고 오래된 행은 삭제
 if [ $(wc -l < "$log_file") -gt 10000 ]; then
-    tail -n 1000 "$log_file" > "$log_file.tmp"
+    tail -n 10000 "$log_file" > "$log_file.tmp"
     mv "$log_file.tmp" "$log_file"
 fi
