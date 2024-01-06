@@ -311,7 +311,7 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
         <td class="td_bom_name"><!-- 품명(구성품수) -->
             <label for="name_<?php echo $i; ?>" class="sound_only">품명</label>
             <input type="text" name="bom_name[<?php echo $i; ?>]" value="<?php echo htmlspecialchars2(cut_str($row['bom_name'],250, "")); ?>" required class="tbl_input required" style="width:250px;display:none;">
-            <?=$row['bom_name']?><?=$row['rows_text']?>
+            ( ID: <?=$row['bom_idx']?> )&nbsp;&nbsp;&nbsp;<?=$row['bom_name']?><?=$row['rows_text']?>
         </td>
         <td class="td_cst_name"><?=$row['cst_name']?></td><!-- 업체명 -->
         <td class="td_bct_name"><?=$row['bct_name']?></td><!-- 차종 -->

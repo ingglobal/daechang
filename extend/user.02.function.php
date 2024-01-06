@@ -2595,4 +2595,24 @@ function change_cst_names($cst_idx,$new_cst_name){
 }
 }
 
+// 거래처 변경
+if(!function_exists('get_search_string2')){
+function get_search_string2($stx){
+    $stx_pattern = array();
+    $stx_pattern[] = '#\.*/+#';
+    $stx_pattern[] = '#\\\*#';
+    $stx_pattern[] = '#\.{2,}#';
+    $stx_pattern[] = '#[/\'\"%=*\#\(\)\|\+\&\!\$~\{\}\[\]`;:\?\^]+#';
+
+    $stx_replace = array();
+    $stx_replace[] = '';
+    $stx_replace[] = '';
+    $stx_replace[] = '.';
+    $stx_replace[] = '';
+
+    $stx = preg_replace($stx_pattern, $stx_replace, $stx);
+
+    return $stx;
+}
+}
 ?>

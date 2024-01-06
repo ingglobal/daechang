@@ -32,29 +32,60 @@ if ($w == '') {
     $sound_only = '<strong class="sound_only">필수</strong>';
     $w_display_none = ';display:none';  // 쓰기에서 숨김
 
+    // 수주 정보를 가지고 등록으로 넘어온 경우 수주 정보를 미리 표시합니다.
+    if($ori_idx) {
+        // print_r3($ori_idx);
+        $ori = get_table('production','prd_idx',$prd_idx);
+        ${$pre}['ori_idx'] = $ori_idx;
+        ${$pre}['cst_idx'] = $ori['cst_idx'];
+        $cst_shp = get_table('customer','cst_idx',${$pre}['cst_idx']);  // 출하처
+        ${$pre}['shp_count'] = $ori['ori_count'];
+    }
+
     ${$pre}[$pre.'_dt'] = G5_TIME_YMD.' 15:00:00';
-    ${$pre}[$pre.'_status'] = 'pending';
+    ${$pre}[$pre.'_status'] = ($ori_idx) ? 'pending':'ok';
 }
 else if ($w == 'u' || $w == 'c') {
     $u_display_none = ';display:none;';  // 수정에서 숨김
 
-    $sql = " SELECT * FROM {$g5['shipment_table']} shp
-            LEFT JOIN {$g5['production_table']} prd ON shp.prd_idx = prd.prd_idx
-            LEFT JOIN {$g5['bom_table']} bom ON prd.bom_idx = bom.bom_idx
-            WHERE shp_idx = '{$shp_idx}'
-    ";
-    ${$pre} = sql_fetch($sql);
-	// ${$pre} = get_table_meta($table_name, $pre.'_idx', ${$pre."_idx"});
+	${$pre} = get_table_meta($table_name, $pre.'_idx', ${$pre."_idx"});
     if (!${$pre}[$pre.'_idx'])
 		alert('존재하지 않는 자료입니다.');
+    // print_r3(${$pre});
+    $cst_shp = get_table('customer','cst_idx',${$pre}['cst_idx']);  // 출하처
+    $mb = get_table('member','mb_id',${$pre}['mb_id']);
+    $ori = get_table('order_item','ori_idx',${$pre}['ori_idx']);
+    // $cst_ori = get_table('customer','cst_idx',$ori['cst_idx']); // 고객처
+    // $bom = get_table('bom','bom_idx',$ori['bom_idx']);
+    // // print_r3($cst_shp);
+    // // print_r3($mb);
+    // $ori['ori_detail'] = $cst_ori['cst_name'].', <b>'.$bom['bom_part_no'].'</b> (품명:'.$bom['bom_name'].'), 수량:<b>'.$ori['ori_count'].'</b>';
 
  }
 else
     alert('제대로 된 값이 넘어오지 않았습니다.');
 
 // 수주 정보가 있는 경우 상세내용 표시
-${$pre}['prd_detail'] = cst2name(boc2cst(${$pre}['boc_idx'])).', <b>'.${$pre}['bom_part_no'].'</b> (품명:'.${$pre}['bom_name'].'), 수량:<b>'.${$pre}['prd_value'].'</b>';
+if(is_array($ori)) {
+    $cst_ori = get_table('customer','cst_idx',$ori['cst_idx']); // 고객처
+    $bom = get_table('bom','bom_idx',$ori['bom_idx']);
+    $ori['ori_detail'] = $cst_ori['cst_name'].', <b>'.$bom['bom_part_no'].'</b> (품명:'.$bom['bom_name'].'), 수량:<b>'.$ori['ori_count'].'</b>';
+}
 
+$driver_sql = " SELECT cmm.mb_id, mb.mb_name FROM {$g5['company_member_table']} cmm
+                    LEFT JOIN {$g5['member_table']} mb ON cmm.mb_id = mb.mb_id
+                WHERE cmm_type = 'driver'
+                    AND com_idx = '{$_SESSION['ss_com_idx']}'
+                    AND mb_leave_date = ''
+                    AND mb_intercept_date = ''
+";
+$driver_res = sql_query($driver_sql,1);
+$driver_opions = '';
+if($driver_res->num_rows){
+for($d=0;$dr=sql_fetch_array($driver_res);$d++){
+    $driver_options .= '<option value="'.$dr['mb_id'].'">'.$dr['mb_name'].'</option>';
+}
+}
 
 
 // 라디오&체크박스 선택상태 자동 설정 (필드명 배열 선언!)
@@ -108,17 +139,17 @@ a.btn_price_add {color:#3a88d8 !important;cursor:pointer;}
     <tr>
         <th scope="row">수주 선택</th>
 		<td colspan="3">
-			<input type="text" name="prd_idx" value="<?=${$pre}['prd_idx']?>" class="frm_input required readonly" style="width:90px" required readonly>
+			<input type="text" name="ori_idx" value="<?=${$pre}['ori_idx']?>" class="frm_input required readonly" style="width:90px" required readonly>
             <a href="./order_item_select.php?file_name=<?=$g5['file_name']?>" class="btn btn_02 btn_order_item">찾기</a>
-            <span class="span_prd_detail font_size_8"><?=${$pre}['prd_detail']?></span>
+            <span class="span_ori_detail font_size_8"><?=$ori['ori_detail']?></span>
         </td>
     </tr>
 	<tr>
         <th scope="row">출하처</th>
-        <td>
-            <input type="hidden" name="boc_idx" value="<?=${$pre}['boc_idx']?>">
-            <input type="hidden" name="cst_idx" value="<?=boc2cst(${$pre}['boc_idx'])?>">
-            <input type="text" name="cst_name" value="<?=cst2name(boc2cst(${$pre}['boc_idx']))?>" class="frm_input required readonly" required readonly>
+		<td>
+            <input type="hidden" name="cst_idx" value="<?=${$pre}['cst_idx']?>">
+			<input type="text" name="cst_name" value="<?=$cst_shp['cst_name']?>" class="frm_input required readonly" required readonly>
+            <a href="./customer_select.php?file_name=<?=$g5['file_name']?>&item=customer" class="btn btn_02 btn_customer">찾기</a>
         </td>
         <th scope="row">출하일시</th>
 		<td>
@@ -131,6 +162,20 @@ a.btn_price_add {color:#3a88d8 !important;cursor:pointer;}
             </script>
 		</td>
     </tr>
+    <tr>
+        <th scope="row">기사 선택</th>
+		<td>
+            <select name="mb_id" id="mb_id">
+                <option value="">::기사선택::</option>
+                <?=$driver_options?>
+            </select>
+            <script>$('#mb_id').val('<?=${$pre}['mb_id']?>');</script>
+        </td>
+        <th scope="row">출하수량</th>
+		<td>
+			<input type="text" name="shp_count" id="shp_count" value="<?=number_format(${$pre}['shp_count'])?>" class="frm_input" style="width:60px;">
+		</td>
+    </tr>
     <?php
     $ar['id'] = 'shp_memo';
     $ar['name'] = '메모';
@@ -141,12 +186,8 @@ a.btn_price_add {color:#3a88d8 !important;cursor:pointer;}
     unset($ar);
     ?>
     <tr>
-        <th scope="row">출하수량</th>
-        <td>
-            <input type="text" name="shp_count" id="shp_count" value="<?=number_format(${$pre}['shp_count'])?>" class="frm_input" style="width:60px;text-align:right;">
-        </td>
         <th scope="row">상태</th>
-        <td>
+        <td colspan="3">
             <select name="<?=$pre?>_status" id="<?=$pre?>_status"
                 <?php if (auth_check($auth[$sub_menu],"d",1)) { ?>onFocus='this.initialSelect=this.selectedIndex;' onChange='this.selectedIndex=this.initialSelect;'<?php } ?>>
                 <?=$g5['set_shp_status_options']?>
@@ -188,7 +229,7 @@ $(function() {
 	$(".btn_order_item").click(function(e) {
 		e.preventDefault();
         var href = $(this).attr('href');
-		winOrderItem = window.open(href, "winOrderItem", "left=300,top=150,width=750,height=600,scrollbars=1");
+		winOrderItem = window.open(href, "winOrderItem", "left=300,top=150,width=550,height=600,scrollbars=1");
         winOrderItem.focus();
 	});
     // 거래처찾기
@@ -215,11 +256,10 @@ $(function() {
            $('.tr_price').hide();
 	});
 
-    // 가격 입력 쉼표 처리 숫자만입력 번호만입력
-	$('#shp_count').on( 'keyup',function(e) {
-        var price = thousand_comma($(this).val().replace(/[^0-9]/g,""));
-        price = (price == '0') ? '' : price;
-        $(this).val(price);
+    // 가격 입력 쉼표 처리
+	$(document).on( 'keyup','input[name$=_price], #shp_count',function(e) {
+        if(!isNaN($(this).val().replace(/,/g,'')))
+            $(this).val( thousand_comma( $(this).val().replace(/,/g,'') ) );
 	});
 
 });

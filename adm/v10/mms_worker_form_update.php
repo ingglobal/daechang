@@ -24,7 +24,7 @@ for($i=0;$i<sizeof($fields);$i++) {
 // $_POST['dta_end_dt'] = strtotime($_POST['dta_end_dt']);
 
 // 공통쿼리
-$skips = array($pre.'_idx',$pre.'_reg_dt',$pre.'_update_dt');
+$skips = array($pre.'_idx',$pre.'_reg_dt',$pre.'_update_dt', $pre.'_main_yn');
 for($i=0;$i<sizeof($fields);$i++) {
     if(in_array($fields[$i],$skips)) {continue;}
     $sql_commons[] = " ".$fields[$i]." = '".$_POST[$fields[$i]]."' ";
@@ -33,29 +33,169 @@ $sql_common = (is_array($sql_commons)) ? implode(",",$sql_commons) : '';
 
 
 if ($w == '' || $w == 'c') {
+    $chk_sql = " SELECT bmw_idx
+                        , MAX(bmw_sort) OVER (PARTITION BY bom_idx, mms_idx) AS bmw_sort 
+                    FROM {$g5['bom_mms_worker_table']}
+                    WHERE bom_idx = '{$bom_idx}'
+                        AND mms_idx = '{$mms_idx}'
+                        AND mb_id = '{$mb_id}'
+                        AND bmw_type = '{$bmw_type}'
+                        AND bmw_status NOT IN ('trash','delete')
+                    ORDER BY bmw_reg_dt DESC LIMIT 1
+    ";
+    // echo $chk_sql."<br>";
+    $chk_res = sql_fetch($chk_sql);
+    if($chk_res['bmw_idx'])
+        alert('동일한 조건의 작업자가 이미 존재합니다.');
     
+    // 해당 bom_idx와 mms_idx조건의 작업자들의 정렬순서중에 가장 큰값을 가져온다.
+    // $bmw_sort_res = sql_fetch(" SELECT MAX(bmw_sort) AS bmw_sort FROM {$g5['bom_mms_worker_table']}
+    //         WHERE bom_idx = '{$bom_idx}'
+    //             AND mms_idx = '{$mms_idx}'
+    //             AND bmw_status NOT IN ('trash','delete')
+    // ");
+    // $bmw_sort = ($bmw_sort_res['bmw_sort']) ? (int)$bmw_sort_res['bmw_sort'] + 1 : 0;
+
+    
+    //혹시라도 같은 제품의 같은 설비에서 day또는 night가 존재하면 등록할 수 없다.
+    //반은 같은 제품과 같은 설비조건에서 day 1명, night1명 존재해야 하고 나머지는 전부 sub이다.
+    if($bmw_type == 'day' || $bmw_type == 'night'){
+        $chk_sql = " SELECT COUNT(*) AS cnt
+                        FROM {$g5['bom_mms_worker_table']}
+                        WHERE bom_idx = '{$bom_idx}'
+                            AND mms_idx = '{$mms_idx}'
+                            AND bmw_type = '{$bmw_type}'
+                            AND bmw_status NOT IN ('trash','delete')
+        ";
+        // echo $chk_sql."<br>";
+        $chk_res = sql_fetch($chk_sql);
+        if($chk_res['cnt']){
+            alert('작업자타입:"'.$g5['set_bmw_type_value'][$bmw_type].'"이 이미 존재합니다."서브"로 등록하셔야 합니다.');
+        }
+    }
+
+    // 자신이외에 bmw_main_yn = 1 로 되어 있는게 없으면 (day,night)일 경우 반드시 bmw_main_yn = 1로 되어야 한다.
+    if((!$bmw_main_yn && $bmw_type == 'day') || (!$bmw_main_yn && $bmw_type == 'night')){
+        $mchk_res = sql_fetch(" SELECT COUNT(*) AS cnt FROM {$g5_table_name}
+                        WHERE bom_idx = '{$bom_idx}'
+                            AND mms_idx != '{$mms_idx}'
+                            AND bmw_main_yn = 1
+                            AND bmw_status = 'ok'
+        ");
+        if(!$mchk_res['cnt']){
+            $bmw_main_yn = 1;
+        }
+    }
+    // 기존 해당 bom_idx를 작업하는 설비의 bmw_main_yn설정을 전부 0으로 셋팅한다.
+    else if(($bmw_main_yn && $bmw_type == 'day') || ($bmw_main_yn && $bmw_type == 'night')){
+        $m_sql = " UPDATE {$g5_table_name} SET bmw_main_yn = 0
+                        WHERE bom_idx = '{$bom_idx}'
+        ";
+        sql_query($m_sql,1);
+    }
+    else {
+        $bmw_main_yn = 0; //day , night가 아니면 무조건 0으로 설정되어야 한다.
+    }
+
     $sql = " INSERT into {$g5_table_name} SET 
                 {$sql_common} 
-                , ".$pre."_reg_dt = '".G5_TIME_YMDHIS."'
-                , ".$pre."_update_dt = '".G5_TIME_YMDHIS."'
+                , bmw_main_yn = '{$bwm_main_yn}'
+                , bmw_reg_dt = '".G5_TIME_YMDHIS."'
+                , bmw_update_dt = '".G5_TIME_YMDHIS."'
 	";
     sql_query($sql,1);
-	${$pre."_idx"} = sql_insert_id();
-    
+	$bmw_idx = sql_insert_id();
+
+    // 만약 day가 bmw_main_yn = 0로 되었다면 night도 0로 설정해야 하고 그 반대의 경우도 마찬가지아다.
+    if((!$bmw_main_yn && $bmw_type == 'day') || (!$bmw_main_yn && $bmw_type == 'night')){
+        $m_sql = " UPDATE {$g5_table_name} SET bmw_main_yn = 0
+                        WHERE bom_idx = '{$bom_idx}'
+                            AND mms_idx = '{$mms_idx}'
+                            AND bmw_type IN ('day','night')
+        ";
+        sql_query($m_sql,1);
+    }
+    // 만약 day가 bmw_main_yn = 1로 되었다면 night도 1로 설정해야 하고 그 반대의 경우도 마찬가지아다.
+    else if(($bmw_main_yn && $bmw_type == 'day') || ($bmw_main_yn && $bmw_type == 'night')){
+        $m_sql = " UPDATE {$g5_table_name} SET bmw_main_yn = 1
+                        WHERE bom_idx = '{$bom_idx}'
+                            AND mms_idx = '{$mms_idx}'
+                            AND bmw_type IN ('day','night')
+        ";
+        sql_query($m_sql,1);
+    }
 }
 else if ($w == 'u') {
-
 	${$pre} = get_table_meta($table_name, $pre.'_idx', ${$pre."_idx"});
     if (!${$pre}[$pre.'_idx'])
 		alert('존재하지 않는 자료입니다.');
- 
+
+    $chk_sql = " SELECT bmw_idx
+            , MAX(bmw_sort) OVER (PARTITION BY bom_idx, mms_idx) AS bmw_sort 
+        FROM {$g5['bom_mms_worker_table']}
+        WHERE bom_idx = '{$bom_idx}'
+            AND mms_idx = '{$mms_idx}'
+            AND mb_id = '{$mb_id}'
+            AND bmw_type = '{$bmw_type}'
+            AND bmw_status NOT IN ('trash','delete')
+            AND bmw_idx != '".${$pre."_idx"}."'
+        ORDER BY bmw_reg_dt DESC LIMIT 1
+    ";
+    // echo $chk_sql."<br>";
+    $chk_res = sql_fetch($chk_sql);
+    if($chk_res['bmw_idx'])
+        alert('동일한 조건의 데이터가 이미 존재합니다.');
+
+    // 자신이외에 bmw_main_yn = 1 로 되어 있는게 없으면 (day,night)일 경우 반드시 bmw_main_yn = 1로 되어야 한다.
+    if((!$bmw_main_yn && $bmw_type == 'day') || (!$bmw_main_yn && $bmw_type == 'night')){
+        $mchk_res = sql_fetch(" SELECT COUNT(*) AS cnt FROM {$g5_table_name}
+                        WHERE bom_idx = '{$bom_idx}'
+                            AND mms_idx != '{$mms_idx}'
+                            AND bmw_idx != '{$bmw_idx}'
+                            AND bmw_main_yn = 1
+                            AND bmw_status = 'ok'
+        ");
+        if(!$mchk_res['cnt']){
+            $bmw_main_yn = 1;
+        }
+    }
+    else if(($bmw_main_yn && $bmw_type == 'day') || ($bmw_main_yn && $bmw_type == 'night')){
+            $m_sql = " UPDATE {$g5_table_name} SET bmw_main_yn = 0
+                    WHERE bom_idx = '{$bom_idx}'
+            ";
+            sql_query($m_sql,1);
+    }
+    else {
+        $bmw_main_yn = 0; //day , night가 아니면 무조건 0으로 설정되어야 한다.
+    }
+
     $sql = "	UPDATE {$g5_table_name} SET 
 					{$sql_common}
-					, ".$pre."_update_dt = '".G5_TIME_YMDHIS."'
-				WHERE ".$pre."_idx = '".${$pre."_idx"}."' 
+                    , bmw_main_yn = '{$bmw_main_yn}'
+					, bmw_update_dt = '".G5_TIME_YMDHIS."'
+				WHERE bmw_idx = '{$bmw_idx}' 
 	";
     //echo $sql.'<br>';
     sql_query($sql,1);
+
+    // 만약 day가 bmw_main_yn = 0로 되었다면 night도 0로 설정해야 하고 그 반대의 경우도 마찬가지아다.
+    if((!$bmw_main_yn && $bmw_type == 'day') || (!$bmw_main_yn && $bmw_type == 'night')){
+        $m_sql = " UPDATE {$g5_table_name} SET bmw_main_yn = 0
+                        WHERE bom_idx = '{$bom_idx}'
+                            AND mms_idx = '{$mms_idx}'
+                            AND bmw_type IN ('day','night')
+        ";
+        sql_query($m_sql,1);
+    }
+    // 만약 day가 bmw_main_yn = 1로 되었다면 night도 1로 설정해야 하고 그 반대의 경우도 마찬가지아다.
+    else if(($bmw_main_yn && $bmw_type == 'day') || ($bmw_main_yn && $bmw_type == 'night')){
+        $m_sql = " UPDATE {$g5_table_name} SET bmw_main_yn = 1
+                        WHERE bom_idx = '{$bom_idx}'
+                            AND mms_idx = '{$mms_idx}'
+                            AND bmw_type IN ('day','night')
+        ";
+        sql_query($m_sql,1);
+    }
         
 }
 else if ($w == 'd') {

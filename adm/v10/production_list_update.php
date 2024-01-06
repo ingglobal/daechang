@@ -22,14 +22,13 @@ if ($_POST['act_button'] == "선택수정") {
     {
         // 실제 번호를 넘김
         $k = $_POST['chk'][$i];
-        $prd = get_table('production','prd_idx',$_POST['prd_idx'][$k]);
+        // $prd = get_table('production','prd_idx',$_POST['prd_idx'][$k]);
         // echo 'prd_idx: '.$_REQUEST['prd_idx'][$k].BR;
         // echo 'prd_start_date: '.$_REQUEST['prd_start_date'][$k].BR;
 
-        $sql = "UPDATE {$g5['production_table']} SET
-                    prd_start_date = '".$_POST['prd_start_date'][$k]."',
-                    prd_status = '".$_POST['prd_status'][$k]."'
-                WHERE prd_idx = '".$_POST['prd_idx'][$k]."'
+        $sql = "UPDATE {$g5['production_main_table']} SET
+                    prm_status = '".$_POST['prm_status'][$k]."'
+                WHERE prm_idx = '".$_POST['prm_idx'][$k]."'
         ";
         // echo $sql.BR;
         sql_query($sql,1);
@@ -48,17 +47,16 @@ else if ($_POST['act_button'] == "선택삭제") {
 
         // 작업자아이템이 정보 초기화
         $sql = "DELETE FROM {$g5['production_item_count_table']} 
-                WHERE pri_idx IN (SELECT pri_idx FROM {$g5['production_item_table']} WHERE prd_idx = '".$_POST['prd_idx'][$k]."') 
+                WHERE pri_idx IN (SELECT pri_idx FROM {$g5['production_item_table']} WHERE prm_idx = '".$_POST['prm_idx'][$k]."') 
         ";
         // echo $sql.BR;
         sql_query($sql,1);
         // 생산아이템이 정보 초기화
-        $sql = " DELETE FROM {$g5['production_item_table']} WHERE prd_idx = '".$_POST['prd_idx'][$k]."' ";
+        $sql = " DELETE FROM {$g5['production_item_table']} WHERE prm_idx = '".$_POST['prm_idx'][$k]."' ";
         // echo $sql.BR;
         sql_query($sql,1);
-        // 생산계획 정보 초기화
-        $sql = " DELETE FROM {$g5['production_table']} WHERE prd_idx = '".$_POST['prd_idx'][$k]."' ";
-        // echo $sql.BR;
+        // 생산계획완제품 정보 초기화
+        $sql = " DELETE FROM {$g5['production_main_table']} WHERE prm_idx = '".$_POST['prm_idx'][$k]."' ";
         sql_query($sql,1);
 
     }

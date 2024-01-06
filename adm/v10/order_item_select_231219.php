@@ -15,20 +15,13 @@ $stx = isset($_REQUEST['stx']) ? clean_xss_tags($_REQUEST['stx'], 1, 1) : '';
 $g5['title'] = '수주제품검색';
 include_once(G5_PATH.'/head.sub.php');
 
-
-
-$sql_common = " FROM {$g5['production_table']} AS prd
-                LEFT JOIN {$g5['bom_table']} AS bom ON bom.bom_idx = prd.bom_idx
+$sql_common = " FROM {$g5['order_item_table']} AS ori
+                LEFT JOIN {$g5['bom_table']} AS bom ON bom.bom_idx = ori.bom_idx
 ";
-$sql_where = " WHERE prd_status NOT IN ('delete','trash') ";
-
+$sql_where = " WHERE ori_status NOT IN ('delete','trash') ";
 
 if($ser_cst_idx) {
-    $sql_where .= " AND boc_idx IN (".cst2bocs($ser_cst_idx,'customer').") ";
-}
-
-if($ser_prd_date) {
-    $sql_where .= " AND prd_date = '".$ser_prd_date."' ";
+    $sql_where .= " AND cst_idx = '".$ser_cst_idx."' ";
 }
 
 if($item=="product") {
@@ -56,7 +49,7 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
 $sql = "SELECT *
             $sql_common
             $sql_where
-        ORDER BY prd_reg_dt DESC
+        ORDER BY ori_reg_dt DESC
         LIMIT $from_record, $rows
 ";
 // echo $sql.'<br>';
@@ -75,25 +68,26 @@ $qstr1 = 'stx='.urlencode($stx).'&file_name='.$file_name.'&item='.$item;
     <div id="scp_list_find">
         <select name="ser_cst_idx" id="ser_cst_idx">
             <option value="">고객사전체</option>
-            <?=$g5['customer_options']?>
+            <?php
+            $sql = "SELECT cst_idx, cst_name FROM {$g5['customer_table']} WHERE com_idx = '".$_SESSION['ss_com_idx']."' AND cst_type = 'customer' ORDER BY cst_idx ";
+            // echo $sql.'<br>';
+            $rs = sql_query($sql,1);
+            for ($i=0; $row=sql_fetch_array($rs); $i++) {
+                // print_r2($row);
+                echo '<option value="'.$row['cst_idx'].'" '.get_selected($ser_cst_idx, $row['cst_idx']).'>'.$row['cst_name'].')</option>';
+            }
+            ?>
         </select>
-        <script>
-            $('#ser_cst_idx').val('<?=$ser_cst_idx?>');
-        </script>
-        <input type="text" name="ser_prd_date" id="ser_prd_date" value="<?=$ser_prd_date?>" class="frm_input" placeholder="수주일" style="width:100px;">
-        <input type="text" name="stx" id="stx" value="<?php echo get_text($stx); ?>" class="frm_input" placeholder="품번">
+        <input type="text" name="stx" id="stx" value="<?php echo get_text($stx); ?>" class="frm_input required" required placeholder="품번 or 품명">
         <input type="submit" value="검색" class="btn_frmline">
-        <a href="<?=$_SERVER['SCRIPT_NAME']?>?file_name=<?=$file_name?>&item=<?=$item?>" class="ov_listall">전체목록</a>
     </div>
     <div class="tbl_head01 tbl_wrap new_win_con">
         <table>
         <caption>검색결과</caption>
         <thead>
         <tr>
-            <th>수주ID</th>
             <th>고객사</th>
             <th>품번/품명</th>
-            <th>수주일</th>
             <th>수량</th>
             <th>선택</th>
         </tr>
@@ -104,31 +98,24 @@ $qstr1 = 'stx='.urlencode($stx).'&file_name='.$file_name.'&item='.$item;
             $row['cst'] = get_table('customer','cst_idx',$row['cst_idx']);
         ?>
         <tr>
-            <td class="td_prd_idx td_left">
-                <?=$row['prd_idx']?>
-            </td>
             <td class="td_cst_name td_left">
-                <?=cst2name(boc2cst($row['boc_idx']))?>
+                <?=get_text($row['cst']['cst_name'])?>
             </td>
             <td class="td_bom_part_name td_left">
                 <?=get_text($row['bom_part_no'])?>
                 <p class="font_size_8"><?=$row['bom_name']?></p>
             </td>
-            <td class="td_prd_date">
-                <?=$row['prd_date']?>
-            </td>
-            <td class="td_prd_value">
-                <?=number_format($row['prd_value'])?>
+            <td class="td_ori_count">
+                <?=number_format($row['ori_count'])?>
             </td>
             <td class="scp_find_select td_mng td_mng_s">
                 <button type="button" class="btn btn_03 btn_select"
-                    prd_idx="<?=$row['prd_idx']?>"
-                    boc_idx="<?=$row['boc_idx']?>"
-                    cst_idx="<?=boc2cst($row['boc_idx'])?>"
-                    cst_name="<?=cst2name(boc2cst($row['boc_idx']))?>"
+                    cst_idx="<?=$row['cst_idx']?>"
+                    cst_name="<?=$row['cst']['cst_name']?>"
+                    ori_idx="<?=$row['ori_idx']?>"
                     bom_part_no="<?=$row['bom_part_no']?>"
                     bom_name="<?=$row['bom_name']?>"
-                    prd_value="<?=$row['prd_value']?>"
+                    ori_count="<?=$row['ori_count']?>"
                 >선택</button>
             </td>
         </tr>
@@ -136,7 +123,7 @@ $qstr1 = 'stx='.urlencode($stx).'&file_name='.$file_name.'&item='.$item;
         }
 
         if($i ==0)
-            echo '<tr><td colspan="6" class="empty_table">검색된 자료가 없습니다.</td></tr>';
+            echo '<tr><td colspan="4" class="empty_table">검색된 자료가 없습니다.</td></tr>';
         ?>
         </tbody>
         </table>
@@ -148,27 +135,23 @@ $qstr1 = 'stx='.urlencode($stx).'&file_name='.$file_name.'&item='.$item;
 </div>
 
 <script>
-$("input[name$=_date]").datepicker({ changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd", showButtonPanel: true, yearRange: "c-99:c+99" });
-
 $('.btn_select').click(function(e){
     e.preventDefault();
-    var prd_idx = $(this).attr('prd_idx');
-    var boc_idx = $(this).attr('boc_idx');
+    var ori_idx = $(this).attr('ori_idx');
     var bom_part_no = $(this).attr('bom_part_no');
     var bom_name = $(this).attr('bom_name');
     var cst_idx = $(this).attr('cst_idx');
     var cst_name = $(this).attr('cst_name');
-    var prd_value = $(this).attr('prd_value');
+    var ori_count = $(this).attr('ori_count');
 
     <?php
     if($file_name=='shipment_form') {
     ?>
-        $("input[name=prd_idx]", opener.document).val( prd_idx );
-        $("input[name=boc_idx]", opener.document).val( boc_idx );
+        $("input[name=ori_idx]", opener.document).val( ori_idx );
         $("input[name=cst_idx]", opener.document).val( cst_idx );
         $("input[name=cst_name]", opener.document).val( cst_name );
-        var prd_detail = cst_name+', <b>'+bom_part_no+'</b> (품명:'+bom_name+'), 수량:<b>'+prd_value+'</b>';
-        $(".span_prd_detail", opener.document).html( prd_detail );
+        var ori_detail = cst_name+', <b>'+bom_part_no+'</b> (품명:'+bom_name+'), 수량:<b>'+ori_count+'</b>';
+        $(".span_ori_detail", opener.document).html( ori_detail );
     <?php
     }
     else if($file_name=='item_form'||$file_name=='material_form') {

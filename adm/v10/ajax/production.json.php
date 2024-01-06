@@ -31,7 +31,7 @@ if ($aj == "c1") {
 		$ar['mms_idx']  = $mms_idx;
 		$ar['mb_id']  = '';
 		$ar['pri_value'] = 0; // 설정 전 수량 0 (완제품 지시량을 초과하면 안 됨)
-		$ar['pri_status'] = 'pending';
+		$ar['pri_status'] = 'confirm';
 		$arr['pri_idx'] = update_db($ar);
 		// echo $arr['pri_idx'];
 

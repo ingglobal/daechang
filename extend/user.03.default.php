@@ -126,11 +126,17 @@ if (isset($_REQUEST['sfl2']))  {
 
 
 if (isset($_REQUEST['stx2']))  { // search text (검색어)
-    $stx2 = get_search_string(trim($_REQUEST['stx2']));
+    $stx2 = get_search_string2(trim($_REQUEST['stx2']));
     if ($stx2 || $stx2 === '0')
         $qstr .= '&amp;stx2=' . urlencode(cut_str($stx2, 20, ''));
 } else {
     $stx2 = '';
+}
+
+if (isset($_REQUEST['ser_stx']))  { // search text (검색어)
+    $ser_stx = get_search_string2(trim($_REQUEST['ser_stx']));
+} else {
+    $ser_stx = '';
 }
 
 if (isset($_REQUEST['sst2']))  {

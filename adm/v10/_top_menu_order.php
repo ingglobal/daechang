@@ -14,8 +14,8 @@ if($member['mb_manager_yn']) {
 $g5['container_sub_title'] = '
 <h2 id="container_sub_title">
     '.$sub_title_list.'
-    <a href="./order_list.php" class="btn_top_menu '.$active_order_list.'">수주관리</a>
-    <a href="./order_excel_form.php" class="btn_top_menu '.$active_order_excel_form.'">수주엑셀등록</a>
+    <a href="./ordprd_list.php" class="btn_top_menu '.$active_ordprd_list.'">수주관리</a>
+    <a href="./ordprd_excel_form.php" class="btn_top_menu '.$active_ordprd_excel_form.'">수주엑셀등록</a>
 </h2>
 ';
 ?>

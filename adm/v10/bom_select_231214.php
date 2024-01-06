@@ -18,24 +18,15 @@ $stx = isset($_REQUEST['stx']) ? clean_xss_tags($_REQUEST['stx'], 1, 1) : '';
 $g5['title'] = '제품검색';
 include_once(G5_PATH.'/head.sub.php');
 
-// $sql_common = " FROM {$g5['bom_table']} AS bom
-//                 LEFT JOIN {$g5['customer_table']} AS cst ON cst.cst_idx = bom.cst_idx_provider
-// ";
-$sql_common = " FROM {$g5['bom_customer_table']} boc
-                LEFT JOIN {$g5['bom_table']} bom ON boc.bom_idx = bom.bom_idx
-                LEFT JOIN {$g5['customer_table']} cst ON boc.cst_idx = cst.cst_idx
+$sql_common = " FROM {$g5['bom_table']} AS bom
+                LEFT JOIN {$g5['customer_table']} AS cst ON cst.cst_idx = bom.cst_idx_provider
 ";
 $sql_where = " WHERE bom_status NOT IN ('delete','trash') ";
-$sql_where .= " AND boc.cst_idx != 0 ";
-$sql_where .= " AND boc.com_idx = '{$_SESSION['ss_com_idx']}' ";
+$sql_where .= " AND bom.com_idx = '{$_SESSION['ss_com_idx']}' ";
 
 if($file_name == 'material_order_form' && $cst_idx){
     $sql_where .= " AND cst_idx_provider = '".$cst_idx."' ";
     $sql_where .= " AND bom_type = 'material' ";
-}
-else if($file_name == 'ordprd_form' || $file_name == 'production_form'){
-    $sql_where .= " AND bom_type = 'product' ";
-    $sql_where .= " AND boc_type = 'customer' ";
 }
 
 if($stx != ""){
@@ -51,21 +42,11 @@ if($stx != ""){
 }
 
 if($ser_cst_idx) {
-    $sql_where .= " AND boc.cst_idx = '".$ser_cst_idx."' ";
+    $sql_where .= " AND cst_idx_customer = '".$ser_cst_idx."' ";
 }
 
-$sql_group = " GROUP BY boc.bom_idx, boc.cst_idx ";
-
-// $sst = " boc.bom_idx";
-// $sod = "DESC";
-// $sst2 = ", boc.cst_idx";
-// $sod2 = "";
-
-// $sql_order = " ORDER BY {$sst} {$sod} {$sst2} {$sod2} ";
-
-
 // 테이블의 전체 레코드수만 얻음
-$sql = " SELECT COUNT(*) cnt FROM ( SELECT boc_idx AS cnt {$sql_common} {$sql_where} {$sql_group} ) gboc ";
+$sql = " SELECT COUNT(*) AS cnt " . $sql_common . $sql_where;
 $row = sql_fetch($sql);
 $total_count = $row['cnt'];
 
@@ -74,20 +55,10 @@ $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
 if ($page < 1) { $page = 1; } // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
-$sql = "SELECT boc.bom_idx
-            , bom_part_no
-            , bom_name
-            , bom_type
-            , bom_price
-            , bom_status
-            , boc_idx
-            , boc.cst_idx
-            , boc_type
-            , cst_name
-            {$sql_common}
-            {$sql_where}
-            {$sql_group}
-        ORDER BY boc.bom_idx DESC, boc.cst_idx
+$sql = "SELECT *
+            $sql_common
+            $sql_where
+        ORDER BY bom_reg_dt DESC
         LIMIT $from_record, $rows
 ";
 // echo $sql.'<br>';
@@ -104,10 +75,14 @@ $qstr1 = 'sfl='.urlencode($sfl).'&stx='.urlencode($stx).'&file_name='.$file_name
     <input type="hidden" name="item" value="<?php echo $item; ?>" class="frm_input">
     <div id="scp_list_find">
         <select name="ser_cst_idx" id="ser_cst_idx">
-            <option value="">거래처</option>
+            <option value="">고객사전체</option>
             <?php
-            if($file_name == 'ordprd_form'){
-                echo $g5['customer_options'];
+            $sql = "SELECT cst_idx, cst_name FROM {$g5['customer_table']} WHERE com_idx = '".$_SESSION['ss_com_idx']."' AND cst_type = 'customer' ORDER BY cst_idx ";
+            // echo $sql.'<br>';
+            $rs = sql_query($sql,1);
+            for ($i=0; $row=sql_fetch_array($rs); $i++) {
+                // print_r2($row);
+                echo '<option value="'.$row['cst_idx'].'" '.get_selected($ser_cst_idx, $row['cst_idx']).'>'.$row['cst_name'].'</option>';
             }
             ?>
         </select>
@@ -118,7 +93,6 @@ $qstr1 = 'sfl='.urlencode($sfl).'&stx='.urlencode($stx).'&file_name='.$file_name
         </select>
         <input type="text" name="stx" id="stx" value="<?php echo get_text($stx); ?>" class="frm_input" placeholder="검색어">
         <input type="submit" value="검색" class="btn_frmline">
-        <a href="<?=$_SERVER['SCRIPT_NAME']?>?file_name=<?=$file_name?>&item=<?=$item?>" class="ov_listall">전체목록</a>
     </div>
     <div class="tbl_head01 tbl_wrap new_win_con">
         <table>
@@ -127,8 +101,6 @@ $qstr1 = 'sfl='.urlencode($sfl).'&stx='.urlencode($stx).'&file_name='.$file_name
         <tr>
             <th>품번</th>
             <th>품명</th>
-            <th>유형</th>
-            <th>거래처</th>
             <th>선택</th>
         </tr>
         </thead>
@@ -140,21 +112,14 @@ $qstr1 = 'sfl='.urlencode($sfl).'&stx='.urlencode($stx).'&file_name='.$file_name
         <tr>
             <td class="td_bom_part_no td_left">
                 <?=get_text($row['bom_part_no'])?>
+                <p class="font_size_8"><?=$g5['set_bom_type_value'][$row['bom_type']]?></p>
             </td>
             <td class="td_bom_part_name td_left">
                 <?=$row['bom_name']?>
-            </td>
-            <td class="td_bom_type td_left">
-                <?=$g5['set_bom_type_value'][$row['bom_type']]?>
-            </td>
-            <td class="td_cst_name td_left">
-                <?=$row['cst_name']?>
+                <p class="font_size_8"><?=$row['cst_name']?> (단가: <?=number_format($row['bom_price'])?>)</p><!-- 거래처, 단가 -->
             </td>
             <td class="scp_find_select td_mng td_mng_s">
                 <button type="button" class="btn btn_03 btn_select"
-                    boc_idx="<?=$row['boc_idx']?>"
-                    cst_idx="<?=$row['cst_idx']?>"
-                    cst_name="<?=$row['cst_name']?>"
                     bom_idx="<?=$row['bom_idx']?>"
                     bom_part_no="<?=$row['bom_part_no']?>"
                     bom_name="<?=$row['bom_name']?>"
@@ -167,7 +132,7 @@ $qstr1 = 'sfl='.urlencode($sfl).'&stx='.urlencode($stx).'&file_name='.$file_name
         }
 
         if($i ==0)
-            echo '<tr><td colspan="5" class="empty_table">검색된 자료가 없습니다.</td></tr>';
+            echo '<tr><td colspan="4" class="empty_table">검색된 자료가 없습니다.</td></tr>';
         ?>
         </tbody>
         </table>
@@ -181,9 +146,6 @@ $qstr1 = 'sfl='.urlencode($sfl).'&stx='.urlencode($stx).'&file_name='.$file_name
 <script>
 $('.btn_select').click(function(e){
     e.preventDefault();
-    var boc_idx = $(this).attr('boc_idx');
-    var cst_idx = $(this).attr('cst_idx');
-    var cst_name = $(this).attr('cst_name');
     var bom_idx = $(this).attr('bom_idx');
     var bom_part_no = $(this).attr('bom_part_no');
     var bom_name = $(this).attr('bom_name');
@@ -193,7 +155,6 @@ $('.btn_select').click(function(e){
     <?php
     if($file_name=='order_form'||$file_name=='production_form'||$file_name=='mms_worker_form') {
     ?>
-        $("input[name=boc_idx]", opener.document).val( boc_idx );
         $("input[name=bom_idx]", opener.document).val( bom_idx );
         $("input[name=bom_name]", opener.document).val( bom_name );
         $("input[name=ori_price]", opener.document).val( bom_price );
@@ -239,14 +200,6 @@ $('.btn_select').click(function(e){
     ?>
         $("input[name=bom_idx]", opener.document).val( bom_idx );
         $("input[name=bom_name]", opener.document).val( bom_name );
-    <?php
-    } else if($file_name=='ordprd_form'){ 
-    ?>
-        $("input[name=bom_idx]", opener.document).val( bom_idx );
-        $("input[name=bom_name]", opener.document).val( bom_name );
-        $("#bom_part_no", opener.document).text( bom_part_no );
-        $("input[name=boc_idx]", opener.document).val( boc_idx );
-        $("#cst_name", opener.document).val( cst_name );
     <?php
     }
     ?>

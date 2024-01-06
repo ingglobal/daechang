@@ -32,6 +32,10 @@ else {
     $where[] = " mms.com_idx = '".$_SESSION['ss_com_idx']."' ";
 }
 
+if($file_name == 'mms_worker_form'){
+    $where[] = " mms_serial_no != '' ";
+}
+
 // 검색어 설정
 if ($sch_word != "") {
     switch ($sch_field) {
@@ -56,7 +60,9 @@ if ($where)
 
 // 정렬기준
 $sql_order = " ORDER BY mms_idx ";
-
+if($file_name == 'mms_worker_form'){
+    $sql_order = " ORDER BY mms_sort ";
+}
 
 // 테이블의 전체 레코드수
 $sql = " SELECT COUNT(*) AS cnt " . $sql_common . $sql_search;
@@ -98,7 +104,7 @@ include_once('./_head.sub.php');
         <select name="sch_field" id="sch_field">
             <option value="mms_name">설비명</option>
             <option value="mms_model">모델</option>
-            <option value="mms_install_date">도입날짜</option>
+            <option value="mms_serial_no">시리얼번호</option>
         </select>
         <script>$('select[name=sch_field]').val('<?php echo $sch_field?>').attr('selected','selected')</script>
         <input type="text" name="sch_word" id="sch_word" value="<?php echo get_text($sch_word); ?>" class="frm_input required" required size="20">
@@ -112,8 +118,8 @@ include_once('./_head.sub.php');
         <thead>
         <tr>
             <th scope="col">설비명</th>
-            <th scope="col">위치</th>
-            <th scope="col">도입날짜</th>
+            <th scope="col">순서</th>
+            <th scope="col">시리얼번호</th>
             <th scope="col">선택</th>
         </tr>
         </thead>
@@ -125,8 +131,8 @@ include_once('./_head.sub.php');
         ?>
         <tr>
             <td class="td_mms_name"><?php echo $row['mms_name']; ?></td>
-            <td class="td_mms_model"><?php echo $row['mms_model']; ?></td>
-            <td class="td_mms_install_date"><?php echo $row['mms_install_date']; ?></td>
+            <td class="td_mms_sort"><?php echo $row['mms_sort']; ?></td>
+            <td class="td_mms_serial_no"><?php echo $row['mms_serial_no']; ?></td>
             <td class="td_mng td_mng_s" mms_idx="<?php echo $row['mms_idx']; ?>"
                                         mms_name="<?php echo $row['mms_name']; ?>"
                                         mmg_idx="<?php echo $row['mmg_idx']; ?>"

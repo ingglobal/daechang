@@ -23,17 +23,14 @@ $html_title = '거래처검색';
 $g5['title'] = $html_title;
 include_once(G5_PATH.'/head.sub.php');
 
-$sql_common = " FROM {$g5['bom_customer_table']} boc
-                LEFT JOIN {$g5['customer_table']} cst ON boc.cst_idx = cst.cst_idx
-";
-$sql_where = " WHERE boc.cst_idx != '0' ";
-$sql_group = " GROUP BY boc.cst_idx ";
+$sql_common = " FROM {$g5['customer_table']} ";
+$sql_where = " WHERE cst_status NOT IN ('delete','trash') ";
 
 if($item=="customer") {
-    $sql_where .= " AND boc_type = 'customer' ";
+    $sql_where .= " AND cst_type = 'customer' ";
 }
 else if($item=="provider") {
-    $sql_where .= " AND boc_type = 'provider' ";
+    $sql_where .= " AND cst_type = 'provider' ";
 }
 
 if($stx){
@@ -42,10 +39,8 @@ if($stx){
 }
 
 // 테이블의 전체 레코드수만 얻음
-$sql = " SELECT COUNT(*) cnt
-    FROM ( SELECT boc.cst_idx  {$sql_common}  {$sql_where}  {$sql_group} ) gboc  ";
+$sql = " SELECT COUNT(*) AS cnt " . $sql_common . $sql_where;
 $row = sql_fetch($sql);
-// echo $sql;
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -56,8 +51,7 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
 $sql = "SELECT *
             $sql_common
             $sql_where
-            $sql_group
-        ORDER BY boc.cst_idx DESC
+        ORDER BY cst_reg_dt DESC
         LIMIT $from_record, $rows
 ";
 // echo $sql.'<br>';
@@ -75,7 +69,6 @@ $qstr1 = 'stx='.urlencode($stx).'&file_name='.$file_name.'&item='.$item;
     <div id="scp_list_find">
         <input type="text" name="stx" id="stx" value="<?php echo get_text($stx); ?>" class="frm_input required" required placeholder="검색어">
         <input type="submit" value="검색" class="btn_frmline">
-        <a href="<?=$_SERVER['SCRIPT_NAME']?>?file_name=<?=$file_name?>&item=<?=$item?>" class="ov_listall">전체목록</a>
     </div>
     <div class="tbl_head01 tbl_wrap new_win_con">
         <table>
@@ -99,7 +92,6 @@ $qstr1 = 'stx='.urlencode($stx).'&file_name='.$file_name.'&item='.$item;
             <td class="scp_find_select td_mng td_mng_s">
                 <button type="button" class="btn btn_03 btn_select"
                     cst_idx="<?=$row['cst_idx']?>"
-                    boc_idx="<?=$row['boc_idx']?>"
                     cst_name="<?=$row['cst_name']?>"
                     cst_president="<?=$row['cst_president']?>"
                 >선택</button>
@@ -124,7 +116,6 @@ $qstr1 = 'stx='.urlencode($stx).'&file_name='.$file_name.'&item='.$item;
 $('.btn_select').click(function(e){
     e.preventDefault();
     var cst_idx = $(this).attr('cst_idx');
-    var boc_idx = $(this).attr('boc_idx');
     var cst_name = $(this).attr('cst_name');
     var cst_president = $(this).attr('cst_president');
 
@@ -132,7 +123,6 @@ $('.btn_select').click(function(e){
     if($file_name=='order_form'||$file_name=='shipment_form'||$file_name=='material_order_form') {
     ?>
         $("input[name=cst_idx]", opener.document).val( cst_idx );
-        $("input[name=boc_idx]", opener.document).val( boc_idx );
         $("input[name=cst_name]", opener.document).val( cst_name );
     <?php
     }
@@ -179,14 +169,6 @@ $('.btn_select').click(function(e){
 			$("input[name=cst_name_provider]", opener.document).val( cst_name );
     <?php
 		}
-    }
-    else if($file_name=='ordprd_form'){
-        if($item=='customer'){
-    ?>
-            $("input[name=cst_idx]", opener.document).val(cst_idx);
-            $("input[name=cst_name]", opener.document).val(cst_name);
-    <?php
-        }
     }
     ?>
     // 창닫기

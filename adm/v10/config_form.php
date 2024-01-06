@@ -720,11 +720,18 @@ yearly,1,10 = 연도별,1년단위,10년치,sum(합계)'); ?>
 			</td>
 		</tr>
 		<tr>
-			<th scope="row">수주상태</th>
+			<th scope="row">수주유형</th>
 			<td colspan="3">
-				<input type="text" name="set_ori_status" value="<?php echo $g5['setting']['set_ori_status']; ?>" class="frm_input" style="width:60%;">
+				<?php echo help('예) normal=일반수주,sagub=사급수주') ?>
+				<input type="text" name="set_prd_type" value="<?php echo $g5['setting']['set_prd_type']; ?>" class="frm_input" style="width:60%;">
 			</td>
 		</tr>
+		<!-- <tr>
+			<th scope="row">수주상태</th>
+			<td colspan="3">
+				<input type="text" name="set_ori_status" value="<?php //echo $g5['setting']['set_ori_status']; ?>" class="frm_input" style="width:60%;">
+			</td>
+		</tr> -->
 		<tr>
 			<th scope="row">출하상태</th>
 			<td colspan="3">
@@ -735,6 +742,12 @@ yearly,1,10 = 연도별,1년단위,10년치,sum(합계)'); ?>
 			<th scope="row">생산계획상태</th>
 			<td colspan="3">
 				<input type="text" name="set_prd_status" value="<?php echo $g5['setting']['set_prd_status']; ?>" class="frm_input" style="width:60%;">
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">생산계획완제품상태</th>
+			<td colspan="3">
+				<input type="text" name="set_prm_status" value="<?php echo $g5['setting']['set_prm_status']; ?>" class="frm_input" style="width:60%;">
 			</td>
 		</tr>
 		<tr>

@@ -235,41 +235,99 @@ unset($cat_res);
 unset($i);
 
 //자재공급업체 배열
-$prv_sql = " SELECT DISTINCT(cst_idx_provider) AS cst_idx 
-                , cst.cst_name
-            FROM {$g5['bom_table']} bom
-                LEFT JOIN {$g5['customer_table']} cst ON bom.cst_idx_provider = cst.cst_idx
-            WHERE bom_type IN ('material','goods')
-                AND cst_idx_provider != 0 
-            ORDER BY cst_idx_provider
+$prv_sql = "  SELECT boc_idx, boc.cst_idx, cst_name, boc_type FROM {$g5['bom_customer_table']} boc 
+                LEFT JOIN {$g5['customer_table']} cst ON boc.cst_idx = cst.cst_idx 
+            WHERE boc_type = 'provider' AND boc.cst_idx != 0
+            GROUP BY boc.cst_idx
+            ORDER BY cst_name
 ";
 $prv_res = sql_query($prv_sql,1);
 $g5['provider_key_val'] = array();
 $g5['provider_val_key'] = array();
+$g5['provider_options'] = '';
 for($i=0;$row=sql_fetch_array($prv_res);$i++){
     $g5['provider_key_val'][$row['cst_idx']] = $row['cst_name'];
     $g5['provider_val_key'][$row['cst_name']] = $row['cst_idx'];
+    $g5['provider_options'] .= '<option value="'.$row['cst_idx'].'">'.$row['cst_name'].'</option>';
 }
 unset($prv_sql);
 unset($prv_res);
 unset($i);
 
 //완제품고객업체 배열
-$cst_sql = " SELECT DISTINCT(cst_idx_customer) AS cst_idx 
-                , cst.cst_name
-            FROM g5_1_bom bom
-                LEFT JOIN g5_1_customer cst ON bom.cst_idx_customer = cst.cst_idx
-            WHERE bom_type IN ('product','goods')
-                AND cst_idx_customer != 0 
-            ORDER BY cst_idx_customer
+$cst_sql = " SELECT boc_idx, boc.cst_idx, cst_name, boc_type FROM {$g5['bom_customer_table']} boc 
+                LEFT JOIN {$g5['customer_table']} cst ON boc.cst_idx = cst.cst_idx 
+            WHERE boc_type = 'customer' AND boc.cst_idx != 0
+            GROUP BY boc.cst_idx
+            ORDER BY cst_name
 ";
 $cst_res = sql_query($cst_sql,1);
 $g5['customer_key_val'] = array();
 $g5['customer_val_key'] = array();
+$g5['customer_options'] = '';
 for($i=0;$row=sql_fetch_array($cst_res);$i++){
     $g5['customer_key_val'][$row['cst_idx']] = $row['cst_name'];
     $g5['customer_val_key'][$row['cst_name']] = $row['cst_idx'];
+    $g5['customer_options'] .= '<option value="'.$row['cst_idx'].'">'.$row['cst_name'].'</option>';
 }
 unset($cst_sql);
 unset($cst_res);
+unset($i);
+
+$cst_all_sql = " SELECT cst_idx, cst_name, cst_type FROM {$g5['customer_table']}
+                WHERE cst_status = 'ok'
+                    AND cst_type IN ('customer','provider')
+                GROUP BY cst_idx
+                ORDER BY cst_name
+";
+$cst_all_res = sql_query($cst_all_sql,1);
+$g5['allcst_key_val'] = array();
+$g5['allcst_val_key'] = array();
+$g5['allcst_options'] = '';
+for($i=0;$row=sql_fetch_array($cst_all_res);$i++){
+    $g5['allcst_key_val'][$row['cst_idx']] = $row['cst_name'];
+    $g5['allcst_val_key'][$row['cst_name']] = $row['cst_idx'];
+    $g5['allcst_options'] .= '<option value="'.$row['cst_idx'].'">'.$row['cst_name'].'</option>';
+}
+unset($cst_all_sql);
+unset($cst_all_res);
+unset($i);
+
+/*
+$driver_sql = " SELECT cmm.mb_id, mb.mb_name FROM {$g5['company_member_table']} cmm
+                    LEFT JOIN {$g5['member_table']} mb ON cmm.mb_id = mb.mb_id
+                WHERE cmm_type = 'driver'
+                    AND com_idx = '{$_SESSION['ss_com_idx']}'
+                    AND mb_leave_date = ''
+                    AND mb_intercept_date = ''
+                    AND mb_6 = ''
+";
+$driver_res = sql_query($driver_sql,1);
+$driver_opions = '';
+if($driver_res->num_rows){
+for($d=0;$dr=sql_fetch_array($driver_res);$d++){
+    $driver_options .= '<option value="'.$dr['mb_id'].'">'.$dr['mb_name'].'</option>';
+}
+}
+*/
+//mb_6 = '' 은 소속업체가 없다는 뜻이기 때문에 대창소속 driver라는 뜻이다.
+$dvr_deachang_sql = " SELECT cmm.mb_id, mb.mb_name FROM {$g5['company_member_table']} cmm
+                        LEFT JOIN {$g5['member_table']} mb ON cmm.mb_id = mb.mb_id
+                    WHERE cmm_type = 'driver'
+                        AND com_idx = '{$_SESSION['ss_com_idx']}'
+                        AND mb_leave_date = ''
+                        AND mb_intercept_date = ''
+                        AND mb_6 = ''
+";
+$dvr_deachang_res = sql_query($dvr_deachang_sql,1);
+$g5['dvr_deachang_key_val'] = array();
+$g5['dvr_deachang_val_key'] = array();
+$g5['dvr_deachang_options'] = '';
+for($i=0;$row=sql_fetch_array($cst_all_res);$i++){
+    $g5['dvr_deachang_key_val'][$row['mb_id']] = $row['mb_name'];
+    $g5['dvr_deachang_val_key'][$row['mb_name']] = $row['mb_id'];
+    $g5['dvr_deachang_options'] .= '<option value="'.$row['mb_id'].'">'.$row['mb_name'].'</option>';
+}
+unset($dvr_deachang_sql);
+unset($dvr_deachang_res);
 unset($i);

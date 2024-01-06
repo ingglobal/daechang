@@ -114,9 +114,18 @@ include_once ('./_head.php');
 		</td>
     </tr>
 	<tr>
-        <th scope="row">순번</th>
-		<td colspan="3">
+		<th scope="row">순번</th>
+		<td>
 			<input type="text" name="bmw_sort" value="<?=${$pre}['bmw_sort']?>" class="frm_input required" required style="width:60px;">
+		</td>
+		<th scope="row">메인설비여부</th>
+		<td>
+			<select name="bmw_main_yn" id="bmw_main_yn">
+				<option value="0">아니오</option>
+				<option value="1">예</option>
+			</select>
+			<script>
+				$('select[name="bmw_main_yn"]').val('<?=((${$pre}['bmw_main_yn'])?${$pre}['bmw_main_yn']:0)?>');</script>
 		</td>
     </tr>
 	<tr>

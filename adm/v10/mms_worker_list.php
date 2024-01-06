@@ -125,7 +125,7 @@ $colspan = 16;
 <div class="local_desc01 local_desc" style="display:no ne;">
     <p>설비별로 제품 생산 시 작업자 할당이 되어 있지 않으면 정상적인 생산량 관리를 할 수 없습니다.</p>
     <p>설비별로 변동사항이 발생하면 (제품이 추가되거나 작업자 입퇴사 시) 기존 설정을 변경하거나 추가해 주셔야 합니다.</p>
-    <p>최초 전달 내용은 공유 엑셀을 참고하세요. <a href="https://docs.google.com/spreadsheets/d/1nsWf9z9qQUuDsMkLRqCMPh98soWiPW7ybaOZVjqED0I/edit?usp=sharing" target="_blank">바로가기</a></p>
+    <p>최초 전달 내용은 공유 엑셀을 참고하세요. <a href="https://docs.google.com/spreadsheets/d/1L5akSn_9n6VA3RuK9pUJs4dSq8ELs7kHbXOzWUrs59U/edit?usp=sharing" target="_blank">바로가기</a></p>
 </div>
 
 
@@ -150,6 +150,8 @@ $colspan = 16;
             <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
         </th>
         <th scope="col"><?php echo subject_sort_link('mms_idx',$qstr) ?>설비명</a></th>
+        <th scope="col">메인여부</th>
+        <th scope="col">제품ID</th>
         <th scope="col">품번</th>
         <th scope="col">품명</th>
         <th scope="col"><?php echo subject_sort_link('mb_name',$qstr) ?>이름</a></th>
@@ -179,6 +181,8 @@ $colspan = 16;
             <input type="checkbox" name="chk[]" value="<?php echo $i ?>" id="chk_<?php echo $i ?>">
         </td>
         <td class="td_mms_name"><a href="?sfl=bmw.mms_idx&stx=<?=$row['mms_idx']?>"><?=get_text($row['mms']['mms_name'])?></a> <span class="font_size_7"><?=$row['mms_idx']?></span></td>
+        <td class="td_bmw_main_yn font_size_7"><?=$row['bmw_main_yn']?></td>
+        <td class="td_bom_idx font_size_7"><?=$row['bom']['bom_idx']?></td>
         <td class="td_bom_part_no font_size_7"><?=$row['bom']['bom_part_no']?></td>
         <td class="td_bom_name font_size_7"><?=$row['bom']['bom_name']?></td>
         <td class="td_mb_name"><a href="?sfl=bmw.mb_id&stx=<?=$row['mb_id']?>"><?=get_text($row['mb']['mb_name'])?></a></td>

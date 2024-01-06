@@ -27,7 +27,6 @@ if ($_POST['act_button'] == "선택수정") {
         $_POST['shp_count'][$k] = preg_replace("/,/","",$_POST['shp_count'][$k]);
 
         $sql = "UPDATE {$g5['shipment_table']} SET
-                    mb_id = '".$_POST['mb_id'][$k]."',
                     shp_count = '".$_POST['shp_count'][$k]."',
                     shp_sort= '".$_POST['shp_sort'][$k]."',
                     shp_status = '".$_POST['shp_status'][$k]."',
@@ -61,7 +60,21 @@ if ($msg)
     //echo '<script> alert("'.$msg.'"); </script>';
     alert($msg);
 
+foreach($_REQUEST as $key => $value ) {
+    if(substr($key,0,4)=='ser_') {
+    //    print_r3($key.'='.$value);
+        if(is_array($value)) {
+            foreach($value as $k2 => $v2 ) {
+//                print_r3($key.$k2.'='.$v2);
+                $qstr .= '&'.$key.'[]='.$v2;
+            }
+        }
+        else {
+            $qstr .= '&'.$key.'='.(($key == 'ser_stx')?urlencode(cut_str($value, 40, '')):$value);
+        }
+    }
+}
+
 // exit;
-$qstr .= '&ser_cst_idx='.$ser_cst_idx.'&st_date='.$st_date.'&en_date='.$en_date;
 goto_url('./shipment_list.php?'.$qstr);
 ?>

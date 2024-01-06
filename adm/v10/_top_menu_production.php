@@ -15,7 +15,7 @@ $g5['container_sub_title'] = '
 <h2 id="container_sub_title">
     '.$sub_title_list.'
     <a href="./production_list.php" class="btn_top_menu '.$active_production_list.'">생산계획</a>
-    <a href="./predict_amount_list.php" class="btn_top_menu '.$active_predict_amount_list.'">자재소요량산출</a>
+    <a href="./production_excel_form.php" class="btn_top_menu '.$active_production_excel_form.'">생산계획엑셀등록</a>
 </h2>
 ';
 ?>

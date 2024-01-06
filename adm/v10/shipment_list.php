@@ -18,9 +18,24 @@ $fname = preg_replace("/_list/","",$g5['file_name']); // _list 을 제외한 파
 $qstr1 = '&ser_cst_idx='.$ser_cst_idx.'&st_date='.$st_date.'&en_date='.$en_date; // 추가로 확장해서 넘겨야 할 변수들
 $qstr .= $qstr1; // $qstr 확장
 
-$sql_common = " FROM {$g5_table_name} AS shp
-                LEFT JOIN {$g5['order_item_table']} AS ori ON ori.ori_idx = shp.ori_idx 
-                LEFT JOIN {$g5['member_table']} AS mbr ON mbr.mb_id = shp.mb_id
+foreach($_REQUEST as $key => $value ) {
+    if(substr($key,0,4)=='ser_') {
+        if(is_array($value)) {
+            foreach($value as $k2 => $v2 ) {
+                $qstr .= '&'.$key.'[]='.$v2;
+                $form_input .= '<input type="hidden" name="'.$key.'[]" value="'.$v2.'" class="frm_input">'.PHP_EOL;
+            }
+        }
+        else {
+            $qstr .= '&'.$key.'='.(($key == 'ser_stx')?urlencode(cut_str($value, 40, '')):$value);
+            $form_input .= '<input type="hidden" name="'.$key.'" value="'.(($key == 'ser_stx')?urlencode(cut_str($value, 40, '')):$value).'" class="frm_input">'.PHP_EOL;
+        }
+    }
+}
+
+$sql_common = " FROM {$g5_table_name} shp
+                LEFT JOIN {$g5['production_table']} prd ON shp.prd_idx = prd.prd_idx
+                LEFT JOIN {$g5['bom_table']} bom ON prd.bom_idx = bom.bom_idx
 ";
 
 $where = array();
@@ -31,50 +46,20 @@ $where[] = " shp.com_idx = '".$_SESSION['ss_com_idx']."' ";
 
 
 // 검색어 설정
-if ($stx != "") {
+if ($ser_stx != "") {
     switch ($sfl) {
-		case ( $sfl == 'shp_idx' || $sfl == 'cst_idx' || $sfl == 'bom_idx' ) :
-			$where[] = " {$sfl} = '".trim($stx)."' ";
+		case ( $sfl == 'shp_idx' || $sfl == 'cst_idx' || $sfl == 'bom.bom_idx' || $sfl == 'bom_part_no' ) :
+			$where[] = " {$sfl} = '".trim($ser_stx)."' ";
             break;
-		case ( $sfl == 'bom_part_no') :
-            $sql1 = "   SELECT GROUP_CONCAT(bom_idx) AS bom_idxs FROM {$g5['bom_table']}
-                        WHERE bom_part_no = '".trim($stx)."'
-            ";
-            // echo $sql1.'<br>';
-            $one = sql_fetch($sql1,1);
-            $where[] = $one['bom_idxs'] ? " bom_idx IN (".$one['bom_idxs'].") " : " (0)";
-            break;
-		case ( $sfl == 'bom_name' ) :
-            $sql1 = "   SELECT GROUP_CONCAT(bom_idx) AS bom_idxs FROM {$g5['bom_table']}
-                        WHERE bom_name LIKE '%".trim($stx)."%'
-            ";
-            // echo $sql1.'<br>';
-            $one = sql_fetch($sql1,1);
-            $where[] = $one['bom_idxs'] ? " bom_idx IN (".$one['bom_idxs'].") " : " (0)";
-            break;
-		// case ( $sfl == 'mb_name' ) :
-        //     $sql1 = "   SELECT GROUP_CONCAT(mb_id) AS mb_ids FROM {$g5['member_table']}
-        //                 WHERE mb_name LIKE '%".trim($stx)."%'
-        //     ";
-        //     // echo $sql1.'<br>';
-        //     $one = sql_fetch($sql1,1);
-        //     $one['mb_ids_array'] = explode(",",$one['mb_ids']);
-        //     $where[] = $one['bom_idxs'] ? " bom_idx IN ('".implode("','",$one['mb_ids_array'])."') " : " (0)";
-        //     break;
         default :
-			$where[] = " $sfl LIKE '%".trim($stx)."%' ";
+			$where[] = " $sfl LIKE '%".trim($ser_stx)."%' ";
             break;
     }
 }
 
 // 고객사
 if ($ser_cst_idx) {
-    $sql1 = "   SELECT GROUP_CONCAT(shp_idx) AS shp_idxs FROM {$g5['shipment_table']}
-                WHERE com_idx = '".$_SESSION['ss_com_idx']."' AND cst_idx = '".$ser_cst_idx."'
-    ";
-    // echo $sql1.'<br>';
-    $one = sql_fetch($sql1,1);
-    $where[] = $one['shp_idxs'] ? " shp_idx IN (".$one['shp_idxs'].") " : " (0)";
+    $where[] = " shp.cst_idx = '{$ser_cst_idx}' ";
 }
 
 // 날자 검색
@@ -97,7 +82,7 @@ if (!$sst) {
 }
 */
 if (!$sst) {
-    $sst = "ori.ori_idx";
+    $sst = "shp.prd_idx";
     $sod = "DESC";
 }
 
@@ -107,7 +92,7 @@ if (!$sst2) {
 }
 
 if (!$sst3) {
-    $sst3 = ", shp.shp_idx";
+    $sst3 = ", shp_idx";
     $sod3 = "";
 }
 
@@ -126,25 +111,10 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
 $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목록</a>';
 
-// $driver_sql = " SELECT cmm.mb_id, mb.mb_name FROM {$g5['company_member_table']} cmm
-//                     LEFT JOIN {$g5['member_table']} mb ON cmm.mb_id = mb.mb_id
-//                 WHERE cmm_type = 'driver'
-//                     AND com_idx = '{$_SESSION['ss_com_idx']}'
-//                     AND mb_leave_date = ''
-//                     AND mb_intercept_date = ''
-// ";
-// $driver_res = sql_query($driver_sql,1);
-// $driver_opions = '';
-// if($driver_res->num_rows){
-// for($d=0;$dr=sql_fetch_array($driver_res);$d++){
-//     $driver_options .= '<option value="'.$dr['mb_id'].'">'.$dr['mb_name'].'</option>';
-// }
-// }
-
 
 $sql = "SELECT *
             , shp.cst_idx AS shp_cst_idx
-            , ori.cst_idx AS ori_cst_idx
+            , prd.boc_idx AS prd_boc_idx
         {$sql_common} {$sql_search} {$sql_order} 
         LIMIT {$from_record}, {$rows}
 ";
@@ -177,34 +147,22 @@ $colspan = 16;
 <label for="sfl" class="sound_only">검색대상</label>
 <select name="ser_cst_idx" id="ser_cst_idx">
     <option value="">고객사전체</option>
-    <?php
-    $sql = "SELECT cst_idx, cst_name FROM {$g5['customer_table']} WHERE com_idx = '".$_SESSION['ss_com_idx']."' AND cst_type = 'customer' ORDER BY cst_idx ";
-    // echo $sql.'<br>';
-    $rs = sql_query($sql,1);
-    for ($i=0; $row=sql_fetch_array($rs); $i++) {
-        // print_r2($row);
-        echo '<option value="'.$row['cst_idx'].'" '.get_selected($ser_cst_idx, $row['cst_idx']).'>'.$row['cst_name'].')</option>';
-    }
-    ?>
+    <?=$g5['customer_options']?>
 </select>
 <script>$('select[name=ser_cst_idx]').val("<?=$ser_cst_idx?>").attr('selected','selected');</script>
 
 <label for="ser_st_date" class="sound_only">시작일</label>
-<input type="text" name="ser_st_date" value="<?php echo $ser_st_date ?>" id="ser_st_date" class="frm_input" style="width:90px;">
+<input type="text" name="ser_st_date" placeholder="출하일시작" value="<?php echo $ser_st_date ?>" id="ser_st_date" class="frm_input" style="width:90px;">
 ~
 <label for="ser_en_date" class="sound_only">종료일</label>
-<input type="text" name="ser_en_date" value="<?php echo $ser_en_date ?>" id="ser_en_date" class="frm_input" style="width:90px;">
+<input type="text" name="ser_en_date" placeholder="출하일종료" value="<?php echo $ser_en_date ?>" id="ser_en_date" class="frm_input" style="width:90px;">
 
 <select name="sfl" id="sfl">
     <option value="bom_part_no"<?php echo get_selected($_GET['sfl'], "bom_part_no"); ?>>품번</option>
     <option value="bom_name"<?php echo get_selected($_GET['sfl'], "bom_name"); ?>>품명</option>
-    <option value="mb_name"<?php echo get_selected($_GET['sfl'], "mb_name"); ?>>기사이름</option>
-    <option value="shp.mb_id"<?php echo get_selected($_GET['sfl'], "shp.mb_id"); ?>>기사아이디</option>
-    <option value="shp.ori_idx"<?php echo get_selected($_GET['sfl'], "shp.ori_idx"); ?>>수주고유번호</option>
-    <option value="shp_status"<?php echo get_selected($_GET['sfl'], "shp_status"); ?>>상태</option>
 </select>
 <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
-<input type="text" name="stx" value="<?php echo $stx ?>" id="stx" class="frm_input">
+<input type="text" name="ser_stx" value="<?php echo $ser_stx ?>" id="ser_stx" class="frm_input">
 <input type="submit" class="btn_submit" value="검색">
 
 </form>
@@ -224,10 +182,11 @@ $colspan = 16;
 <input type="hidden" name="sst3" value="<?php echo $sst3 ?>">
 <input type="hidden" name="sod3" value="<?php echo $sod3 ?>">
 <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
-<input type="hidden" name="stx" value="<?php echo $stx ?>">
+<input type="hidden" name="ser_stx" value="<?php echo $ser_stx ?>">
 <input type="hidden" name="page" value="<?php echo $page ?>">
 <input type="hidden" name="token" value="">
 <input type="hidden" name="w" value="">
+<?=$form_input?>
 
 <div class="tbl_head01 tbl_wrap">
     <table>
@@ -238,8 +197,8 @@ $colspan = 16;
             <label for="chkall" class="sound_only">항목 전체</label>
             <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
         </th>
-        <th scope="col">수주ID</th>
         <th scope="col">출하ID</th>
+        <th scope="col">수주ID</th>
         <th scope="col">출하처</th>
         <th scope="col">출하일시</th>
         <th scope="col">품번</th>
@@ -255,11 +214,11 @@ $colspan = 16;
     <?php
     for ($i=0; $row=sql_fetch_array($result); $i++) {
         $row['cst1'] = get_table('customer','cst_idx',$row['shp_cst_idx']);
-        $row['cst2'] = get_table('customer','cst_idx',$row['ori_cst_idx']);
-        $row['bom'] = get_table('bom','bom_idx',$row['bom_idx']);
+        $row['cst2'] = get_table('customer','cst_idx',boc2cst($row['prd_boc_idx']));
+        // $row['bom'] = get_table('bom','bom_idx',$row['bom_idx']);
 
         // 수주정보
-        $row['ori_detail'] = $row['cst2']['cst_name'].'('.$row['ori_count'].', '.substr($row['ori_date'],5,11).')';
+        $row['prd_detail'] = $row['cst2']['cst_name'].'('.$row['prd_value'].', '.substr($row['prd_date'],5,11).')';
         // 출하일
         $row['shp_date'] = substr($row['shp_dt'],0,10);
 
@@ -269,26 +228,26 @@ $colspan = 16;
         $s_mod = '<a href="./'.$fname.'_form.php?'.$qstr.'&w=u&'.$pre.'_idx='.$row[$pre.'_idx'].'" class="btn btn_03">수정</a>';
 
         // $bg = 'bg'.($i%2);
-        $bg = 'bgg'.($row['ori_idx']%2);
+        $bg = 'bgg'.($row['prd_idx']%2);
 
         //#070012, #192234
     ?>
 
-    <tr class="<?php echo $bg; ?>" tr_id="<?php echo $row['ori_idx'] ?>"<?=$sty?>>
+    <tr class="<?php echo $bg; ?>" tr_id="<?php echo $row['prd_idx'] ?>"<?=$sty?>>
         <td class="td_chk">
             <input type="hidden" name="<?=$pre?>_idx[<?=$i?>]" value="<?=$row[$pre.'_idx']?>" id="<?=$pre?>_idx_<?=$i?>">
             <input type="checkbox" name="chk[]" value="<?=$i?>" id="chk_<?=$i?>">
         </td>
-        <td class="td_ori_idx"><a href="?ser_ori_idx=<?=$row['ori_idx']?>"><?=$row['ori_idx']?></a></td>
         <td class="td_shp_idx"><?=$row['shp_idx']?></a></td>
+        <td class="td_prd_idx"><a href="?ser_prd_idx=<?=$row['prd_idx']?>"><?=$row['prd_idx']?></a></td>
         <td class="td_cst_name"><a href="?ser_cst_idx=<?=$row['shp_cst_idx']?>"><?=get_text($row['cst1']['cst_name'])?></a></td>
         <td class="td_shp_dt font_size_8"><a href="?ser_st_date=<?=$row['shp_date']?>&ser_en_date=<?=$row['shp_date']?>"><?=$row['shp_dt']?></a></td>
-        <td class="td_bom_part_no"><?=$row['bom']['bom_part_no']?></td>
-        <td class="td_bom_name font_size_7"><?=$row['bom']['bom_name']?></td>
+        <td class="td_bom_part_no"><?=$row['bom_part_no']?></td>
+        <td class="td_bom_name font_size_7"><?=$row['bom_name']?></td>
         <td class="td_shp_count">
             <input type="text" name="shp_count[<?=$i?>]" value="<?=number_format($row['shp_count'])?>" onclick="javascript:numtoprice(this)" class="frm_input moi_count wg_wdx60 wg_right">
         </td>
-        <td class="td_shp_detail font_size_8"><a href="./order_list.php?sfl=ori_idx&stx=<?=$row['ori_idx']?>" target="_blank"><?=$row['ori_detail']?></a></td>
+        <td class="td_shp_detail font_size_8"><a href="./ordprd_list.php?sfl=prd_idx&stx=<?=$row['prd_idx']?>" target="_blank"><?=$row['prd_detail']?></a></td>
         <td class="td_shp_sort">
             <input type="text" name="shp_sort[<?=$i?>]" value="<?=$row['shp_sort']?>" onclick="javascript:numtoprice(this)" class="frm_input wg_wdx40 wg_right">
         </td>

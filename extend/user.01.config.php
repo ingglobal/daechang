@@ -226,6 +226,7 @@ $g5['bom_mms_worker_table']         = NEW_TABLE_PREFIX . 'bom_mms_worker';
 $g5['order_item_table']             = NEW_TABLE_PREFIX . 'order_item';
 $g5['shipment_table']               = NEW_TABLE_PREFIX . 'shipment';
 $g5['production_table']             = NEW_TABLE_PREFIX . 'production';
+$g5['production_main_table']        = NEW_TABLE_PREFIX . 'production_main';
 $g5['production_item_table']        = NEW_TABLE_PREFIX . 'production_item';
 $g5['production_item_count_table']  = NEW_TABLE_PREFIX . 'production_item_count';
 $g5['production_member_table']      = NEW_TABLE_PREFIX . 'production_member';

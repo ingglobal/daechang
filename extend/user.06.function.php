@@ -456,6 +456,166 @@ function get_production_item($prd)
 }
 
 // 생산아이템 업데이트
+if(!function_exists('insert_production_item')){
+function insert_production_item($prd=0,$prm=0,$boc=0,$bom=0,$day='',$count=0,$status='confirm')
+{
+	global $g5;
+
+    $prd_idx = $prd;
+    $prm_idx = $prm;
+    $boc_idx = $boc;
+    $bom_idx = $bom;
+    $date = $day;
+    $cnt = $count;
+    $stat = $status;
+	
+	//등록된 완제품의 pri_idx가 있는지 확인(boc_idx, bom_idx, pri_date, pri_status)
+    $chk_sql = " SELECT COUNT(pri_idx) AS cnt, GROUP_CONCAT(pri_idx) AS pri_idxs 
+                    FROM {$g5['production_item_table']}
+                    WHERE com_idx = '{$g5['setting']['set_com_idx']}'
+                        AND prd_idx = '{$prd_idx}'
+                        AND prm_idx = '{$prm_idx}'
+                        AND boc_idx = '{$boc_idx}'
+                        AND bom_idx = '{$bom_idx}'
+                        AND bom_idx_parent = '{$bom_idx}'
+                        AND pri_date = '{$date}'
+                        AND pri_status NOT IN ('trash')
+    ";
+    $chk_res = sql_fetch($chk_sql,1);
+    $num = $chk_res['cnt'];
+
+    //기존의 동일한 조건의 생산계획이 존재하면 그냥 건너뛴다.
+    //이유: 여러유형의 복제레코드가 존재하고 복제레코드간 갯수의 분배도 불분명하기 때문이다.
+    if(!$num && $prd_idx){
+        // 해당제품의 담당작업자를 불러온다.
+        $w_res = sql_fetch(" SELECT GROUP_CONCAT(mb_id) AS mb_ids
+                                    , GROUP_CONCAT(mms_idx) AS mms_idxs 
+                FROM {$g5['bom_mms_worker_table']} 
+                WHERE bom_idx = {$bom_idx}
+                    AND bmw_type IN('day','night')
+                    AND bmw_status = 'ok'
+                    AND bmw_main_yn = 1
+                ORDER BY mms_idx, bmw_type
+                LIMIT 2
+        ");
+        $wks = ($w_res['mb_ids']) ? explode(',',$w_res['mb_ids']) : array();
+        $mms = ($w_res['mms_idxs']) ? explode(',',$w_res['mms_idxs']) : array();
+        //$g5['set_bmw_type_share_value']['day']
+        list($cnt_day,$cnt_night) = day_night_share($cnt,$wks);
+
+
+        // $sql = " INSERT INTO {$g5['production_item_table']} 
+        // (com_idx,boc_idx,prd_idx,prm_idx,bom_idx,bom_idx_parent,mms_idx,mb_id,pri_value,pri_date,pri_status,pri_reg_dt,pri_update_dt) VALUES
+        // ";
+        // $pri_idx = 0;
+        if($cnt_day){
+            $sql = " INSERT INTO {$g5['production_item_table']} 
+            (com_idx,boc_idx,prd_idx,prm_idx,bom_idx,bom_idx_parent,mms_idx,mb_id,pri_value,pri_date,pri_status,pri_reg_dt,pri_update_dt) VALUES
+            ('{$g5['setting']['set_com_idx']}','{$boc_idx}','{$prd_idx}','{$prm_idx}','{$bom_idx}','{$bom_idx}','{$mms[0]}','{$wks[0]}','{$cnt_day}','{$date}','{$stat}','".G5_TIME_YMDHIS."','".G5_TIME_YMDHIS."')
+            ";
+            sql_query($sql,1);
+            // $pri_idx = sql_insert_id();
+        }
+        if($cnt_night){
+            $sql = " INSERT INTO {$g5['production_item_table']} 
+            (com_idx,boc_idx,prd_idx,prm_idx,bom_idx,bom_idx_parent,mms_idx,mb_id,pri_value,pri_date,pri_status,pri_reg_dt,pri_update_dt) VALUES
+            ('{$g5['setting']['set_com_idx']}','{$boc_idx}','{$prd_idx}','{$prm_idx}','{$bom_idx}','{$bom_idx}','{$mms[1]}','{$wks[1]}','{$cnt_night}','{$date}','{$stat}','".G5_TIME_YMDHIS."','".G5_TIME_YMDHIS."')
+            ";
+            sql_query($sql,1);
+            // $pri_index = sql_insert_id();
+            // $pri_idx = ($pri_idx) ? $pri_idx : $pri_index; 
+        }
+    } //--if(!$num)
+
+    $vsql = " SELECT bit_idx 
+                , bom_idx
+                , bom_idx_child 
+                , bit_count 
+                , bit_main_yn 
+                , bit_reply 
+            FROM {$g5['bom_item_table']} 
+            WHERE bom_idx = '{$bom_idx}' 
+            ORDER BY bit_reply 
+    ";
+    $vres = sql_query($vsql,1);
+    if($vres->num_rows){
+        for($i=0;$row=sql_fetch_array($vres);$i++){
+            //기존 데이터가 있는지 확인한다.
+            $chk_sql2 = " SELECT COUNT(pri_idx) AS cnt, GROUP_CONCAT(pri_idx) AS pri_idxs 
+                            FROM {$g5['production_item_table']}
+                            WHERE com_idx = '{$g5['setting']['set_com_idx']}'
+                                AND prd_idx = '{$prd_idx}'
+                                AND prm_idx = '{$prm_idx}'
+                                AND boc_idx = '{$boc_idx}'
+                                AND bom_idx = '{$row['bom_idx_child']}'
+                                AND bom_idx_parent = '{$bom_idx}'
+                                AND pri_date = '{$date}'
+                                AND pri_status NOT IN ('trash')
+            ";
+            $chk_res2 = sql_fetch($chk_sql2,1);
+            $num2 = $chk_res2['cnt'];
+            if(!$num2){
+                // 해당제품의 담당작업자를 불러온다.
+                $w_res2 = sql_fetch(" SELECT GROUP_CONCAT(mb_id) AS mb_ids
+                        , GROUP_CONCAT(mms_idx) AS mms_idxs 
+                FROM {$g5['bom_mms_worker_table']} 
+                WHERE bom_idx = {$row['bom_idx_child']}
+                    AND bmw_type IN('day','night')
+                    AND bmw_status = 'ok'
+                    AND bmw_main_yn = 1
+                ORDER BY mms_idx, bmw_type
+                LIMIT 2
+                ");
+                $wks2 = ($w_res2['mb_ids']) ? explode(',',$w_res2['mb_ids']) : array();
+                $mms2 = ($w_res2['mms_idxs']) ? explode(',',$w_res2['mms_idxs']) : array();
+                //$g5['set_bmw_type_share_value']['day']
+                $cnt2 = $cnt * $row['bit_count'];
+                list($cnt_day2,$cnt_night2) = day_night_share($cnt2,$wks2);
+    
+                if($cnt_day2){
+                    $sql2 = " INSERT INTO {$g5['production_item_table']} 
+                    (com_idx,boc_idx,prd_idx,prm_idx,bom_idx,bom_idx_parent,mms_idx,mb_id,pri_value,pri_date,pri_status,pri_reg_dt,pri_update_dt) VALUES
+                    ('{$g5['setting']['set_com_idx']}','{$boc_idx}','{$prd_idx}','{$prm_idx}','{$row['bom_idx_child']}','{$bom_idx}','{$mms2[0]}','{$wks2[0]}','{$cnt_day2}','{$date}','{$stat}','".G5_TIME_YMDHIS."','".G5_TIME_YMDHIS."')
+                    ";
+                    sql_query($sql2,1);
+                    // $pri_idx = sql_insert_id();
+                }
+                if($cnt_night2){
+                    $sql2 = " INSERT INTO {$g5['production_item_table']} 
+                    (com_idx,boc_idx,prd_idx,prm_idx,bom_idx,bom_idx_parent,mms_idx,mb_id,pri_value,pri_date,pri_status,pri_reg_dt,pri_update_dt) VALUES
+                    ('{$g5['setting']['set_com_idx']}','{$boc_idx}','{$prd_idx}','{$prm_idx}','{$row['bom_idx_child']}','{$bom_idx}','{$mms2[1]}','{$wks2[1]}','{$cnt_night2}','{$date}','{$stat}','".G5_TIME_YMDHIS."','".G5_TIME_YMDHIS."')
+                    ";
+                    sql_query($sql2,1);
+                    // $pri_index = sql_insert_id();
+                    // $pri_idx = ($pri_idx) ? $pri_idx : $pri_index; 
+                }
+            } //-if(!$num2)
+        } //--for($i=0;$row=sql_fetch_array($vres);$i++)
+    } //--if($vres->num_rows)
+}
+}
+
+if(!function_exists('day_night_share')){
+function day_night_share($cnt=0,$wkarr=array()){
+    global $g5;
+    $cnt_day = 0;
+    $cnt_night = 0;
+    if($cnt && sizeof($wkarr)){
+        $arr_cnt = sizeof($wkarr);
+        if($arr_cnt == 1){
+            $cnt_day = $cnt;
+        }
+        else{
+            $cnt_day = (intval($cnt * $g5['set_bmw_type_share_value']['day']/100))?intval($cnt * $g5['set_bmw_type_share_value']['day']/100):1;
+            $cnt_night = $cnt - $cnt_day;
+        }
+    }
+
+    return array($cnt_day,$cnt_night);
+}
+}
+/*
+// 생산아이템 업데이트
 if(!function_exists('update_production_item')){
 function update_production_item($arr)
 {
@@ -522,7 +682,7 @@ function update_production_item($arr)
     return $row[$pre."_idx"];
 }
 }
-
+*/
 
 // 엑셀 열문자 생성 함수
 if(!function_exists('update_mms_worker')){
@@ -788,8 +948,13 @@ function update_db($arr)
             return false;
         }
     }
+	else if($arr['table']=='g5_1_production_main') {
+        if(!$arr['prd_idx']||!$arr['boc_idx']) {
+            return false;
+        }
+    }
 	else if($arr['table']=='g5_1_production_item') {
-        if(!$arr['prd_idx']||!$arr['bom_idx']) {
+        if(!$arr['prm_idx']||!$arr['boc_idx']) {
             return false;
         }
     }
@@ -871,6 +1036,9 @@ function update_db($arr)
     }
 	else if($arr['table']=='g5_1_production') {
         $where = " bom_idx = '{$arr['bom_idx']}' AND prd_start_date = '{$arr['prd_start_date']}' ";
+    }
+	else if($arr['table']=='g5_1_production_main') {
+        $where = " prm_idx = '{$arr['prm_idx']}' AND boc_idx = '{$arr['boc_idx']}' ";
     }
 	else if($arr['table']=='g5_1_production_item') {
         $where = " prd_idx = '{$arr['prd_idx']}' AND bom_idx = '{$arr['bom_idx']}' AND mms_idx = '{$arr['mms_idx']}' AND mb_id = '{$arr['mb_id']}' AND pri_status = '{$arr['pri_status']}' ";
@@ -3261,6 +3429,100 @@ VALUES (0, NOW(), NOW(), '01087269235', '0547467766','[대창공업]입니다.�
                 ,MSG_BODY = '{$ar['MSG_BODY']}'
     ";
     sql_query($sql);
+}
+}
+
+// g5_1_bom_customer테이블의 boc_idx로 호출하면 cst_idx로 반환하는 함수
+if(!function_exists('boc2cst')){
+function boc2cst($boc){
+    global $g5;
+
+    $cst_idx = 0;
+    // $sql = '';
+    if($boc){
+        $sql = " SELECT cst_idx FROM {$g5['bom_customer_table']} WHERE boc_idx = '{$boc}' ";
+        $res = sql_fetch($sql);
+        $cst_idx = $res['cst_idx'];
+    }
+
+    // return $sql;
+    return $cst_idx;
+}
+}
+
+// g5_1_customer테이블의 cst_idx로 호출하면 cst_name로 반환하는 함수
+if(!function_exists('cst2name')){
+function cst2name($cst){
+    global $g5;
+
+    $cst_name = '';
+    // $sql = '';
+    if($cst){
+        $sql = " SELECT cst_name FROM {$g5['customer_table']} WHERE cst_idx = '{$cst}' ";
+        $res = sql_fetch($sql);
+        $cst_name = $res['cst_name'];
+    }
+
+    // return $sql;
+    return $cst_name;
+}
+}
+
+// g5_1_bom_customer테이블의 cst_idx로 호출하면 관련대 복수개의 boc_idx로 반환하는 함수
+if(!function_exists('cst2bocs')){
+function cst2bocs($cst=0,$typ=''){ //$typ = customer OR provider OR null
+    global $g5;
+    $cst_idx = $cst;
+    $type = $typ;
+    $boc_idxs = 0;
+    // $sql = '';
+    $type_sql = (!$type) ? "" : " AND boc_type = '{$type}' ";
+    if($cst){
+        $sql = " SELECT GROUP_CONCAT(boc_idx) AS boc_idxs FROM {$g5['bom_customer_table']} WHERE cst_idx = '{$cst_idx}' {$type_sql} ORDER BY boc_idx DESC ";
+        $res = sql_fetch($sql);
+        $boc_idxs = $res['boc_idxs'];
+    }
+
+    // return $sql;
+    return $boc_idxs;
+}
+}
+
+// g5_1_bom_customer테이블의 cst_idx, bom_idx로 호출하면 boc_idx로 반환하는 함수
+if(!function_exists('cst2boc')){
+function cst2boc($cst=0,$bom=0,$typ='cusotmer'){
+    global $g5;
+    $cst_idx = $cst;
+    $bom_idx = $bom;
+    $type = $typ;
+    $boc_idx = 0;
+    // $sql = '';
+    if($cst & $bom){
+        $sql = " SELECT boc_idx FROM {$g5['bom_customer_table']} WHERE cst_idx = '{$cst_idx}' AND bom_idx = '{$bom_idx}' AND boc_type = '{$type}' ORDER BY boc_idx DESC LIMIT 1 ";
+        $res = sql_fetch($sql);
+        $boc_idx = $res['boc_idx'];
+    }
+
+    // return $sql;
+    return $boc_idx;
+}
+}
+if(!function_exists('create_boc')){
+function create_boc($cst=0,$bom=0,$typ='customer'){
+    global $g5;
+    $cst_idx = $cst;
+    $bom_idx = $bom;
+    $boc_idx = 0;
+    $type = $typ;
+    if($cst_idx && $bom_idx){
+        $sql = " INSERT INTO {$g5['bom_customer_table']} (com_idx, bom_idx, cst_idx, boc_type)
+            VALUES ('{$g5['setting']['set_com_idx']}', '{$bom_idx}', '{$cst_idx}', '{$type}') 
+        ";
+        sql_query($sql);
+        $boc_idx = sql_insert_id();
+    }
+
+    return $boc_idx;
 }
 }
 ?>

@@ -29,6 +29,10 @@ include_once(G5_PATH.'/head.sub.php');
 $sql_common = " FROM {$g5['member_table']} ";
 $sql_where = " WHERE mb_id <> '{$config['cf_admin']}' AND mb_leave_date = '' AND mb_intercept_date ='' ";
 
+if($file_name == 'mms_worker_form'){
+    $sql_where .= " AND mb_7 = 'ok' AND mb_8 != '' ";
+}
+
 if($item=="mb_id_saler"||$item=="mb_id_worker") {
     $sql_where .= " AND mb_level >= 6 ";
 }
@@ -57,10 +61,15 @@ $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
 if ($page < 1) { $page = 1; } // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
+$sort = 'mb_id';
+if($file_name == 'mms_worker_form'){
+    $sort = 'CAST(mb_8 AS SIGNED)';
+}
+
 $sql = "SELECT *
             $sql_common
             $sql_where
-        ORDER BY mb_id
+        ORDER BY $sort
         LIMIT $from_record, $rows
 ";
 // echo $sql.'<br>';
@@ -87,7 +96,8 @@ $qstr1 = 'mb_name='.urlencode($mb_name).'&file_name='.$file_name.'&item='.$item;
         <tr>
             <th>회원이름</th>
             <th>회원아이디</th>
-            <th>이메일</th>
+            <th>작업자번호</th>
+            <th>휴대폰번호</th>
             <th>선택</th>
         </tr>
         </thead>
@@ -98,7 +108,8 @@ $qstr1 = 'mb_name='.urlencode($mb_name).'&file_name='.$file_name.'&item='.$item;
         <tr>
             <td class="td_mbname"><?php echo get_text($row['mb_name']); ?></td>
             <td class="td_left"><?php echo $row['mb_id']; ?></td>
-            <td class="td_left"><?php echo $row['mb_email']; ?></td>
+            <td class="td_left"><?php echo $row['mb_8']; ?></td>
+            <td class="td_left"><?php echo $row['mb_hp']; ?></td>
             <td class="scp_find_select td_mng td_mng_s">
                 <button type="button" class="btn btn_03 btn_select"
                     mb_id="<?=$row['mb_id']?>"
@@ -108,6 +119,7 @@ $qstr1 = 'mb_name='.urlencode($mb_name).'&file_name='.$file_name.'&item='.$item;
                     mb_tel="<?=$row['mb_tel']?>"
                     mb_email="<?=$row['mb_email']?>"
                     mb_2="<?=$row['mb_2']?>"
+                    mb_8="<?=$row['mb_8']?>"
                     mb_department="<?=$g5['department_name'][$row['mb_2']]?>"
                     mb_positions="<?=$g5['set_mb_positions_value'][$row['mb_1']]?>"
                 >선택</button>

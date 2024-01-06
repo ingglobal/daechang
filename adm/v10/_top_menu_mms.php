@@ -16,6 +16,7 @@ $g5['container_sub_title'] = '
 <h2 id="container_sub_title">
 	<a href="./mms_list.php" class="btn_top_menu '.$active_mms_list.'">설비관리</a>
 	<a href="./mms_worker_list.php" class="btn_top_menu '.$active_mms_worker_list.'">설비별작업자관리</a>
+	<a href="./mms_worker_excel_form.php" class="btn_top_menu '.$active_mms_worker_excel_form.'">설비별작업자엑셀등록</a>
 	<a href="./bom_jig_list.php" class="btn_top_menu '.$active_bom_jig_list.'">설비별지그관리</a>
 	'.$sub_title_list.'
 </h2>

@@ -11,8 +11,12 @@ if(!$prd_count) alert('지시수량을 입력해 주세요.');
 $prd_count = preg_replace("/,/","",$prd_count);
 if($prd_memo) $prd_memo = trim(stripslashes($prd_memo));
 
+// print_r2($_REQUEST);
+// exit;
+
 // production 업데이트
 $ar['table']  = 'g5_1_production';
+$ar['prd_idx']  = $prd_idx;
 $ar['com_idx']  = $_SESSION['ss_com_idx'];
 $ar['ori_idx']  = $ori_idx;
 $ar['bom_idx']  = $bom_idx;
@@ -47,19 +51,21 @@ else if($w == 'u'){
     // print_r2($_REQUEST);
 
     if ($_POST['act_button'] == "초기화") {
-        // 작업자아이템이 정보 초기화
+        // 작업자아이템 정보 초기화
         $sql = "DELETE FROM {$g5['production_member_table']} 
                 WHERE pri_idx IN (SELECT pri_idx FROM {$g5['production_item_table']} WHERE prd_idx = '".$prd_idx."') 
         ";
         // echo $sql.BR;
         sql_query($sql,1);
-        // 생산아이템이 정보 초기화
+        // 생산아이템 정보 초기화
         $sql = " DELETE FROM {$g5['production_item_table']} WHERE prd_idx = '".$prd_idx."' ";
         // echo $sql.BR;
         sql_query($sql,1);
 
         // BOM 구조를 따라서 관련 정보 생성
         $list = get_production_item($prd);
+        // print_r2($list);
+        // exit;
     }
     // 초기화가 아니면 정보 업데이트
     else {
@@ -76,23 +82,27 @@ else if($w == 'u'){
         
                 // 생산아이템 정보 입력 ---------------------------------------------------------------
                 $sql3 = "   UPDATE {$g5['production_item_table']} SET
-                                pri_status = '".$_REQUEST['prm_statuss'][$k1]."'
+                                mms_idx = '".$_REQUEST['mms_idxs'][$k1]."'
+                                , com_idx = '".$_SESSION['ss_com_idx']."'
+                                , mb_id = '".$_REQUEST['mb_ids'][$k1]."'
+                                , pri_value = '".$_REQUEST['pri_values'][$k1]."'
+                                , pri_ing = '".$_REQUEST['pri_ing'][$k1]."'
                                 , pri_update_dt = '".G5_TIME_YMDHIS."'
                             WHERE pri_idx = '".$_REQUEST['pri_idxs'][$k1]."'
                 ";
                 // echo $sql3.BR;
                 sql_query($sql3,1);
-                // 작업자아이템 정보 입력 ---------------------------------------------------------------
-                $sql3 = "   UPDATE {$g5['production_member_table']} SET
-                                mms_idx = '".$_REQUEST['mms_idxs'][$k1]."'
-                                , mb_id = '".$_REQUEST['mb_ids'][$k1]."'
-                                , prm_value = '".$_REQUEST['prm_values'][$k1]."'
-                                , prm_status = '".$_REQUEST['prm_statuss'][$k1]."'
-                                , prm_update_dt = '".G5_TIME_YMDHIS."'
-                            WHERE prm_idx = '".$_REQUEST['prm_idxs'][$k1]."'
-                ";
-                // echo $sql3.BR;
-                sql_query($sql3,1);
+                // // 작업자아이템 정보 입력 ---------------------------------------------------------------
+                // $sql3 = "   UPDATE {$g5['production_member_table']} SET
+                //                 mms_idx = '".$_REQUEST['mms_idxs'][$k1]."'
+                //                 , mb_id = '".$_REQUEST['mb_ids'][$k1]."'
+                //                 , prm_value = '".$_REQUEST['prm_values'][$k1]."'
+                //                 , prm_status = '".$_REQUEST['prm_statuss'][$k1]."'
+                //                 , prm_update_dt = '".G5_TIME_YMDHIS."'
+                //             WHERE prm_idx = '".$_REQUEST['prm_idxs'][$k1]."'
+                // ";
+                // // echo $sql3.BR;
+                // sql_query($sql3,1);
 
             }
         }
@@ -101,4 +111,6 @@ else if($w == 'u'){
 }
 
 // exit;
+$qstr .= ($st_date)?'&st_date='.$st_date:'';
+$qstr .= ($en_date)?'&en_date='.$en_date:'';
 goto_url('./production_form.php?'.$qstr.'&w=u&prd_idx='.$prd_idx, false);
