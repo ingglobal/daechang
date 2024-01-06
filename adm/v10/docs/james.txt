@@ -483,6 +483,7 @@ $ sudo tcpdump --interface=eno8
 # sudo tcpdump -i eno8 tcp port 20480
 # sudo tcpdump -i eno8 src 192.168.100.142
 # sudo tcpdump -i eno8 src 192.168.100.143
+# sudo tcpdump -i eno8 src 192.168.100.143 tcp port 20480
 
 
 포트번호: 20480
