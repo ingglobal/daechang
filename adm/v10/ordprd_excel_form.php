@@ -55,7 +55,7 @@ echo $g5['container_sub_title'];
 
 <script>
 $(function() {
-    $("input[name=ori_date]").datepicker({ changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd", showButtonPanel: true, yearRange: "c-99:c+99"});
+    $("input[name=prd_date]").datepicker({ changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd", showButtonPanel: true, yearRange: "c-99:c+99"});
 
 });
 
