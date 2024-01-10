@@ -331,6 +331,13 @@ yearly,1,10 = 연도별,1년단위,10년치,sum(합계)'); ?>
 			</td>
 		</tr>
 		<tr>
+			<th scope="row">PLC데이터타입</th>
+			<td colspan="3">
+				<?php echo help('tag=측정태그, alarm=알람, count=생산카운터, addup=적산, trigger=트리거, auto=자동선택, autostart=자동시작, countercheck=카운터체크, runtime=가동시간'); ?>
+				<input type="text" name="set_ppr_data_type" value="<?php echo $g5['setting']['set_ppr_data_type']; ?>" class="frm_input" style="width:50%;">
+			</td>
+		</tr>
+		<tr>
 			<th scope="row">코드상태 설정</th>
 			<td colspan="3">
 				<?php echo help('stop=중지,ok=정상') ?>

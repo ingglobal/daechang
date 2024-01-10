@@ -8,6 +8,7 @@
 // /adm/v10/item_today_list.php
 // /adm/v10/alarm_code_form.php
 // /adm/v10/production_item_count_list.php
+// /adm/v10/plc_protocol_form.php
 include_once('./_common.php');
 
 if($member['mb_level']<4)
@@ -194,6 +195,7 @@ $('.btn_select').click(function(e){
         ||$file_name=='material_form'
         ||$file_name=='bom_jig_form'
         ||$file_name=='alarm_code_form'
+        ||$file_name=='plc_protocol_form'
     ) {
     ?>
         $("input[name=mms_idx]", opener.document).val( mms_idx );

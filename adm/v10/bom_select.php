@@ -6,6 +6,7 @@
 // /adm/v10/bom_jig_form.php
 // /adm/v10/production_form.php
 // /adm/v10/mms_worker_form.php
+// /adm/v10/plc_protocol_form.php
 include_once('./_common.php');
 
 if($member['mb_level']<4)
@@ -200,7 +201,7 @@ $('.btn_select').click(function(e){
         $(".span_bom_part_no", opener.document).text( bom_part_no );
     <?php
     }
-    else if($file_name=='item_form'||$file_name=='bom_jig_form') {
+    else if($file_name=='item_form'||$file_name=='bom_jig_form'||$file_name=='plc_protocol_form') {
     ?>
         $("input[name=bom_idx]", opener.document).val( bom_idx );
         $("input[name=bom_name]", opener.document).val( bom_name );
