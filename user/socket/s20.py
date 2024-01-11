@@ -10,7 +10,7 @@ import sys
 # sys.path.append(os.path.join(os.getcwd(), "/home/hanho/hanho_www/data/python"))
 sys.path.append(os.path.join(os.getcwd(), "../../data/python"))
 
-import shutil
+import psycopg2
 import json
 
 # plc protocal 정의된 dictionary 배열 삽입
@@ -19,10 +19,48 @@ from data_socket import data_socket
 # ppr_name_value = data_socket['192.168.123.251']['20480']['0'][0]['ppr_name']
 # print(ppr_name_value)
 
+
+def is_signed_integer(byte_array):
+    # 부호 비트 확인
+    sign_bit = byte_array[0] & 0x80  # 0x80은 10000000을 나타냄
+
+    # 부호 비트가 1이면 부호 있는 정수, 0이면 부호 없는 정수
+    return sign_bit == 0x80
+
+# local 데이터베이스 연결 정보
+db1_config = {
+    'host': 'localhost',
+    'database': 'daechang_www',
+    'user': 'postgres',
+    'password': 'super@ingglobal*',
+    'port': '5432',
+}
+
+# epcs 데이터베이스 연결 정보
+db2_config = {
+    'host': '110.10.129.208',
+    'database': 'daechang_www',
+    'user': 'postgres',
+    'password': 'super@ingglobal*',
+    'port': '10432',
+}
+
+
+# database connection
+try:
+    # 데이터베이스 연결 & 커서 생성
+    conn1 = psycopg2.connect(**db1_config)
+    cur1 = conn1.cursor()
+    conn2 = psycopg2.connect(**db2_config)
+    cur2 = conn2.cursor()
+except Exception as e:
+    print(e)
+
+
 # 호스트와 포트 지정
 host = ''
 # ports = [20480, 20481, 20482]
-ports = [20482]
+ports = [20480]
 
 clients = []
 sockets = []
@@ -67,30 +105,27 @@ def handle_client(client_socket, addr):
                 # print(rec[i],' / ',rec[i+1])
                 # print(rec[i:i+2])
                 # print(ip, port, idx)
-                # print(d2, ip, port, idx)
-                # print(idx,': ',len(data_socket[str(ip)][str(port)][str(idx)]), end='')
-                # print(idx,': ',len(data_socket[str(ip)][str(port)][str(150)]))
-                # print(data_socket[str(ip)][str(port)][str(150)][str(0)])
-                # print(idx,': ',data_socket[str(ip)][str(port)][str(idx)])
-                # if idx==220:
-                #     print(idx,': ',data_socket[str(ip)][str(port)][str(idx)][1])
-                #     print('=============')
+                # 존재하지 않을 때 error가 나므로 try 사용
+                dtype = 'int'
                 try:
-                    if data_socket[str(ip)][str(port)][str(idx)][1]:
-                        print(idx,': ',data_socket[str(ip)][str(port)][str(idx)][1])
-                        print('=============')
-                    elif data_socket[str(ip)][str(port)][str(idx)][str(1)]:
-                        print(idx,': ',data_socket[str(ip)][str(port)][str(idx)][str(1)])
-                        print('=============')
+                    # if isinstance(data_socket[str(ip)][str(port)][str(idx)], list) or isinstance(data_socket[str(ip)][str(port)][str(idx)], dict):
+                    #     print(idx,': ',data_socket[str(ip)][str(port)][str(idx)])
+                    # 내부 배열의 갯수가 여러개면 bit 구조 
+                    if len(data_socket[str(ip)][str(port)][str(idx)])>1 or len(data_socket[str(ip)][str(port)][str(idx)])>1:
+                        # print(idx,': ',data_socket[str(ip)][str(port)][str(idx)])
+                        # print(idx,': ',len(data_socket[str(ip)][str(port)][str(idx)]))
+                        # print('=============')
+                        dtype = 'bit'
+                    # 내부 배열의 갯수가 1개 뿐이면 정수형 구조
+                    else:
+                        # print(idx,': ',data_socket[str(ip)][str(port)][str(idx)][0]['ppr_name'])
+                        # print('=============')
+                        dtype = 'int'
                 except:
                     pass
-                if i<4: # 정수
-                    st = format(rec[i+1],'08b')
-                    st += format(rec[i],'08b')
-                    t1 = int(st,2)
-                    # print(t1)
-                    lst.append(t1)
-                elif i<8:   # bit 구조
+                
+                # print(idx,': ',dtype)
+                if dtype=='bit':
                     st = format(rec[i+1],'08b')
                     st += format(rec[i],'08b')
                     reversed_str = st[::-1]  # 문자열 뒤집기
@@ -98,15 +133,41 @@ def handle_client(client_socket, addr):
                     st2 = bin(reversed_binary)[2:].zfill(16)  # 10진수 정수를 2진수 문자열로 변환하고 16자리로 맞추기
                     # print(st2)
                     lst.append(st2)
-                else:   # 부호가 있는 정수형
-                    num = struct.unpack('!h', rec[i:i+2])[0]
+                else:
+                    # 일반 정수
+                    st = format(rec[i+1],'08b')
+                    st += format(rec[i],'08b')
+                    num = int(st,2)
+                    # # 부호가 있는 정수형
+                    # # num = struct.unpack('!h', rec[i:i+2])[0]
+                    # if is_signed_integer(rec[i:i+2]):
+                    #     num = int.from_bytes(rec[i:i+2], byteorder='big', signed=True)
+                    #     # print(f"부호 있는 정수: {num}")
+                    # else:
+                    #     num = int.from_bytes(rec[i:i+2], byteorder='big', signed=False)
+                    #     # print(f"부호 없는 정수: {num}")                    
+                    
+                    # print(num)
                     lst.append(num)
             
             # print (lst)
             # lst[0] = ip
-            print(d2, addr[0], port, '=>', lst[0:6],'...')
-            # print(d2, addr[0], port, '\n', lst[0:6],'...')
+            print(d2, ip, port, '=>', lst[0:3],'...',lst[470:472])
+            # print(d2, ip, port, '=>', lst[470:476],'...')
             # print ('\n------------------------------------')
+            
+            # write to pgSQL
+            try:
+                lst_json = json.dumps(lst) # list -> json (json 타입으로 바꿔야 db 입력시 no error)
+                # cur1.execute("INSERT INTO g5_1_socket (sck_dt, sck_ip, sck_port, sck_value) VALUES (%s, %s, %s, %s)", ("now()", ip, port, lst_json))
+                cur1.execute("INSERT INTO g5_1_socket (sck_dt, sck_ip, sck_port, sck_value) VALUES (%s, %s, %s, %s)", (d2, ip, port, lst_json))
+                conn1.commit()
+                cur2.execute("INSERT INTO g5_1_socket (sck_dt, sck_ip, sck_port, sck_value) VALUES (%s, %s, %s, %s)", (d2, ip, port, lst_json))
+                conn2.commit()
+            except Exception as e:
+                conn1.rollback()  # 이전 트랜잭션 롤백
+                conn2.rollback()  # 이전 트랜잭션 롤백
+                print(e)
             
         except ValueError:
             print('ValueError occured.')

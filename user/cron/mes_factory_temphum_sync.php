@@ -54,7 +54,7 @@ else if($ymd) {
 }
 else {
     // 데이터의 마지막 일시 ------
-    $sql = " SELECT event_time FROM {$table2} ORDER BY fct_idx DESC LIMIT 1 ";
+    $sql = " SELECT event_time FROM {$table2} ORDER BY mms_idx DESC LIMIT 1 ";
     $dat = sql_fetch($sql,1);
     $ymdhis = $dat['event_time'];
 
@@ -118,7 +118,7 @@ for ($i=0; $row=$result->fetch(PDO::FETCH_ASSOC); $i++) {
 
     // table2 입력을 위한 변수배열 일괄 생성 ---------
     // 건너뛸 변수들 설정
-    $skips = array('fct_idx','event_timestamp');
+    $skips = array('mms_idx','event_timestamp');
     for($j=0;$j<sizeof($fields2);$j++) {
         if(in_array($fields2[$j],$skips)) {continue;}
         $arr[$fields2[$j]] = ($fields21[$fields2[$j]]) ? $arr[$fields21[$fields2[$j]]] : $arr[$fields2[$j]];
@@ -134,7 +134,7 @@ for ($i=0; $row=$result->fetch(PDO::FETCH_ASSOC); $i++) {
     $sql_text[$i] = (is_array($sql_commons[$i])) ? implode(",",$sql_commons[$i]) : '';
 
     // Record update
-    $sql3 = "   SELECT fct_idx FROM {$table2}
+    $sql3 = "   SELECT mms_idx FROM {$table2}
                 WHERE work_date = '".$arr['work_date']."'
                     AND work_shift = '".$arr['work_shift']."'
                     AND event_time = '".$arr['event_time']."'
@@ -142,10 +142,10 @@ for ($i=0; $row=$result->fetch(PDO::FETCH_ASSOC); $i++) {
     //echo $sql3.'<br>';
     $row3 = sql_fetch($sql3,1);
     // 정보 업데이트
-    if($row3['fct_idx']) {
+    if($row3['mms_idx']) {
 		$sql = "UPDATE {$table2} SET
 					$sql_text[$i]
-				WHERE fct_idx = '".$row3['fct_idx']."'
+				WHERE mms_idx = '".$row3['mms_idx']."'
 		";
 		if(!$demo) {sql_query($sql,1);}
 	    else {echo $sql.'<br><br>';}
@@ -165,7 +165,7 @@ for ($i=0; $row=$result->fetch(PDO::FETCH_ASSOC); $i++) {
     // timescaleDB insert record.
     $sql3 = "INSERT INTO {$table2}
                 {$sql_fields[$i]} VALUES {$sql_values[$i]} 
-            RETURNING fct_idx 
+            RETURNING mms_idx 
 	";
     if(!$demo) {sql_query_pg($sql3,1);}
     else {echo $sql3.'<br><br>';}

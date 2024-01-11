@@ -241,5 +241,6 @@ $g5['msg_log_table']                = NEW_TABLE_PREFIX . 'msg_log';
 $g5['pallet_table']                 = NEW_TABLE_PREFIX . 'pallet';
 $g5['material_table']               = NEW_TABLE_PREFIX . 'material';
 $g5['bom_customer_table']           = NEW_TABLE_PREFIX . 'bom_customer';
+$g5['plc_protocol_table']           = NEW_TABLE_PREFIX . 'plc_protocol';
 
 $g5['v_bom_item_table']             = NEW_TABLE_PREFIX . 'v_bom_item';

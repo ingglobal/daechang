@@ -9,6 +9,8 @@ if($member['mb_manager_yn']) {
     $sub_title_list = ' <a href="./imp_list.php" class="btn_top_menu '.$active_imp_list.'">IMP관리</a>
 						<a href="./mms_status_list.php" class="btn_top_menu '.$active_mms_status_list.'">상태코드설정</a>
 						<a href="./data_downtime_list.php" class="btn_top_menu '.$active_data_downtime_list.'">비가동코드설정</a>
+						<a href="./plc_protocol_list.php" class="btn_top_menu '.$active_plc_protocol_list.'">PLC통신규약</a>
+						<a href="./plc_protocol_excel.php" class="btn_top_menu '.$active_plc_protocol_excel.'">PLC통신엑셀</a>
     ';
 }
 

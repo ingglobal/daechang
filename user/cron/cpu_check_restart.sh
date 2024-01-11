@@ -44,7 +44,7 @@ if [ $cpu_percentage_postgres -ge 100 ]; then
 fi
 
 # 로그 파일 최근 1000줄만 남기고 오래된 행은 삭제
-if [ $(wc -l < "$log_file") -gt 10000 ]; then
-    tail -n 10000 "$log_file" > "$log_file.tmp"
+if [ $(wc -l < "$log_file") -gt 100000 ]; then
+    tail -n 100000 "$log_file" > "$log_file.tmp"
     mv "$log_file.tmp" "$log_file"
 fi
