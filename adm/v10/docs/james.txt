@@ -481,8 +481,12 @@ $ sudo tcpdump --interface=lo
 
 $ sudo tcpdump --interface=eno8
 # sudo tcpdump -i eno8 tcp port 20480
-# sudo tcpdump -i eno8 src 192.168.100.142
-# sudo tcpdump -i eno8 src 192.168.100.143
+# sudo tcpdump -i eno8 src 192.168.100.128 (PLC1)
+# sudo tcpdump -i eno8 src 192.168.100.130 (PLC2)
+# sudo tcpdump -i eno8 src 192.168.100.137 (PLC3)
+# sudo tcpdump -i eno8 src 192.168.100.139 (PLC4)
+# sudo tcpdump -i eno8 src 192.168.100.141 (PLC5)
+# sudo tcpdump -i eno8 src 192.168.100.143 (PLC6)
 # sudo tcpdump -i eno8 src 192.168.100.143 tcp port 20480
 
 
@@ -3339,3 +3343,32 @@ top -bn1 | head -n 12
 
 SELECT SUBSTRING('10',1,2) -> 10
 SELECT SUBSTRING('1010',3,2) -> 10
+
+
+SELECT * FROM g5_1_bom_jig WHERE bom_idx = '1817' AND mms_idx = '170' AND boj_code = 'R1' AND bom_idx = '1817'
+SELECT * FROM g5_1_bom_jig WHERE bom_idx = '1817' AND mms_idx = '170' AND boj_code = 'R1' AND bom_idx = '1817'
+SELECT * FROM g5_1_bom_jig WHERE bom_idx = '1788' AND mms_idx = '170' AND boj_code = 'L1' AND bom_idx = '1788'
+SELECT * FROM g5_1_bom_jig WHERE bom_idx = '1788' AND mms_idx = '170' AND boj_code = 'L1' AND bom_idx = '1788'
+SELECT * FROM g5_1_bom_jig WHERE bom_idx = '2112' AND mms_idx = '364' AND boj_code = 'R1' AND bom_idx = '2112'
+SELECT * FROM g5_1_bom_jig WHERE bom_idx = '2113' AND mms_idx = '364' AND boj_code = 'R1' AND bom_idx = '2113'
+
+
+sudo apt install python3.13
+python3.13 -V
+
+
+which python3.13
+
+/usr/bin/python3.13
+
+sudo ln -sf /usr/bin/python3.13 /usr/bin/python3
+
+
+SELECT * 
+FROM g5_1_plc_protocol AS ppr
+LEFT JOIN g5_1_mms AS mms ON mms.mms_idx = ppr.mms_idx
+LEFT JOIN g5_1_code AS cod ON cod.cod_idx = ppr.cod_idx
+WHERE ppr_no = '21'
+ORDER BY ppr_reg_dt DESC
+
+

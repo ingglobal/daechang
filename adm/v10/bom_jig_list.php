@@ -102,20 +102,23 @@ $colspan = 16;
 </select>
 <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
 <input type="text" name="stx" value="<?php echo $stx ?>" id="stx" class="frm_input">
-<label for="sfl2" class="sound_only">검색대상2</label>
-<select name="sfl2" id="sfl2">
-    <option value="boj_plc_ip"<?php echo get_selected($_GET['sfl2'], "boj_plc_ip"); ?>>아이피</option>
-    <option value="boj_plc_port"<?php echo get_selected($_GET['sfl2'], "boj_plc_port"); ?>>포트</option>
-</select>
-<label for="stx2" class="sound_only">검색어2<strong class="sound_only"> 필수</strong></label>
-<input type="text" name="stx2" value="<?php echo $stx2 ?>" id="stx2" class="frm_input">
+<div style="display:none;">
+    <label for="sfl2" class="sound_only">검색대상2</label>
+    <select name="sfl2" id="sfl2">
+        <option value="boj_plc_ip"<?php echo get_selected($_GET['sfl2'], "boj_plc_ip"); ?>>아이피</option>
+        <option value="boj_plc_port"<?php echo get_selected($_GET['sfl2'], "boj_plc_port"); ?>>포트</option>
+    </select>
+    <label for="stx2" class="sound_only">검색어2<strong class="sound_only"> 필수</strong></label>
+    <input type="text" name="stx2" value="<?php echo $stx2 ?>" id="stx2" class="frm_input">
+</div>
 <input type="submit" class="btn_submit" value="검색">
 
 </form>
 
 <div class="local_desc01 local_desc" style="display:no ne;">
     <p>PLC NO는 엑셀의 번호와 차이가 있습니다. (엑셀은 1부터 시작, 배열번호는 0부터 시작)</p>
-    <p>공유 엑셀을 참고하세요. <a href="https://docs.google.com/spreadsheets/d/1baQOZuue_rMJ2xiY1DhqHxFDAfeefK_94llKKmPBEO8/edit?usp=sharing" target="_blank">바로가기</a></p>
+    <p>공유 엑셀을 참고하세요. <a href="https://docs.google.com/spreadsheets/d/1BDxTudbNcYy8Uuwds45uQtep-lCN5fEF/edit?usp=sharing&ouid=103655811572310865604&rtpof=true&sd=true" target="_blank">바로가기</a></p>
+    <p>PLC 통신규약 엑셀등록을 하려면 해당 페이지로 이동하세요. <a href="./bom_jig_excel_form.php">바로가기</a></p>
 </div>
 
 
@@ -143,9 +146,6 @@ $colspan = 16;
         <th scope="col">지그명</th>
         <th scope="col">품번</th>
         <th scope="col">품명</th>
-        <th scope="col"><?php echo subject_sort_link('boj_plc_ip') ?>PLC IP</a></th>
-        <th scope="col"><?php echo subject_sort_link('boj_plc_port') ?>PLC Port</a></th>
-        <th scope="col"><?php echo subject_sort_link('boj_plc_no') ?>PLC No</a></th>
         <th scope="col"><?php echo subject_sort_link('boj_status') ?>상태</a></th>
         <th scope="col">관리</th>
     </tr>
@@ -168,9 +168,6 @@ $colspan = 16;
         <td class="td_boj_code"><?php echo get_text($row['boj_code']); ?></td>
         <td class="td_bom_part_no"><a href="?sfl=bom_part_no&stx=<?=$row['bom_part_no']?>"><?=$row['bom_part_no']?></a></td>
         <td class="td_bom_name"><a href="?sfl=boj.bom_idx&stx=<?=$row['bom_idx']?>"><?php echo get_text($row['bom_name']); ?></a></td>
-        <td class="td_boj_plc_ip"><a href="?sfl=boj_plc_ip&stx=<?=$row['boj_plc_ip']?>"><?=$row['boj_plc_ip']?></a></td>
-        <td class="td_boj_plc_port"><a href="?sfl=boj_plc_port&stx=<?=$row['boj_plc_port']?>"><?=$row['boj_plc_port']?></a></td>
-        <td class="td_boj_plc_no"><?=$row['boj_plc_no']?></td>
         <td class="td_boj_status"><?php echo $g5['set_boj_status_value'][$row['boj_status']] ?></td>
         <td class="td_mng td_mng_s">
 			<?php echo $s_mod ?><!-- 수정 -->

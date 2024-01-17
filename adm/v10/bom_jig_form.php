@@ -98,22 +98,8 @@ include_once ('./_head.php');
     </tr>
 	<tr> 
 		<th scope="row">지그코드</th>
-		<td>
+		<td colspan="3">
 			<input type="text" name="boj_code" value="<?=${$pre}['boj_code']?>" class="frm_input required" required>
-		</td>
-        <th scope="row">PLC IP</th>
-		<td>
-			<input type="text" name="boj_plc_ip" value="<?=${$pre}['boj_plc_ip']?>" class="frm_input">
-		</td>
-    </tr>
-	<tr> 
-        <th scope="row">PLC Port</th>
-		<td>
-			<input type="text" name="boj_plc_port" value="<?=${$pre}['boj_plc_port']?>" class="frm_input">
-		</td>
-        <th scope="row">PLC no</th>
-		<td>
-			<input type="text" name="boj_plc_no" value="<?=${$pre}['boj_plc_no']?>" class="frm_input">
 		</td>
     </tr>
 	<tr>

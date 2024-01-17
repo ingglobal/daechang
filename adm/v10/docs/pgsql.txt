@@ -124,3 +124,6 @@ postgres=# SELECT pg_cancel_backend(63256);
 
 
 
+
+
+SELECT * FROM g5_1_socket WHERE sck_idx > '101136' AND sck_dt <= '2024-01-15 15:00:34.673183'

@@ -9,7 +9,7 @@ $g5['container_sub_title'] = '
 	<a href="./bom_category_list.php" class="btn_top_menu '.$active_bom_category_list.'">카테고리</a>
 	<a href="./bom_excel_form.php" class="btn_top_menu '.$active_bom_excel_form.'">BOM엑셀관리</a>
 	<a href="./bom_jig_excel_form.php" class="btn_top_menu '.$active_bom_jig_excel_form.'">지그엑셀관리</a>
-	<a href="./bom_plc_excel_form.php" class="btn_top_menu '.$active_bom_plc_excel_form.'">PLC엑셀관리</a>
+	<a href="./plc_protocol_excel.php" class="btn_top_menu '.$active_plc_protocol_excel.'">PLC통신엑셀</a>
 </h2>
 ';
 ?>

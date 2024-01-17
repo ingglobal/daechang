@@ -79,7 +79,7 @@ $idx = 0;
 for($i=0;$i<=sizeof($allData[0]);$i++) {
     // print_r3($allData[0][$i]);
     if($demo) {
-        if($i>51) {break;} // 51
+        if($i>10) {break;} // 51
     }
 
     // 초기화
@@ -93,7 +93,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
         }
     }
     // print_r3($list);
-    $arr['image'] = $list[0];
+    $arr['image'] = $list[0];   // 이미지
     $arr['serial'] = trim($list[1]); // 설비 시리얼번호
     $arr['machine_name'] = trim($list[2]); // 호기
     $arr['location'] = trim($list[3]);  // 위치
@@ -134,8 +134,6 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
             $ar['bom_idx'] = $bom['bom_idx'];
             $ar['mms_idx'] = $mms['mms_idx'];
             $ar['boj_code'] = $arr['location'];
-            $ar['boj_plc_ip'] = '192.168.100.143';
-            $ar['boj_plc_port'] = '20480';
             // if($demo) {print_r3($ar);}
             // if($ar['mms_idx']==140) {print_r3($arr);print_r3($ar);print_r3('-----------------------<br>');}
             $arr['boj_idx'] = update_db($ar);

@@ -92,12 +92,12 @@ foreach($_REQUEST as $key => $value ) {
 
 
 // 캐시 업데이트
-$cache_file = G5_DATA_PATH.'/cache/socket-setting.php';
+$cache_file = G5_DATA_PATH.'/cache/socket-jig.php';
 @unlink($cache_file);
     
 $list = array();
 // $list_idx2 = array();
-$sql = "SELECT * FROM {$g5['bom_jig_table']} WHERE boj_status = 'ok' ORDER BY boj_plc_ip, boj_plc_port, boj_plc_no";
+$sql = "SELECT * FROM {$g5['bom_jig_table']} WHERE boj_status = 'ok' ORDER BY mms_idx, bom_idx";
 $result = sql_query($sql,1);
 // echo $sql;
 for($i=0; $row=sql_fetch_array($result); $i++) {
@@ -111,7 +111,8 @@ for($i=0; $row=sql_fetch_array($result); $i++) {
     $ar['bom_idx'] = $row['bom_idx'];
     $ar['mms_idx'] = $row['mms_idx'];
     $ar['boj_status'] = $row['boj_status'];
-    $list[$row['boj_plc_ip']][$row['boj_plc_port']][$row['boj_plc_no']][] = $ar;
+    $list[$row['mms_idx']][$row['bom_idx']][] = $ar;
+    $list2[$row['mms_idx']][$row['boj_code']][] = $ar;
     unset($ar);
 }
 // print_r2($list);
@@ -121,10 +122,22 @@ for($i=0; $row=sql_fetch_array($result); $i++) {
 $handle = fopen($cache_file, 'w');
 $cache_content = "<?php\n";
 $cache_content .= "if (!defined('_GNUBOARD_')) exit;\n";
-$cache_content .= "\$g5['socket']=".var_export($list, true).";\n";
+$cache_content .= "\$g5['socket_jig']=".var_export($list2, true).";\n";
 $cache_content .= "?>";
 fwrite($handle, $cache_content);
 fclose($handle);
+
+
+// python용 변수 생성
+$cache_file = G5_DATA_PATH.'/python/data_jig.py';
+@unlink($cache_file);
+// 캐시파일 생성
+$handle = fopen($cache_file, 'w');
+// PHP 배열을 JSON 형식으로 인코딩
+$cache_content = "data_jig=".json_encode($list2, JSON_PRETTY_PRINT)."\n";
+fwrite($handle, $cache_content);
+fclose($handle);
+
 
 
 if ($w == 'u') {

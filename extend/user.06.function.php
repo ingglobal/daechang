@@ -914,7 +914,7 @@ function update_db($arr)
         }
     }
 	else if($arr['table']=='g5_1_bom_jig') {
-        if(!$arr['bom_idx']||!$arr['mms_idx']||!$arr['boj_status']) {
+        if(!$arr['bom_idx']||!$arr['mms_idx']||!$arr['bom_idx']||!$arr['boj_status']) {
             return false;
         }
     }
@@ -1017,7 +1017,7 @@ function update_db($arr)
         $where = " bom_part_no = '{$arr['bom_part_no']}' ";
     }
 	else if($arr['table']=='g5_1_bom_jig') {
-        $where = " bom_idx = '{$arr['bom_idx']}' AND mms_idx = '{$arr['mms_idx']}' AND boj_code = '{$arr['boj_code']}' ";
+        $where = " bom_idx = '{$arr['bom_idx']}' AND mms_idx = '{$arr['mms_idx']}' AND boj_code = '{$arr['boj_code']}' AND bom_idx = '{$arr['bom_idx']}' ";
     }
 	else if($arr['table']=='g5_1_customer') {
         $where = " cst_name = '{$arr['cst_name']}' ";
@@ -1058,7 +1058,7 @@ function update_db($arr)
     }
 
     $sql = "SELECT * FROM {$arr['table']} WHERE {$where} ";
-    // print_r2($sql);
+    // echo $sql.BR;
     $row = sql_fetch($sql,1);
 	if($row[$pre."_idx"]) {
 		$sql = " UPDATE {$arr['table']} SET {$sql_common} WHERE ".$pre."_idx = '".$row[$pre."_idx"]."' ";
