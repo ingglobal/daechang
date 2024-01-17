@@ -83,14 +83,8 @@ $qstr .= '&sca='.$sca.'&ser_cod_type='.$ser_cod_type; // 추가로 확장해서 
     <div id="inp_box">
         <span id="qr_ttl">입고처리 스캔을 시작하세요.</span><br>
         <p id="qr_desc">반드시 본인 ID로 로그인 되어 있는지 확인해 주세요.<br>스캔이 안되면 하얀색 사각형 박스를 터치 또는 클릭해 주세요.<br>입고스캔작업을 완료했으면 반드시 홈으로 나가 주세요.</p>
-        <input type="text" name="qr_scan" value="" id="qr_scan" class="frm_input<?=(($moi_chk_yn)?' error':'')?>" style="width:150px;"><br>
-        <strong id="qr_status" class="<?=(($moi_chk_yn)?'error':'')?>">
-            <?php
-            if($moi_chk_yn){
-                echo  '품질검사가 필요한 제품이 존재합니다.';
-            }
-            ?>
-        </strong>
+        <input type="text" name="qr_scan" value="" id="qr_scan" class="frm_input" style="width:150px;"><br>
+        <strong id="qr_status"></strong>
     </div>
 
     <div class="tbl_head01 tbl_wrap">
@@ -178,60 +172,50 @@ $(document).on('input','#qr_scan',function(e){
             var except_url = "<?=G5_USER_ADMIN_MOBILE_URL?>/input_list.php?";
             if(except_url.indexOf("?") == -1){
                 $('#qr_scan').removeClass('ok').addClass('error');
-                $('#qr_status').removeClass('ok').addClass('error').text('형식이 맞지 않는 데이터입니다.1');
+                $('#qr_status').removeClass('ok').addClass('error').text('형식이 맞지 않는 데이터입니다.');
                 $('#qr_scan').val('').select().focus();
                 return false;
             }
             var sub_vars = $(this).val().substring(except_url.indexOf("?") + 1);
             if(sub_vars.indexOf("=") == -1){
                 $('#qr_scan').removeClass('ok').addClass('error');
-                $('#qr_status').removeClass('ok').addClass('error').text('변수가 제대로 넘어오지 않았습니다.');
+                $('#qr_status').removeClass('ok').addClass('error').text('형식이 맞지 않는 데이터입니다.');
                 $('#qr_scan').val('').select().focus();
                 return false;
             }
             var sub_arr = sub_vars.split("=");
             // var key_arr = sub_arr[0].split("_");
-            if(sub_arr[0] != 'mto_idx'){
+            if(sub_arr[1].indexOf("_") == -1){
                 $('#qr_scan').removeClass('ok').addClass('error');
-                $('#qr_status').removeClass('ok').addClass('error').text('잘못된 발주데이터입니다.');
+                $('#qr_status').removeClass('ok').addClass('error').text('형식이 맞지 않는 데이터입니다.');
                 $('#qr_scan').val('').select().focus();
                 return false;
             }
-
-            var mto_idx = Number(sub_arr[1]);
-            // alert(mto_idx);return false;
+            var var_arr = sub_arr[1].split("_");
+            var moi_idx = Number(var_arr[0]);
+            var moi_count = Number(var_arr[1]);
             
-            if(sub_arr[0] == 'mto_idx' && mto_idx){
-                //로딩시작
-                $('#loading_box').addClass('focus');
-
+            if(sub_arr[0] == 'moi_cnt' && moi_idx && moi_count){
                 $('#qr_scan').removeClass('error').addClass('ok');
                 $('#qr_status').removeClass('error').addClass('ok').text('스캔했습니다.');
                 
-                var inp_ajax_url = '<?=G5_USER_ADMIN_KIOSK_AJAX_URL?>/input_mto_update.php';
+                var inp_ajax_url = '<?=G5_USER_ADMIN_KIOSK_AJAX_URL?>/input_update.php';
                 $.ajax({
                     url: inp_ajax_url,
                     type: 'POST',
                     dataType: 'json',
-                    data: {'w':'','mb_id_driver':'<?=$member['mb_id']?>','mto_idx': mto_idx},
+                    data: {'w':'','mb_id_driver':'<?=$member['mb_id']?>','moi_idx': moi_idx, 'moi_count': moi_count},
                     async: false,
                     success: function(res){
-                        // console.log(res);return false;
                         //출하처리 성공이면 새로고침
                         if(res.ok){
                             // location.reload();
-                            var go_url = '<?=G5_USER_ADMIN_KIOSK_URL?>/input_list.php';
-                            if(res.moi_chk_yn){
-                                go_url += '?moi_chk_yn='+res.moi_chk_yn;
-                            }
-                            location.href = go_url;
+                            location.href = '<?=G5_USER_ADMIN_KIOSK_URL?>/input_list.php';
                         }
                         //출하처리 실패면 네모박스와 상태문자 error처리
                         else {
                             $('#qr_scan').removeClass('ok').addClass('error');
                             $('#qr_status').removeClass('ok').addClass('error').text(res.msg);
-                            //로딩끝
-                            $('#loading_box').removeClass('focus');
                         }
                     },
                     error: function(xmlReq){

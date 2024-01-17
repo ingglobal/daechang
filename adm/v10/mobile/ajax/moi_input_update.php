@@ -67,6 +67,13 @@ if($res['ok']){
                     WHERE moi_idx = '{$moi_idx}'
             ";
             sql_query($moi_sql,1);
+
+            // 혹시라도 존재할지 모르는 해당moi_idx가진 레코드를 삭제하자
+            $del_sql = " DELETE FROM {$g5['material_table']}
+                            WHERE moi_idx = '{$moi_idx}'
+            ";
+            sql_query($del_sql,1);
+
             //발주개수만큼 재고테이블에 입고처리한다.
             $mtr_sql = " INSERT INTO {$g5['material_table']}
                 (com_idx, cst_idx_provider, cst_idx_customer, bom_idx, moi_idx, mtr_name, mtr_part_no, mtr_price, mtr_value, mtr_date, mtr_type, mtr_status, mtr_auth_dt, mtr_reg_dt, mtr_update_dt) VALUES
