@@ -48,6 +48,10 @@ SELECT * FROM g5_1_socket ORDER BY sck_idx DESC LIMIT 100;
 -- UTC time? Let's change to notimezone date. (??)
 ALTER TABLE g5_1_socket ALTER COLUMN sck_dt TYPE TIMESTAMP without time zone USING time_temp;
 
+
+ALTER TABLE g5_1_socket ALTER sck_dt TYPE timestamp without time zone;
+// this is working.
+
 ---------------------------------------------------------------------------------
 
 SELECT CURRENT_SETTING('TIMEZONE'), NOW(), CURRENT_TIMESTAMP, clock_timestamp();
@@ -127,3 +131,10 @@ postgres=# SELECT pg_cancel_backend(63256);
 
 
 SELECT * FROM g5_1_socket WHERE sck_idx > '101136' AND sck_dt <= '2024-01-15 15:00:34.673183'
+
+
+
+DELETE FROM g5_1_socket WHERE sck_dt < '".date("Y-m-d H:i:s", G5_SERVER_TIME-86400*1)."'
+
+DELETE FROM g5_1_socket WHERE sck_dt < NOW() - INTERVAL '1 hour';
+

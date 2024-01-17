@@ -1,5 +1,6 @@
-import sys
+my_list = ['202', '204', '205', '207', '208', '225', '324']
 
-print(sys.prefix)  # 파이썬 설치 경로
-print(sys.exec_prefix)  # 파이썬 실행 파일이 위치한 경로
-print(sys.path)  # 파이썬 모듈을 찾는 경로
+# Convert each element to a string and join them with a comma
+result_string = ', '.join(map(str, my_list))
+
+print(result_string)

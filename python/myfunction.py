@@ -1,6 +1,33 @@
 import os
 from time import sleep
 
+def read_count_files(parent_top_path):
+    data_count = {}
+
+    for root, dirs, files in os.walk(parent_top_path):
+        # Assuming 'count' files are present at the last level
+        if 'count' in files:
+            count_file_path = os.path.join(root, 'count')
+            with open(count_file_path, 'r') as file:
+                count_value = int(file.read())
+            
+            # Extract IP address, port, and subfolder from the path
+            components = root.split(os.sep)
+            ip_address = components[-3]
+            port = components[-2]
+            subfolder = components[-1]
+            
+            # Update data_count dictionary
+            if ip_address not in data_count:
+                data_count[ip_address] = {}
+            if port not in data_count[ip_address]:
+                data_count[ip_address][port] = {}
+            
+            data_count[ip_address][port][subfolder] = count_value
+    
+    return data_count
+    
+    
 def read_file(file_path):
     try:
         with open(file_path, 'r') as file:

@@ -50,9 +50,13 @@ def handle_data():
             print(e)
             
         d1 = datetime.now().strftime('%Y-%m-%d %H:%M:%S') # 2023-02-27 11:11:11
-        d2 = datetime.now() + timedelta(minutes=10) # 10minutes after
+        d2 = datetime.now() + timedelta(minutes=11) # 11minutes after
         d3 = datetime.now() - timedelta(minutes=10) # 10minutes ago
         # print(d2)
+        
+        # get the last count once from folder before starting -------------- 아직은 사용하지 않아요. 부하가 높아진다 싶을 때 활용 예정!
+        last_count = myfunction.read_count_files('../data/python/addup')
+        # print(last_count)
         
         # PostgreSQL -------------------------------------------------------
         # get the previous counter
@@ -75,6 +79,7 @@ def handle_data():
         # ---------
         if demo:
             sql_where = f" WHERE sck_dt >= '{d3}' "
+            sql_where = f" WHERE sck_dt >= '2024-01-17 11:41:32' "
         # ---------
         sql = f" SELECT * FROM g5_1_socket {sql_where} ORDER BY sck_dt "
         # print(sql)
@@ -149,6 +154,9 @@ def handle_data():
 
                         # print(f'{i} {v} - {data_type} {mms_idx} {jig_code}')
                         if data_type=='count':
+                            prev = {}
+                            prev[ip] = {}
+                            prev[ip][port] = {}
                             # make folder for variable of the previous count
                             # ip = '192.168.0.0'
                             # port = '1233'
@@ -156,19 +164,62 @@ def handle_data():
                             if not os.path.isdir(path0):
                                 os.makedirs(path0)
                             
-                            # get the previous counter
+                            # get the count compared to the previous one
                             # print(myfunction.read_file(f'{path0}/count'))
                             old_count = int(myfunction.read_file(f'{path0}/count'))
                             now_count = int(v)
                             count = now_count - old_count
                             count = 1 if abs(count)>10 else count   # 30000 이상에서 다시 초기화되는 부분이 있어서 추가 (터무니 없는 값이면 일단 1로 설정)
-                            if count: #----------------------------------
-                                print(f'{i}. now:{v} old:{old_count} - [{data_type}] mms_idx={mms_idx} jig_code={jig_code} count: {count}')
-                                # print(f'count: {count}')
+                            if count>0: #----------------------------------
+                                # print(f'{i}. now:{v} old:{old_count} - [{data_type}] mms_idx={mms_idx} jig_code={jig_code} count: {count}')
+
+                                # get bom_idxs from data_jig dict. (/data/python/data_jig.py)
+                                bom_idxs = []
+                                try:
+                                    # print(len(data_jig[str(mms_idx)][str(jig_code)]))
+                                    for row1 in data_jig[str(mms_idx)][str(jig_code)]:
+                                        # print(row1)
+                                        bom_idxs.append(row1['bom_idx'])
+                                except Exception as e:
+                                    # print(f"error: {e} When mms_idx={mms_idx} jig_code={jig_code} count: {count}")
+                                    pass
+                                    
+                                # print(bom_idxs)
+                                bom_idxs_string = ','.join(map(str, bom_idxs))
+                                # print(bom_idxs_string)
+                                
+                                # now get the worker info from production_item table.
+                                if bom_idxs_string:
+                                    sql1 =  f" SELECT * FROM g5_1_production_item " \
+                                            f"WHERE pri_ing = 1 AND bom_idx IN ({bom_idxs_string}) " \
+                                            f"ORDER BY pri_idx DESC LIMIT 1 "
+                                    # sql1 = f" SELECT * FROM g5_1_production_item WHERE pri_ing = 0 AND bom_idx IN ({bom_idxs_string}) "
+                                    # print(sql1)
+                                    my1.execute(sql1)
+                                    result = my1.fetchone()
+                                    # print(result)
+                                    if result is not None:
+                                        print(f'{i}. now:{v} old:{old_count} - [{data_type}] mms_idx={mms_idx} jig_code={jig_code} count: {count}')
+                                        # Get column names from the description attribute
+                                        columns = [column[0] for column in my1.description]
+                                        # Create a dictionary using zip with column names as keys
+                                        pri = dict(zip(columns, result))
+                                        # Now, pri is a dictionary with field names as keys
+                                        print(pri)
+                                        print(pri['bom_idx'])
+                                    # else:
+                                    #     print("No rows were fetched.")
 
 
+                            # save prev sck_value for next calculation. not now, for next use.
+                            prev[ip][port][i] = now_count
+                            
                             # write current count for next use.
-                            # v -= 1 (for test.)
+                            # ---------
+                            if demo and ip=='192.168.100.137':
+                                v -= 1 # (for test.)
+                            # v -= 1 # (for test.)
+                            # ---------
                             f = open(f'{path0}/count', 'w')
                             f.write(str(v))
                             f.close() # 쓰기모드 닫기
@@ -203,6 +254,9 @@ def handle_data():
         print(e)
 
     finally:
+        # print(prev)
+        # print(type(prev["192.168.100.137"]))
+        # print(type(prev["192.168.100.137"][20480]))
         # Close database connections in the 'finally' block to ensure they are closed even if an exception occurs
         pgcon1.close()
         myconn1.close()

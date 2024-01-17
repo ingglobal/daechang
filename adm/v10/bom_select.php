@@ -116,6 +116,7 @@ $qstr1 = 'sfl='.urlencode($sfl).'&stx='.urlencode($stx).'&file_name='.$file_name
         <select name="sfl" id="sfl">
             <option value="bom_part_no">품번</option>
             <option value="bom_name">품명</option>
+            <option value="bom_idx">BOMidx</option>
         </select>
         <input type="text" name="stx" id="stx" value="<?php echo get_text($stx); ?>" class="frm_input" placeholder="검색어">
         <input type="submit" value="검색" class="btn_frmline">
