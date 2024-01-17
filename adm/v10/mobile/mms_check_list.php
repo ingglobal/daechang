@@ -44,7 +44,7 @@ if (!$sst) {
 }
 $sql_order = " ORDER BY {$sst} {$sod} ";
 
-$rows = 100;$config['cf_page_rows'];
+$rows = 100;//$config['cf_page_rows'];
 if (!$page) $page = 1; // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 

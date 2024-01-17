@@ -234,7 +234,7 @@
       without any need to specify the path to remove.
       This is available for extract(), extractByIndex(), create() and add() functionS by using
       the new variable options parameters :
-      - PCLZIP_OPT_REMOVE_ALL_PATH : by indicating this option while calling the fct.
+      - PCLZIP_OPT_REMOVE_ALL_PATH : by indicating this option while calling the mms.
     - Ability to change the mode of a file after the extraction (chmod()).
       This is available for extract() and extractByIndex() functionS by using
       the new variable options parameters.

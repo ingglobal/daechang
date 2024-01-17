@@ -3278,7 +3278,7 @@ CREATE TABLE `e3_plc_protocol` (
   `com_idx` int(11) NOT NULL DEFAULT 0 COMMENT '업체idx',
   `fct_idx` int(11) NOT NULL DEFAULT 0 COMMENT '설비idx',
   `alc_idx` int(11) NOT NULL DEFAULT 0 COMMENT '알람코드idx',
-  `ppr_plc_data_type` int(11) NOT NULL DEFAULT 0 COMMENT 'PLC데이터타입',
+  `ppr_ppr_data_type` int(11) NOT NULL DEFAULT 0 COMMENT 'PLC데이터타입',
   `ppr_tag_name` varchar(10) NOT NULL COMMENT '코드',
   `ppr_ip` varchar(20) NOT NULL COMMENT '아이피',
   `ppr_port` int(11) NOT NULL DEFAULT 0 COMMENT '포트번호',
@@ -3345,6 +3345,7 @@ SELECT SUBSTRING('10',1,2) -> 10
 SELECT SUBSTRING('1010',3,2) -> 10
 
 
+<<<<<<< HEAD
 SELECT * FROM g5_1_bom_jig WHERE bom_idx = '1817' AND mms_idx = '170' AND boj_code = 'R1' AND bom_idx = '1817'
 SELECT * FROM g5_1_bom_jig WHERE bom_idx = '1817' AND mms_idx = '170' AND boj_code = 'R1' AND bom_idx = '1817'
 SELECT * FROM g5_1_bom_jig WHERE bom_idx = '1788' AND mms_idx = '170' AND boj_code = 'L1' AND bom_idx = '1788'
@@ -3371,4 +3372,9 @@ LEFT JOIN g5_1_code AS cod ON cod.cod_idx = ppr.cod_idx
 WHERE ppr_no = '21'
 ORDER BY ppr_reg_dt DESC
 
+=======
+INSERT INTO g5_1_plc_protocol SET com_idx = '13' , mms_idx = '141' , cod_idx = '0' , ppr_data_type = 'runtime' , ppr_name = 'DC0049 가동 시간' , ppr_ip = '192.168.100.128' , ppr_port_no = '20480' , ppr_no = '0' , ppr_bit = '0' , ppr_update_dt = '2024-01-08 20:51:24' , ppr_reg_dt = '2024-01-08 20:51:24'
+1054 : Unknown column 'ppr_data_type' in 'field list'
+error file : /adm/v10/plc_protocol_excel_update.php
+>>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
 

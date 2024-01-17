@@ -76,7 +76,11 @@ $sleepsec = 1000;  // 백만분의 몇초간 쉴지 설정, default=200
 $maxscreen = 20; // 몇건씩 화면에 보여줄건지?
 
 // tag=측정태그, alarm=알람, count=생산카운터, addup=적산, trigger=트리거, auto=자동선택, autostart=자동시작
+<<<<<<< HEAD
 $plc_type_array = array('0'=>'alarm','1'=>'tag','2'=>'count','3'=>'trigger','4'=>'auto','5'=>'autostart','6'=>'countercheck','7'=>'runtime');
+=======
+$plc_type_array = array('0'=>'alarm','1'=>'tag','2'=>'addup','3'=>'trigger','4'=>'auto','5'=>'autostart','6'=>'countercheck','7'=>'runtime');
+>>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
 $pre = 'ppr';
 
 flush();
@@ -205,7 +209,11 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
             // print_r3($sql);
         }
         
+<<<<<<< HEAD
     // plc_protocol 입력 정보
+=======
+        // plc_protocol 입력 정보
+>>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
         $ar['ppr_decimal'] = 0;
         $ar['ppr_set_time'] = 0;
     }
@@ -214,12 +222,15 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     {
         $ar['ppr_decimal'] = $arr['decimal'];
         $ar['ppr_set_time'] = $arr['set_time'];
+<<<<<<< HEAD
         // get the jig code
         $pattern = '/([LR]\d)/';
         preg_match($pattern, $arr['tag_name1'], $matches1);
         // print_r3($matches1[1]);
         $ar['ppr_jig_code'] = $matches1[1];
         
+=======
+>>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
     }
     // 디비유형 => countercheck(6)=카운터체크
     else if( is_numeric($arr['bit_no']) && in_array($arr['db_type'], array('6')) )
@@ -227,7 +238,10 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
         $ar['ppr_idx_parent'] = $ppr_idx[$arr['unit_no']];
         $ar['ppr_decimal'] = $arr['decimal'];
         $ar['ppr_set_time'] = $arr['set_time'];
+<<<<<<< HEAD
         // print_r3($ar);
+=======
+>>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
     }
     // 디비유형 => runtime(7)=가동시간
     else if( is_numeric($arr['word_no']) && in_array($arr['db_type'], array('7')) )

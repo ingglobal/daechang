@@ -122,7 +122,10 @@ for($i=0; $row=sql_fetch_array($result); $i++) {
     $ar['ppr_idx_parent'] = $row['ppr_idx_parent'] ?: 0;
     $ar['ppr_name'] = addslashes($row['ppr_name']);
     $ar['ppr_data_type'] = $row['ppr_data_type'];
+<<<<<<< HEAD
     $ar['ppr_jig_code'] = $row['ppr_jig_code'];
+=======
+>>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
     $ar['ppr_decimal'] = $row['ppr_decimal'];
     $ar['ppr_set_time'] = $row['ppr_set_time'];
     $ar['mms_idx'] = $row['mms_idx'] ?: 0;

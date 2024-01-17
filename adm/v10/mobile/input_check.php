@@ -2,7 +2,7 @@
 include_once('./_common.php');
 include_once(G5_LIB_PATH.'/thumbnail.lib.php');
 //http://daechang2.epcs.co.kr/adm/v10/mobile/check.php?plt_idx=116
-if($member['mb_9'] != 'admin_quality'){
+if($member['mb_9'] != 'admin_quality' && !$is_admin){
     alert('품질관리권한을 가지고 계신분만 접근 가능합니다.', G5_USER_ADMIN_MOBILE_URL);
 }
 

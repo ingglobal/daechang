@@ -135,13 +135,13 @@ $qstr = $qstr."&st_date=$st_date&en_date=$en_date";
 		// $row['tr_bgcolor'] = ($i==0) ? '#fff7ea' : '' ;
 		// $row['tr_color'] = ($i==0) ? 'blue' : '' ;
 
-        $s_mod_a = '<a href="./'.$fname.'_form.php?'.$qstr.'&w=u&fct_idx='.$row['fct_idx'].'">';
-        $s_mod = '<a href="./'.$fname.'_form.php?'.$qstr.'&w=u&fct_idx='.$row['fct_idx'].'" class="btn btn_03">수정</a>';
-        $s_copy = '<a href="./'.$fname.'_form.php?'.$qstr.'&w=c&fct_idx='.$row['fct_idx'].'" class="btn btn_03">복제</a>';
+        $s_mod_a = '<a href="./'.$fname.'_form.php?'.$qstr.'&w=u&mms_idx='.$row['mms_idx'].'">';
+        $s_mod = '<a href="./'.$fname.'_form.php?'.$qstr.'&w=u&mms_idx='.$row['mms_idx'].'" class="btn btn_03">수정</a>';
+        $s_copy = '<a href="./'.$fname.'_form.php?'.$qstr.'&w=c&mms_idx='.$row['mms_idx'].'" class="btn btn_03">복제</a>';
 
         echo '
 			<tr tr_id="'.$i.'" style="background-color:'.$row['tr_bgcolor'].';color:'.$row['tr_color'].'">
-				<td>'.$s_mod_a.$row['fct_idx'].'</a></td>
+				<td>'.$s_mod_a.$row['mms_idx'].'</a></td>
 				<td>'.$row['work_date'].'</td>
 				<td>'.$g5['set_work_shift'][$row['work_shift']].'</td>
 				<td>'.$row['event_time'].'</td>

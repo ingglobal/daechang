@@ -16,7 +16,7 @@ $menu_datas = array(
     ),
     array(
         'me_name' => '입고검사'
-        , 'me_link' => G5_USER_ADMIN_MOBILE_URL.'/input_check.php?moi_idx=A'
+        , 'me_link' => G5_USER_ADMIN_MOBILE_URL.'/input_list.php?mto_idx=A'
         , 'me_target' => '_self'
         , 'me_icon' => 'fa-shield'
     ),

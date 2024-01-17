@@ -10,6 +10,10 @@ if($member['mb_manager_yn']) {
 						<a href="./mms_status_list.php" class="btn_top_menu '.$active_mms_status_list.'">상태코드설정</a>
 						<a href="./data_downtime_list.php" class="btn_top_menu '.$active_data_downtime_list.'">비가동코드설정</a>
 						<a href="./plc_protocol_list.php" class="btn_top_menu '.$active_plc_protocol_list.'">PLC통신규약</a>
+<<<<<<< HEAD
+=======
+						<a href="./plc_protocol_excel.php" class="btn_top_menu '.$active_plc_protocol_excel.'">PLC통신엑셀</a>
+>>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
     ';
 }
 

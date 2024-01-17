@@ -7,7 +7,11 @@ auth_check($auth[$sub_menu],'w');
 
 
 $g5['title'] = 'PLC프로토콜 엑셀관리';
+<<<<<<< HEAD
 include_once('./_top_menu_bom.php');
+=======
+include_once('./_top_menu_mms.php');
+>>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
 include_once('./_head.php');
 echo $g5['container_sub_title'];
 ?>
@@ -35,7 +39,11 @@ echo $g5['container_sub_title'];
 	<tr>
         <th scope="row">표준엑셀</th>
         <td>
+<<<<<<< HEAD
             <a href="https://docs.google.com/spreadsheets/d/1BDxTudbNcYy8Uuwds45uQtep-lCN5fEF/edit?usp=sharing&ouid=103655811572310865604&rtpof=true&sd=true" target="_blank">대창공업_EPCS_DATA_2023_12_30_이병구</a>
+=======
+            <a href="https://docs.google.com/spreadsheets/d/1DaJBt-FaGHLRYBzTRSUj2iyWENKgQZqQXbRXUDLVgd0/edit?usp=sharing" target="_blank">대창공업_EPCS_DATA_2023_12_30_이병구</a>
+>>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
         </td>
     </tr>
 	<tr style="display:none;">
