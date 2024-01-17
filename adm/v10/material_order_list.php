@@ -154,6 +154,7 @@ if($sch_to_date){
 }
 $colspan = ($mtyp == 'moi') ? 15 : 12;
 $colspan = ($provider_member_yn) ? $colspan - 1 : $colspan;
+add_javascript('<script src="'.G5_USER_ADMIN_JS_URL.'/qrcode/qrcode.js"></script>', 0);
 ?>
 <style>
 .td_orange_bold{color:orange !important;font-weight:700;}
@@ -313,7 +314,7 @@ $colspan = ($provider_member_yn) ? $colspan - 1 : $colspan;
         <td class="td_bom_name"><span style="color:orange;"><?=$row['bom_part_no']?></span><br><?=$row['bom_name']?></td><!--제품명-->
         <td class="td_qr">
             <?php if($row['moi_status'] == 'ready'){ //(true){ //($row['moi_status'] == 'ready') { ?>
-                <i class="fa fa-qrcode moi_qr" aria-hidden="true" moi="<?=$row['moi_idx']?>" cnt="<?=$row['moi_count']?>" no="<?=$row['bom_part_no']?>"></i>
+                <i class="fa fa-qrcode moi_qr" aria-hidden="true" mto_idx="<?=$row['mto_idx']?>"></i>
             <?php } else { ?>
                 -
             <?php } ?>
@@ -332,7 +333,7 @@ $colspan = ($provider_member_yn) ? $colspan - 1 : $colspan;
         <td class="td_mto_idx">
             <input type="hidden" name="mto_idx[<?=$row[$mtyp.'_idx']?>]" value="<?=$row['mto_idx']?>">
             <?=$row['mto_idx']?>
-            <?php if($row['moi_status'] == 'ready'){ //(true){ //($row['moi_status'] == 'ready') { ?>
+            <?php if(false){ //($row['moi_status'] == 'ready'){ //(true){ //($row['moi_status'] == 'ready') { ?>
             <a href="<?=G5_USER_ADMIN_URL?>/material_qr_bundle_download.php?mto_idx=<?=$row['mto_idx']?>" class="qr_bundle_download" mto_idx="<?=$row['mto_idx']?>" download>
                 <i class="fa fa-download" aria-hidden="true"></i>
             </a>
@@ -481,21 +482,18 @@ $('.td_moi_memo,.td_mto_memo').on('mouseleave',function(){
 let down_url = '';
 let down_name = '';
 $('.moi_qr').on('click',function(){
-    var moi_idx = $(this).attr('moi');
-    var moi_cnt = $(this).attr('cnt');
-    var chk_url = "<?=G5_USER_ADMIN_MOBILE_URL?>/input_check.php";
-    var qr_url = "https://chart.googleapis.com/chart?chs=140x140&cht=qr&chl="+chk_url+"?moi_cnt="+moi_idx+"_"+moi_cnt;
-    var bom_part_no = $(this).attr('no');
-    var img_tag = '<img src="'+qr_url+'">';
-
-    down_url = qr_url;
-    down_name = bom_part_no+'_moi_'+moi_idx+'_cnt_'+moi_cnt+'.png';
-    
-    $('.mdl_st_ttl').text(bom_part_no);
-    $('.mdl_moi_idx').text(moi_idx);
-    $('.mdl_bom_part_no').text(bom_part_no);
-    $('.mdl_moi_count').text(moi_cnt);
-    $('.mdl_qr_img_box').html(img_tag);
+    var mto_idx = $(this).attr('mto_idx');
+    var chk_url = "<?=G5_USER_ADMIN_MOBILE_URL?>/input_list.php";
+    var qr = qrcode(4, 'L');
+    qr.addData(chk_url+'?mto_idx='+mto_idx);
+    qr.make();
+    down_name = 'mto_idx_'+mto_idx+'.png';
+    // console.log(qr.createImgTag()); 
+    $('.mdl_st_ttl').text('발주ID [' + mto_idx + ']');
+    $('.mdl_mto_idx').text(mto_idx);
+    // $('.mdl_qr_img_box').html(img_tag);
+    down_url = $(qr.createImgTag()).attr('src');//qr.createImgTag()로 img태그가 만들어진다.
+    $('.mdl_qr_img').attr('src', down_url);
 
     $('.modal').removeClass('mdl_hide');
 
@@ -505,10 +503,8 @@ $('.moi_qr').on('click',function(){
 function mdl_evt_on(){
     $('.mdl_bg, .mdl_close').on('click',function(){
         $('.mdl_st_ttl').text('');
-        $('.mdl_moi_idx').text('');
-        $('.mdl_bom_part_no').text('');
-        $('.mdl_moi_count').text('');
-        $('.mdl_qr_img_box').empty();
+        $('.mdl_mto_idx').text('');
+        $('.mdl_qr_img').attr('src','');
         $('.modal').addClass('mdl_hide');
 
         mdl_evt_off();
