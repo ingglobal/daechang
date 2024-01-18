@@ -56,8 +56,8 @@ if($w == ''){
                     , boc_idx = '{$boc_idx}'
                     , prm_order_no = '{$prm_order_no}'
                     , prm_date = '{$prm_date}'
-                    , prm_value = {$prm_value}
-                    , prm_memo = {$prm_memo}
+                    , prm_value = '{$prm_value}'
+                    , prm_memo = '{$prm_memo}'
                     , prm_status = '{$prm_status}'
                     , prm_reg_dt = '".G5_TIME_YMDHIS."'
                     , prm_update_dt = '".G5_TIME_YMDHIS."'

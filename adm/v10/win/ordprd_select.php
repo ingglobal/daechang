@@ -47,6 +47,29 @@ if (!$sst2) {
 }
 
 
+$sql_order = " ORDER BY {$sst} {$sod} {$sst2} {$sod2} ";
+
+$sql = " select count(*) as cnt {$sql_common} {$sql_search} ";
+$row = sql_fetch($sql);
+$total_count = $row['cnt'];
+
+$rows = $config['cf_page_rows'];
+// $rows = 20;//10
+$total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
+if ($page < 1) { $page = 1; } // 페이지가 없으면 첫 페이지 (1 페이지)
+$from_record = ($page - 1) * $rows; // 시작 열을 구함
+
+$sql = "SELECT *
+        {$sql_common} {$sql_search} {$sql_order}
+        LIMIT {$from_record}, {$rows}
+";
+// print_r2($sql);exit;
+$result = sql_query($sql,1);
+
+$qstr .= '&sca='.$sca.'&file_name='.$file_name; // 추가로 확장해서 넘겨야 할 변수들
+
+$g5['title'] = '수주리스트 ('.number_format($total_count).')';
+include_once('./_head.sub.php');
 
 ?>
 <style>

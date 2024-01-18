@@ -408,11 +408,11 @@ include_once('./_head.php');
 </tr>
 </table>
 <script>
-let prd_idx = <?=$prm['prd_idx']?>;
-let prm_idx = <?=$prm['prm_idx']?>;
+let prd_idx = '<?=$prm['prd_idx']?>';
+let prm_idx = '<?=$prm['prm_idx']?>';
 let prm_date = '<?=$prm['prm_date']?>';
-let boc_idx = <?=$prm['boc_idx']?>;
-let bom_idx_parent = <?=$prm['bom_idx']?>;
+let boc_idx = '<?=$prm['boc_idx']?>';
+let bom_idx_parent = '<?=$prm['bom_idx']?>';
 $(function(){
     <?php if($w == ''){ ?>
     $("input[name$=_date]").datepicker({ changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd", showButtonPanel: true, yearRange: "c-99:c+99" });
@@ -440,7 +440,9 @@ $(function(){
         let bom_part_no = 'ㄴ ' + $(this).closest('tr').attr('bom_part_no');
         let pri_date = prm_date;
         let nbsp = '';
-        for(k=0;k<=len;k++){nbsp += '&nbsp;&nbsp;&nbsp;';}
+        for(k=0;k<=len;k++){
+            nbsp += '&nbsp;&nbsp;&nbsp;';
+        }
         let trLastIdx = $('tr[bom_idx="'+bom_idx+'"]').length - 1;
         let trLastObj = $('tr[bom_idx="'+bom_idx+'"]').eq(trLastIdx);
         let reg_tr = $('#tr_reg').find('tr').clone();
