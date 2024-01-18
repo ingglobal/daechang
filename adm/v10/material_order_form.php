@@ -35,8 +35,8 @@ else if($w == 'u'){
                         , bom.bom_name
                         , moi_count
                         , moi_price
-                        , mb_id_driver
-                        , mb_id_check
+                        , moi.mb_id_driver
+                        , moi.mb_id_check
                         , moi_input_date
                         , moi_input_dt
                         , moi_check_yn

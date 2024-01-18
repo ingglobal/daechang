@@ -24,9 +24,30 @@ if($mtyp == 'moi'){
         }
     
         foreach($_POST['chk'] as $moi_idx_v){
+            $moi_chk_yn = 0;
+            $moi_chk_txt = '';
+            $mb_chk = '';
+            $moi_inp_dt = '0000-00-00 00:00:00';
+
+            if($moi_status[$moi_idx_v] == 'input'){
+                $moi_chk_yn = 1;
+                $moi_inp_dt = G5_TIME_YMDHIS;
+                $mb_chk = $member['mb_id'];
+            } else if($moi_status[$moi_idx_v] == 'reject') {
+                $moi_chk_txt = '반려처리';
+                $mb_chk = $member['mb_id'];
+            } else {
+                ;
+            }
+
             $moi_sql = " UPDATE {$g5['material_order_item_table']}
                             SET moi_count = '{$moi_count[$moi_idx_v]}'
+                             , mb_id_check = '{$mb_chk}'
                              , moi_input_date = '{$moi_input_date[$moi_idx_v]}'
+                             , moi_input_dt = '{$moi_inp_dt}'
+                             , moi_check_yn = '{$moi_chk_yn}'
+                             , moi_check_text = '{$moi_chk_txt}'
+                             , moi_history = CONCAT(moi_history,'\n{$moi_status[$moi_idx_v]}|".G5_TIME_YMDHIS."')
                              , moi_status = '{$moi_status[$moi_idx_v]}'
                              , moi_update_dt = '".G5_TIME_YMDHIS."'
                         WHERE moi_idx = '{$moi_idx_v}'
@@ -46,6 +67,29 @@ if($mtyp == 'moi'){
                         WHERE mto_idx = '{$mto_idx[$moi_idx_v]}'
             ";
             sql_query($sql,1);
+
+            // 혹시모를 이전 등록된 레코드를 삭제하거나, 실제로 reject시 삭제하기
+            $mtr_del_sql = " DELETE FROM {$g5['material_table']} WHERE moi_idx = '{$moi_idx_v}'
+            ";
+            sql_query($mtr_del_sql,1);
+
+            if($moi_status[$moi_idx_v] == 'reject'){
+
+            } else if($moi_status[$moi_idx_v] == 'input'){
+                $bom = get_table('bom','bom_idx',$bom_idx[$moi_idx_v]);
+                //발주개수만큼 재고테이블에 입고처리한다.
+                $mtr_sql = " INSERT INTO {$g5['material_table']}
+                    (com_idx, cst_idx_provider, cst_idx_customer, bom_idx, moi_idx, mtr_name, mtr_part_no, mtr_price, mtr_value, mtr_date, mtr_type, mtr_status, mtr_auth_dt, mtr_reg_dt, mtr_update_dt) VALUES
+                ";
+
+                for($i=0;$i<$moi_count[$moi_idx_v];$i++){
+                    $mtr_sql .= ($i==0) ? '':',';
+                    $mtr_sql .= "('{$_SESSION['ss_com_idx']}','{$bom['cst_idx_provider']}','{$bom['cst_idx_customer']}','{$bom['bom_idx']}', '{$moi_idx_v}','{$bom['bom_name']}','{$bom['bom_part_no']}','{$bom['bom_price']}','1','".G5_TIME_YMD."','material','ok','".G5_TIME_YMDHIS."','".G5_TIME_YMDHIS."','".G5_TIME_YMDHIS."')";
+                }
+                sql_query($mtr_sql,1);
+            } else {
+
+            }
         }
     }
     else if($act_button == '선택삭제'){
@@ -70,6 +114,11 @@ if($mtyp == 'moi'){
                         WHERE mto_idx = '{$mto_idx[$moi_idx_v]}'
             ";
             sql_query($sql,1);
+
+            // trash시 삭제하기
+            $mtr_del_sql = " DELETE FROM {$g5['material_table']} WHERE moi_idx = '{$moi_idx_v}'
+            ";
+            sql_query($mtr_del_sql,1);
         }
     }
 }

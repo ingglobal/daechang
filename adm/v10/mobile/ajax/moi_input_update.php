@@ -100,7 +100,7 @@ if($res['ok']){
             $mb_chk = $mb_id_check;
         }
         else if($nopass && !$moi_check_text){
-            $moi_chk_txt = '불합격';
+            $moi_chk_txt = '반려처리';
             $mb_chk = $mb_id_check;
         }
         else{

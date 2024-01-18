@@ -41,6 +41,10 @@ if($res['ok']){
             ";
             sql_query($moi_sql,1);
     
+            $mtr_del_sql = " DELETE FROM {$g5['material_table']} WHERE moi_idx = '{$moi_idx_v}'
+            ";
+            sql_query($mtr_del_sql,1);
+
             $mtr_sql = " INSERT INTO {$g5['material_table']}
                 (com_idx, cst_idx_provider, cst_idx_customer, bom_idx, moi_idx, mtr_name, mtr_part_no, mtr_price, mtr_value, mtr_date, mtr_type, mtr_status, mtr_auth_dt, mtr_reg_dt, mtr_update_dt) VALUES
             ";

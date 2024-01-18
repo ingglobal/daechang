@@ -198,7 +198,7 @@ add_javascript('<script src="'.G5_USER_ADMIN_JS_URL.'/qrcode/qrcode.js"></script
 
     <ul class="view_type">
         <li><a href="<?=(($mtyp == 'moi')?'javascript:':G5_USER_ADMIN_URL.'/material_order_list.php')?>" class="<?=(($mtyp == 'moi')?'focus':'')?>">개별관리</a></li>
-        <?php if($member['mb_4'] == $_SESSION['ss_com_idx'] && !$member['mb_6']){ ?>
+        <?php if(false){ //if($member['mb_4'] == $_SESSION['ss_com_idx'] && !$member['mb_6']){ ?>
         <li><a href="<?=(($mtyp == 'mto')?'javascript:':G5_USER_ADMIN_URL.'/material_order_list.php?mtyp=mto')?>" class="<?=(($mtyp == 'mto')?'focus':'')?>">묶음관리</a></li>
         <?php } ?>
     </ul>
@@ -311,7 +311,10 @@ add_javascript('<script src="'.G5_USER_ADMIN_JS_URL.'/qrcode/qrcode.js"></script
         <td class="td_com_name"><?=$row['cst_name']?></td><!--공급업체-->
         <?php if($mtyp == 'moi'){ ?>
         <td class="td_bct_idx"><?=$g5['cats_key_val'][$row['bct_idx']]?></td>
-        <td class="td_bom_name"><span style="color:orange;"><?=$row['bom_part_no']?></span><br><?=$row['bom_name']?></td><!--제품명-->
+        <td class="td_bom_name">
+            <input type="hidden" name="bom_idx[<?=$row['moi_idx']?>]" value="<?=$row['bom_idx']?>">
+            <span style="color:orange;"><?=$row['bom_part_no']?></span><br><?=$row['bom_name']?>
+        </td><!--제품명-->
         <td class="td_qr">
             <?php if($row['moi_status'] == 'ready'){ //(true){ //($row['moi_status'] == 'ready') { ?>
                 <i class="fa fa-qrcode moi_qr" aria-hidden="true" mto_idx="<?=$row['mto_idx']?>"></i>
@@ -432,7 +435,7 @@ add_javascript('<script src="'.G5_USER_ADMIN_JS_URL.'/qrcode/qrcode.js"></script
 <div class="btn_fixed_top">
     <?php if (!auth_check($auth[$sub_menu],'w') && !$member['mb_6']) { ?>
     <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02">
-    <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn btn_02">
+    <!-- <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn btn_02"> -->
         <?php if($mtyp == 'moi'){ ?>
         <a href="./material_order_form.php?mtyp=<?=$mtyp?>" id="order_add" class="btn btn_01">추가하기</a>
         <?php } ?>
