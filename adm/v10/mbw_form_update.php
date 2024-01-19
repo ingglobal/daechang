@@ -26,19 +26,21 @@ $boj_table = $g5['bom_jig_table'];
 $bmw_table = $g5['bom_mms_worker_table'];
 if ($_POST['act_button'] == "등록"){
     //boj의 기존의 데이터가 있으면 수정해라
-    $chk_boj = sql_fetch(" SELECT COUNT(*) AS cnt FROM {$boj_table} 
-            WHERE mms_idx = {$mms_idx}
-                AND bom_idx = {$bom_idx}
-                AND boj_code = {$jig_code}
-                AND boj_status = 'ok'
-    ");
+    $chk_sql = " SELECT COUNT(*) AS cnt FROM {$boj_table} 
+                WHERE mms_idx = '{$mms_idx}'
+                    AND bom_idx = '{$bom_idx}'
+                    AND boj_code = '{$jig_code}'
+                    AND boj_status = 'ok'
+    ";
+    // echo $chk_sql;exit;
+    $chk_boj = sql_fetch($chk_sql);
     if($chk_boj['cnt']){
         $boj_sql = " UPDATE {$boj_table} SET
                     boj_test_yn = '{$test_yn}'
                     , boj_update_dt = '".G5_TIME_YMDHIS."'
-                WHERE mms_idx = {$mms_idx}
-                    AND bom_idx = {$bom_idx}
-                    AND boj_code = {$jig_code}
+                WHERE mms_idx = '{$mms_idx}'
+                    AND bom_idx = '{$bom_idx}'
+                    AND boj_code = '{$jig_code}'
                     AND boj_status = 'ok'
         ";
     }
@@ -60,8 +62,8 @@ if ($_POST['act_button'] == "등록"){
     $bmw_old = sql_fetch(" SELECT MAX(bmw_sort) AS max_sort
                                 , GROUP_CONCAT(DISTINCT bmw_type) AS bmw_types
                             FROM {$bmw_table}
-                            WHERE mms_idx = {$mms_idx}
-                                AND bom_idx = {$bom_idx}
+                            WHERE mms_idx = '{$mms_idx}'
+                                AND bom_idx = '{$bom_idx}'
                                 AND bmw_status = 'ok'
     ");
     $max_sort = $bmw_old['max_sort'] + 1;
@@ -70,7 +72,7 @@ if ($_POST['act_button'] == "등록"){
 
     //동일한 조건에서 bmw_main_yn = 1이 있는지 확인한다.
     $main = sql_fetch(" SELECT COUNT(*) AS cnt FROM {$bmw_table}
-                                WHERE bom_idx = {$bom_idx}
+                                WHERE bom_idx = '{$bom_idx}'
                                     AND bmw_type = '{$bom_type}'
                                     AND bmw_main_yn = '1'
                                     AND bmw_status = 'ok'
@@ -83,9 +85,9 @@ if ($_POST['act_button'] == "등록"){
 
     //bmw의 기존데이터가 있으면 수정
     $chk_bmw = sql_fetch(" SELECT COUNT(*) AS cnt FROM {$bmw_table} 
-            WHERE mms_idx = {$mms_idx}
-                AND bom_idx = {$bom_idx}
-                AND mb_id = {$mb_id}
+            WHERE mms_idx = '{$mms_idx}'
+                AND bom_idx = '{$bom_idx}'
+                AND mb_id = '{$mb_id}'
                 AND bmw_status = 'ok'
     ");
     if($chk_bmw['cnt']){
@@ -94,9 +96,9 @@ if ($_POST['act_button'] == "등록"){
                         , bmw_type = '{$bmw_type}'
                         , bmw_main_yn = '{$main_yn}'
                         , bmw_update_dt = '".G5_TIME_YMDHIS."'
-                    WHERE mms_idx = {$mms_idx}
-                        AND bom_idx = {$bom_idx}
-                        AND mb_id = {$mb_id}
+                    WHERE mms_idx = '{$mms_idx}'
+                        AND bom_idx = '{$bom_idx}'
+                        AND mb_id = '{$mb_id}'
                         AND bmw_status = 'ok'
         ";
     }
