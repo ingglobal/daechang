@@ -151,6 +151,15 @@ for($j=0;$mrow=sql_fetch_array($mms_res);$j++){
     }
 }
 
+$jig_sql = " SELECT GROUP_CONCAT(DISTINCT boj_code) AS boj_codes FROM {$g5['bom_jig_table']} ";
+$jig_res = sql_fetch($jig_sql);
+$g5['jig_arr'] = ($jig_res['boj_codes'])?explode(',',$jig_res['boj_codes']):array();
+$g5['jig_options'] = '';
+for($j=0;$j<sizeof($g5['jig_arr']);$j++){
+    $g5['jig_options'] .= '<option value="'.$g5['jig_arr'][$j].'">'.$g5['jig_arr'][$j].'</option>'.PHP_EOL;
+}
+
+
 $g5['mmw_arr'] = array();
 //설비별 담당자배열
 $mmw_sql = " SELECT mmw.mms_idx
@@ -188,6 +197,8 @@ for($l=0;$wrow=sql_fetch_array($mmw_res);$l++){
 }
 unset($mms_sql);
 unset($mms_res);
+unset($jig_sql);
+unset($jig_res);
 unset($mmw_sql);
 unset($mmw_res);
 unset($mrow);

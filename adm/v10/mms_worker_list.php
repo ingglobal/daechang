@@ -83,6 +83,10 @@ $colspan = 16;
     <span class="btn_ov01"><span class="ov_txt">총 </span><span class="ov_num"> <?php echo number_format($total_count) ?>건 </span></span>
 </div>
 
+<?php
+include_once('./mbw_form.php');
+?>
+
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get">
 
 <label for="sfl" class="sound_only">검색대상</label>
@@ -158,6 +162,7 @@ $colspan = 16;
         <th scope="col"><?php echo subject_sort_link('bmw_type',$qstr) ?>타입</a></th>
         <th scope="col">휴대폰</th>
         <th scope="col"><?php echo subject_sort_link('bmw_sort',$qstr) ?>순번</a></th>
+        <th scope="col">테스트여부</th>
         <th scope="col">관리</th>
     </tr>
     </thead>
@@ -189,6 +194,7 @@ $colspan = 16;
         <td class="td_bmw_type"><?php echo $g5['set_bmw_type_value'][$row['bmw_type']] ?></td>
         <td class="td_mb_hp"><?=get_text($row['mb']['mb_hp'])?></td>
         <td class="td_bmw_sort"><?php echo $row['bmw_sort']; ?></td>
+        <td class="td_bmw_test_yn"<?=(($row['bmw_test_yn'])?' style="color:orange;"':'')?>><?=(($row['bmw_test_yn'])?'테스트':'아니오')?></td>
         <td class="td_mng td_mng_s">
 			<?php echo $s_mod ?><!-- 수정 -->
 		</td>

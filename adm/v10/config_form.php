@@ -844,6 +844,13 @@ yearly,1,10 = 연도별,1년단위,10년치,sum(합계)'); ?>
 			</td>
 		</tr>
 		<tr>
+			<th scope="row">테스트데이터여부</th>
+			<td colspan="3">
+				<?php echo help('테스트데이터인지 아닌지를 설정하세요. ex)0=아니오, 1=테스트') ?>
+				<input type="text" name="set_test_yn" value="<?php echo $g5['setting']['set_test_yn']; ?>" class="frm_input" style="width:50%;">
+			</td>
+		</tr>
+		<tr>
 			<th scope="row">생산정보 입력</th>
 			<td colspan="3">
                 <input type="hidden" name="set_production_test_yn" value="<?=($g5['setting']['set_production_test_yn'])?'1':''?>">

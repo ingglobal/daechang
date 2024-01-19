@@ -250,6 +250,12 @@ $('.btn_select').click(function(e){
         $("input[name=boc_idx]", opener.document).val( boc_idx );
         $("#cst_name", opener.document).val( cst_name );
     <?php
+    }else if($file_name=='bom_jig_list' || $file_name=='mms_worker_list'){ 
+    ?>
+        $("input[name=bom_idx]", opener.document).val( bom_idx );
+        $("input[name=bom_name]", opener.document).val( bom_name );
+        $(".span_bom_part_no", opener.document).text( bom_part_no );
+    <?php
     }
     ?>
 

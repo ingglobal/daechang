@@ -133,8 +133,16 @@ include_once ('./_head.php');
 		<td colspan="3"><textarea name="bmw_memo" id="bmw_memo"><?php echo ${$pre}['bmw_memo'] ?></textarea></td>
 	</tr>
 	<tr>
+		<th scope="row"><label for="boj_status">테스트데이터여부</label></th>
+		<td>
+			<?php echo help("테스트데이터여부를 설정해 주세요."); ?>
+			<select name="bmw_test_yn" id="bmw_test_yn">
+				<?=$g5['set_test_yn_value_options']?>
+			</select>
+			<script>$('select[name="bmw_test_yn"]').val('<?=${$pre}['bmw_test_yn']?>');</script>
+		</td>
 		<th scope="row"><label for="bmw_status">상태</label></th>
-		<td colspan="3">
+		<td>
 			<?php echo help("상태값은 관리자만 수정할 수 있습니다."); ?>
 			<select name="bmw_status" id="bmw_status"
 				<?php if (auth_check($auth[$sub_menu],"d",1)) { ?>onFocus='this.initialSelect=this.selectedIndex;' onChange='this.selectedIndex=this.initialSelect;'<?php } ?>>

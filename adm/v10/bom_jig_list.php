@@ -87,6 +87,10 @@ $colspan = 16;
     <span class="btn_ov01"><span class="ov_txt">총 </span><span class="ov_num"> <?php echo number_format($total_count) ?>건 </span></span>
 </div>
 
+<?php
+include_once('./mbw_form.php');
+?>
+
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get">
 <select name="ser_mms_idx" id="ser_mms_idx">
     <option value="">전체설비</option>
@@ -146,6 +150,7 @@ $colspan = 16;
         <th scope="col">지그명</th>
         <th scope="col">품번</th>
         <th scope="col">품명</th>
+        <th scope="col">테스트여부</th>
         <th scope="col"><?php echo subject_sort_link('boj_status') ?>상태</a></th>
         <th scope="col">관리</th>
     </tr>
@@ -168,6 +173,7 @@ $colspan = 16;
         <td class="td_boj_code"><?php echo get_text($row['boj_code']); ?></td>
         <td class="td_bom_part_no"><a href="?sfl=bom_part_no&stx=<?=$row['bom_part_no']?>"><?=$row['bom_part_no']?></a></td>
         <td class="td_bom_name"><a href="?sfl=boj.bom_idx&stx=<?=$row['bom_idx']?>"><?php echo get_text($row['bom_name']); ?></a></td>
+        <td class="td_boj_test_yn"<?=(($row['boj_test_yn'])?' style="color:orange;"':'')?>><?=(($row['boj_test_yn'])?'테스트':'아니오')?></td>
         <td class="td_boj_status"><?php echo $g5['set_boj_status_value'][$row['boj_status']] ?></td>
         <td class="td_mng td_mng_s">
 			<?php echo $s_mod ?><!-- 수정 -->
