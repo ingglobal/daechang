@@ -567,7 +567,7 @@ source venv/bin/activate
 deactivate
 
 
-SELECT * FROM g5_1_item3 WHERE json_contains(itm_json, 0,‘$.cst_idx’);
+SELECT * FROM g5_1_item3 WHERE json_contains(itm_json, 0,'$.cst_idx');
 
 // ok
 SELECT * FROM g5_1_item3 WHERE json_contains(itm_json, 108,'$[0].mms_idx');
@@ -1927,8 +1927,8 @@ FROM g5_1_bom
 
 
 # 통계일을 계산해서 반환하는 함수정의 (기준시간 06:40:00)
-$d1 = ‘2023-04-26 04:00:00’
-$d2 = ‘2023-04-26 07:00:00’
+$d1 = '2023-04-26 04:00:00'
+$d2 = '2023-04-26 07:00:00'
 $d = statics_date($d1);
 echo $d; //2023-04-25
 $d = statics_date($d2);
@@ -3347,10 +3347,6 @@ SELECT SUBSTRING('1010',3,2) -> 10
 
 SELECT * FROM g5_1_bom_jig WHERE bom_idx = '1817' AND mms_idx = '170' AND boj_code = 'R1' AND bom_idx = '1817'
 SELECT * FROM g5_1_bom_jig WHERE bom_idx = '1817' AND mms_idx = '170' AND boj_code = 'R1' AND bom_idx = '1817'
-SELECT * FROM g5_1_bom_jig WHERE bom_idx = '1788' AND mms_idx = '170' AND boj_code = 'L1' AND bom_idx = '1788'
-SELECT * FROM g5_1_bom_jig WHERE bom_idx = '1788' AND mms_idx = '170' AND boj_code = 'L1' AND bom_idx = '1788'
-SELECT * FROM g5_1_bom_jig WHERE bom_idx = '2112' AND mms_idx = '364' AND boj_code = 'R1' AND bom_idx = '2112'
-SELECT * FROM g5_1_bom_jig WHERE bom_idx = '2113' AND mms_idx = '364' AND boj_code = 'R1' AND bom_idx = '2113'
 
 
 sudo apt install python3.13
@@ -3373,38 +3369,53 @@ ORDER BY ppr_reg_dt DESC
 
 
 PLC 137
-77. now:75 old:74 - [count] mms_idx=132(37호기) jig_code=L1 count: 1 bom_idx=2010(89406-T1100)
- SELECT * FROM g5_1_production_item WHERE pri_ing = 0 AND bom_idx IN (2010)
+SELECT * FROM g5_1_production_item  WHERE pri_ing = 1 AND bom_idx IN (2010)  ORDER BY pri_idx DESC LIMIT 1
+77. now:75 old:74 - [count] mms_idx=132(37호기) jig_code=L1 count: 1
+[438, 1, '2024-01-17 11:41:32']
+SELECT * FROM g5_1_production_item  WHERE pri_ing = 1 AND bom_idx IN (2010)  ORDER BY pri_idx DESC LIMIT 1
+78. now:95 old:94 - [count] mms_idx=132(37호기) jig_code=R1 count: 1
+[438, 1, '2024-01-17 11:41:32']
+bom_idx = 2010
+part_no = 89406-T1100
 
-임채완
-  2:43 PM
-INSERT INTO `g5_1_production` (`prd_idx`, `com_idx`, `boc_idx`, `ori_idx`, `bom_idx`, `prd_id`, `prd_type`, `prd_value`, `prd_price`, `prd_date`, `prd_order_no`, `prd_start_date`, `prd_done_date`, `prd_memo`, `prd_status`, `prd_reg_dt`, `prd_update_dt`) VALUES (NULL, ‘13’, ‘2267’, ‘0’, ‘2010’, ‘23423543’, ‘normal’, ‘1000’, ‘0’, ‘2024-01-17’, ‘1234245eqwerqtweeqw’, ‘2024-01-17’, ‘2024-01-18’, NULL, ‘confirm’, ‘2024-01-17 14:40:49’, ‘2024-01-17 14:40:49’);
+// 생산계획 정보 입력 ------------------------------------------------------------
+INSERT INTO `g5_1_production` (`prd_idx`, `com_idx`, `boc_idx`, `ori_idx`, `bom_idx`, `prd_id`, `prd_type`, `prd_value`, `prd_price`, `prd_date`, `prd_order_no`, `prd_start_date`, `prd_done_date`, `prd_memo`, `prd_status`, `prd_reg_dt`, `prd_update_dt`)
+VALUES  (NULL, '13', '2267', '0', '2010', '23423543', 'normal', '1000', '0', '2024-01-19', 'order_no1234245', '2024-01-19', '2024-01-19', NULL, 'confirm', '2024-01-19 14:40:49', '2024-01-19 14:40:49');
 
-손지식
-  2:44 PM
-prd_idx = 615
+prd_idx = 801 (새로 생성된 번호를 넣어줘야 함) <-------------------------------------
 boc_idx = 2267
 bom_idx = 2010
 
-임채완
-  2:45 PM
-INSERT INTO `g5_1_production_main` (`prm_idx`, `com_idx`, `prd_idx`, `bom_idx`, `boc_idx`, `prm_order_no`, `prm_date`, `prm_value`, `prm_memo`, `prm_status`, `prm_reg_dt`, `prm_update_dt`) VALUES (NULL, ‘13’, ‘615’, ‘2010’, ‘2267’, ‘41341423raerfarg’, ‘2024-01-17’, ‘1000’, NULL, ‘confirm’, ‘2024-01-17 14:44:11’, ‘2024-01-17 14:44:11’);
+INSERT INTO `g5_1_production_main` (`prm_idx`, `com_idx`, `prd_idx`, `bom_idx`, `boc_idx`, `prm_order_no`, `prm_date`, `prm_value`, `prm_memo`, `prm_status`, `prm_reg_dt`, `prm_update_dt`)
+VALUES (NULL, '13', '801', '2010', '2267', 'order_no1234245', '2024-01-19', '1000', NULL, 'confirm', '2024-01-19 14:44:11', '2024-01-19 14:44:11');
 
-손지식
-  2:46 PM
-prm_idx = 342
-mb_id = 01073861823 (코요)
+prm_idx = 463  (새로 생성된 번호를 넣어줘야 함) <-------------------------------------
+mb_id = 01073861823 (코요) 생산 500개 37호기(mms_idx=132)
+mb_id = 01068849127 (코이) 생산 500개 32호기(mms_idx=90)
+....
+INSERT INTO `g5_1_production_item` (`pri_idx`, `com_idx`, `boc_idx`, `prd_idx`, `prm_idx`, `bom_idx`, `bom_idx_parent`, `pri_order_no`, `mms_idx`, `mb_id`, `trm_idx_operation`, `trm_idx_line`, `pri_value`, `pri_date`, `pri_memo`, `pri_ing`, `pri_status`, `pri_reg_dt`, `pri_update_dt`)
+VALUES (NULL, '13', '2267', '801', '463', '2010', '2010', 'order_no1234245', '132', '01073861823', '0', '0', '1000', '2024-01-19', NULL, '1', 'confirm', '2024-01-19 14:45:58', '2024-01-19 14:45:58');
 
-임채완
-  2:48 PM
-INSERT INTO `g5_1_production_item` (`pri_idx`, `com_idx`, `boc_idx`, `prd_idx`, `prm_idx`, `bom_idx`, `bom_idx_parent`, `pri_order_no`, `mms_idx`, `mb_id`, `trm_idx_operation`, `trm_idx_line`, `pri_value`, `pri_date`, `pri_memo`, `pri_ing`, `pri_status`, `pri_reg_dt`, `pri_update_dt`) VALUES (NULL, ‘13’, ‘2267’, ‘615’, ‘342’, ‘2010’, ‘2010’, ‘2423432fdaads’, ‘132’, ‘01073861823’, ‘0’, ‘0’, ‘1000’, ‘2024-01-17’, NULL, ‘1’, ‘confirm’, ‘2024-01-17 14:45:58’, ‘2024-01-17 14:45:58’);
-
-mms_idx=90 (32호기) 에서도 count가 올라온다.
-코이 할당을 해 줌!!
-
+(제품이 안 맞아서 안 되겠다. 코이 작업을 따로 하세요.)
+INSERT INTO `g5_1_production_item` (`pri_idx`, `com_idx`, `boc_idx`, `prd_idx`, `prm_idx`, `bom_idx`, `bom_idx_parent`, `pri_order_no`, `mms_idx`, `mb_id`, `trm_idx_operation`, `trm_idx_line`, `pri_value`, `pri_date`, `pri_memo`, `pri_ing`, `pri_status`, `pri_reg_dt`, `pri_update_dt`)
+VALUES (NULL, '13', '2267', '801', '463', '2010', '2010', 'order_no1234245', '90', '01068849127', '0', '0', '500', '2024-01-19', NULL, '1', 'confirm', '2024-01-19 14:45:58', '2024-01-19 14:45:58');
+.....
 
 
 
+
+
+// mmd_idx & jig_code
+SELECT * FROM g5_1_bom_jig WHERE mms_idx = 132 AND boj_code = 'L1';
+SELECT * FROM g5_1_bom_jig WHERE mms_idx = 132 AND boj_code = 'R1';
+
+
+SELECT bom.bom_idx, bom.bom_type, bom.bom_name, bom_part_no, bom_price, bom_status, cst_idx_provider, cst_idx_customer      
+    , bit.bit_idx, bit.bom_idx AS bit_bom_idx, bit.bit_main_yn, bit.bom_idx_child, bit.bit_reply, bit.bit_count
+FROM g5_1_bom_item AS bit      
+    LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = bit.bom_idx_child
+WHERE bit.bom_idx = '2010'
+ORDER BY bit.bit_reply
 
 
 

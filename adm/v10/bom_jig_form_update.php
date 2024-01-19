@@ -110,6 +110,7 @@ for($i=0; $row=sql_fetch_array($result); $i++) {
     $ar['bom_name'] = addslashes($row['bom']['bom_name']);
     $ar['bom_idx'] = $row['bom_idx'];
     $ar['mms_idx'] = $row['mms_idx'];
+    $ar['boj_test_yn'] = $row['boj_test_yn'];
     $ar['boj_status'] = $row['boj_status'];
     $list[$row['mms_idx']][$row['bom_idx']][] = $ar;
     $list2[$row['mms_idx']][$row['boj_code']][] = $ar;

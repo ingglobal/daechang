@@ -1,6 +1,217 @@
 import os
 from time import sleep
+from config import *
+# from config import myconn1, my1
+from datetime import datetime, timedelta
 
+def production_count(dic):
+    # print(lst)
+
+    # get related info form db
+    pri = get_table('g5_1_production_item','pri_idx',dic['pri_idx'])
+    prd = get_table('g5_1_production','prd_idx',pri['prd_idx'])
+    bom = get_table('g5_1_bom', 'bom_idx', dic['bom_idx'])
+    mms = get_table('g5_1_mms', 'mms_idx', pri['mms_idx'])
+    # print(mms)
+
+    # 통계 반영 일자
+    pic_date = statics_date(dic['sck_dt'])
+    # print(pic_date)
+    shf_idx = shift_idx(dic['sck_dt'])
+    
+    # 설비가 수동입력(mms_manual_yn) 상태인지 확인, 수동 입력 상태면 카운터 입력을 안 함
+    if mms['mms_manual_yn']:
+        return None
+    
+    # 작업자 생산제품 입력(production_item_count) - 갯수만큼 입력
+    for i in range(dic['count']):
+        sql = f" INSERT INTO g5_1_production_item_count SET " \
+            f" pri_idx = '{dic['pri_idx']}', " \
+            f" mb_id = '{pri['mb_id']}', " \
+            f" pic_ing = '{pri['pri_ing']}', " \
+            f" pic_value = '{dic['count']}', " \
+            f" pic_date = '{pic_date}', " \
+            f" pic_reg_dt = '{dic['sck_dt']}', " \
+            f" pic_update_dt = now() "
+        my1.execute(sql)
+        # print(sql)
+
+    sql = f" SELECT bit_main_yn, bom_idx FROM g5_1_bom_item WHERE bom_idx_child = '{pri['bom_idx']}' "
+    # print(sql)
+    my1.execute(sql)
+    one = my1.fetchone()
+    main = {"bit_main_yn": 0, "bom_idx": 0}
+    if one is not None:
+        main = {"bit_main_yn": one[0], "bom_idx": one[1]}
+        # print(main)
+    else:
+        print("No rows returned:", sql)
+
+    # 내가 대표상품이거나 혹은 최상위 상품인 경우, 하위의 모든 제품 재고를 사용으로 처리해야 함
+    if main['bit_main_yn'] or bom['bom_type']=='product':
+        # 대표상품(main_yn)인 경우 최상위 부모 bom_idx 추출
+        bom_idx = main['bom_idx'] if main['bit_main_yn'] else pri['bom_idx']
+        # print(bom_idx)
+        
+        # 모든 하위 구조 추출해서 재고 먼저 떨어줍니다.
+        sql1 = f"SELECT bom.bom_idx, bom.bom_type, bom.bom_name, bom_part_no, bom_price, bom_status, cst_idx_provider, cst_idx_customer " \
+               f"     , bit.bit_idx, bit.bom_idx AS bit_bom_idx, bit.bit_main_yn, bit.bom_idx_child, bit.bit_reply, bit.bit_count " \
+               f"FROM g5_1_bom_item AS bit " \
+               f"     LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = bit.bom_idx_child " \
+               f" WHERE bit.bom_idx = '{bom_idx}' " \
+               f" ORDER BY bit.bit_reply "
+        # print(sql1)
+        my1.execute(sql1)
+        rows = my1.fetchall()
+
+        # 대표상품이 아닌 완제품(product)인 경우...혹시 내 하위 다른 대표상품이 있다면 재고를 이미 반영한 것이므로 재고 털어주면 안 되요.
+        if main['bit_main_yn']==0 or bom['bom_type']=='product':
+            for row in rows:
+                # print(row[0], row[1])
+                columns = [column[0] for column in my1.description]
+                row = dict(zip(columns, row))
+                if row['bit_main_yn']:
+                    return None
+
+        # print('-----------')
+        for row in rows:
+            # print(row[0], row[1])
+            columns = [column[0] for column in my1.description]
+            row = dict(zip(columns, row))
+            # print(row)
+            for i in range(dic['count']):
+                if row['bom_type']=='half':
+                    sql2 = f" INSERT INTO g5_1_production_item_count SET " \
+                        f" pri_idx = '{dic['pri_idx']}', " \
+                        f" mb_id = '{pri['mb_id']}', " \
+                        f" pic_ing = '{pri['pri_ing']}', " \
+                        f" pic_value = '{dic['count']}', " \
+                        f" pic_date = '{pic_date}', " \
+                        f" pic_reg_dt = '{dic['sck_dt']}', " \
+                        f" pic_update_dt = now() "
+                    # my1.execute(sql2)
+                    print(sql2)
+                elif row['bom_type']=='material':
+                    # 해당 usage 갯수만큼 추출 (2이면 2개 업데이트)
+                    limit_count = dic['count'] * row['bit_count']
+                    sql2 = f"   UPDATE g5_1_material SET " \
+                           f"         mms_idx = '{pri['mms_idx']}', " \
+                           f"         ori_idx = '{prd['ori_idx']}', " \
+                           f"         prd_idx = '{pri['prd_idx']}', " \
+                           f"         pri_idx = '{dic['pri_idx']}', " \
+                           f"         shf_idx = '{shf_idx}', " \
+                           f"         mb_id = '', " \
+                           f"         mtr_history = '\nused|{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}', " \
+                           f"         mtr_status = 'used', " \
+                           f"         mtr_update_dt = 'now()' " \
+                           f"     WHERE bom_idx = '{row['bom_idx']}' AND prd_idx = '0' AND pri_idx = '0' AND mtr_type = 'material' AND mtr_status = 'ok' " \
+                           f"     ORDER BY mtr_reg_dt LIMIT"
+                    print(sql2)
+
+
+        # 제품(item) 테이블에 레코드 생성해 줍니다.
+        for i in range(dic['count']):
+            sql2 = f" INSERT INTO g5_1_production_item_count SET " \
+                f" pri_idx = '{dic['pri_idx']}', " \
+                f" mb_id = '{pri['mb_id']}', " \
+                f" pic_ing = '{pri['pri_ing']}', " \
+                f" pic_value = '{dic['count']}', " \
+                f" pic_date = '{pic_date}', " \
+                f" pic_reg_dt = '{dic['sck_dt']}', " \
+                f" pic_update_dt = now() "
+            # my1.execute(sql2)
+            print(sql2)
+
+
+    return dic['pri_idx']
+    # return None
+
+
+def statics_date(dt):
+    dt_arr = dt.split(' ')
+    date_str = dt_arr[0]
+
+    # Convert date string to datetime object
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+
+    # Get the last shift end time
+    sql_shift = f"SELECT shf_end_time FROM g5_1_shift " \
+                f"WHERE com_idx = 13 " \
+                f"AND shf_end_prevday = '1' " \
+                f"AND shf_period_type = '1' " \
+                f"AND shf_status = 'ok' " \
+                f"ORDER BY shf_idx DESC LIMIT 1"
+    my1.execute(sql_shift)
+    res = my1.fetchone()
+
+    start_time = datetime.strptime('00:00:00', "%H:%M:%S")
+    end_time = res[0] if res else None
+
+    if isinstance(end_time, timedelta):
+        # If it's a timedelta, convert it to a datetime object
+        end_time = datetime(1, 1, 1) + end_time
+
+    if end_time:
+        time_stamp = datetime.strptime(dt_arr[1], "%H:%M:%S")
+
+        if start_time <= time_stamp <= end_time:
+            date_obj -= timedelta(days=1)
+
+    return date_obj.strftime("%Y-%m-%d")
+
+
+def shift_idx(dt):
+    # Assuming dt is a string in the format 'YYYY-MM-DD HH:mm:ss'
+    date = dt[:10]
+    time = dt[-8:]
+    t_stamp = int(datetime.strptime(time, "%H:%M:%S").timestamp())
+
+    shf_idx = 0
+
+    sql = f"SELECT shf_idx, shf_start_time, shf_end_time FROM g5_1_shift " \
+          f"WHERE com_idx = '13' " \
+          f"AND shf_period_type = '1' " \
+          f"AND shf_status = 'ok' " \
+          f"ORDER BY shf_idx"
+    my1.execute(sql)
+    rows = my1.fetchall()
+    for row in rows:
+        # s_time = row[1].strftime('%H:%M:%S')
+        # e_time = row[2].strftime('%H:%M:%S')
+        s_stamp = int(datetime.strptime(str(row[1]), "%H:%M:%S").timestamp())
+        l_stamp = int(datetime.strptime('23:59:59', "%H:%M:%S").timestamp())
+        f_stamp = int(datetime.strptime('00:00:00', "%H:%M:%S").timestamp())
+        e_stamp = int(datetime.strptime(str(row[2]), "%H:%M:%S").timestamp())
+
+        if e_stamp > s_stamp:
+            if s_stamp <= t_stamp <= e_stamp:
+                shf_idx = row[0]
+        else:
+            if (s_stamp <= t_stamp <= l_stamp) or (f_stamp <= t_stamp <= e_stamp):
+                shf_idx = row[0]
+
+    return shf_idx
+
+
+# 특정 날짜에 일수를 더한 날짜를 반환해 주는 함수
+def get_day_add_date(date_obj, day_num):
+    return date_obj + timedelta(days=day_num)
+
+def get_table(table_name, db_field, db_id, db_fields='*'):
+    
+    sql = f" SELECT {db_fields} FROM {table_name} WHERE {db_field} = {db_id} LIMIT 1 "
+    # print(sql)
+    my1.execute(sql)
+    one = my1.fetchone()
+    if one is not None:
+        columns = [column[0] for column in my1.description]
+        row = dict(zip(columns, one))
+    else:
+        row = {db_field:0}
+    # print(row)
+    # print(row[db_field])
+    return row
+    
 def read_count_files(parent_top_path):
     data_count = {}
 

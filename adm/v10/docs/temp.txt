@@ -14,3 +14,111 @@ pri['pri_idx'] = 1
 pri['com_idx'] = 3
 pri['boc_idx'] = 3
 pri['pri_reg_dt'] = '2024-01-17'
+
+
+python
+
+I want to insert a record in the function of other file.
+I code something like this in the main python.
+
+config.py
+----------
+# MySQL database connection
+my1_config = {
+    'host': '172.18.0.3',
+    'database': 'daechang_www',
+    'user': 'daechang',
+    'password': 'daechang@ingglobal'
+}
+....
+# end of file.
+------------
+
+
+main.py
+----------
+import psycopg2
+import mysql.connector
+import myfunction
+from config import my1_config
+
+# MySQL database connection
+my1_config = {
+    'host': '172.18.0.3',
+    'database': 'daechang_www',
+    'user': 'daechang',
+    'password': 'daechang@ingglobal'
+}
+
+# call a function in the file of myfunction.py
+di = {}
+di['pri_idx'] = pri['pri_idx']
+di['bom_idx'] = pri['bom_idx']
+di['count'] = count
+di['sck_dt'] = sck_dt
+pri_idx = myfunction.production_count(di, myconn1, my1)
+del di
+print(pri_idx)
+
+....
+# end of file.
+------------
+
+myfunction.py
+------------
+def production_count(dic, myconn1, my1):
+
+    # get related info form db
+    pri = get_table('g5_1_production_item','pri_idx',dic['pri_idx'], myconn1, my1)
+    bom = get_table('g5_1_bom', 'bom_idx', dic['bom_idx'], myconn1, my1)
+    print(bom)
+    
+    # 작업자 생산제품 입력(production_item_count)
+    sql = f" INSERT INTO g5_1_production_item_count SET " \
+        f" pri_idx = '{dic['pri_idx']}', " \
+        ....
+        f" pic_update_dt = now(), "
+    my1.execute(sql)
+
+    return None
+
+def get_table(table_name, db_field, db_id, myconn1, my1, db_fields='*'):
+    
+    sql = f" SELECT {db_fields} FROM {table_name} WHERE {db_field} = {db_id} LIMIT 1 "
+    # print(sql)
+    my1.execute(sql)
+    one = my1.fetchone()
+    if one is not None:
+        columns = [column[0] for column in my1.description]
+        row = dict(zip(columns, one))
+    else:
+        row = {db_field:0}
+    # print(row)
+    # print(row[db_field])
+    return row
+    
+....
+# end of file.
+------------
+
+I feel a bit troblemsome to pass parameters like myconn1, my1 each time.
+Is there any way to make them default parameters?
+Or can i set myconn1, my1 as a constanst?
+I do not want to pass parameters (myconn1, my1) each time.
+
+
+
+
+
+python 
+
+        sql1 =  f" SELECT set_name, set_value FROM g5_5_setting " \
+                f" WHERE set_name IN ('set_worker_test_yn','set_hp_test_yn','set_production_test_yn') "
+        # print(sql1)
+        my1.execute(sql1)
+------------
+With code above I want to get result data like below.
+------------
+data_jig={["set_name":"set_worker_test_yn","set_value":1],["set_name":"set_hp_test_yn","set_value":0],["set_name":"set_production_test_yn","set_value":1]}
+------------
+how do I code?

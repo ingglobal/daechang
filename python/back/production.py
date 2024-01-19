@@ -1,10 +1,9 @@
 import threading
 import psycopg2
-# import mysql.connector # it is located in myfunction.py file.
+import mysql.connector
 import myfunction
 from datetime import datetime, timedelta
-# from config import data_path, pg_path, addup_path, pg1_config, my1_config, myconn1, my1
-from config import *
+from config import data_path, pg_path, addup_path, pg1_config, my1_config
 import json
 import os
 import sys
@@ -25,7 +24,13 @@ def handle_data():
             pg1 = pgcon1.cursor()
         except Exception as e:
             print(e)
-
+            
+        try:
+            myconn1 = mysql.connector.connect(**my1_config)
+            my1 = myconn1.cursor()
+        except Exception as e:
+            print(e)
+            
         d1 = datetime.now().strftime('%Y-%m-%d %H:%M:%S') # 2023-02-27 11:11:11
         d2 = datetime.now() + timedelta(minutes=11) # 11minutes after
         d3 = datetime.now() - timedelta(minutes=10) # 10minutes ago
@@ -57,7 +62,7 @@ def handle_data():
         # ---------
         if demo:
             sql_where = f" WHERE sck_dt >= '{d3}' "
-            sql_where = f" WHERE sck_dt >= '2024-01-19 15:41:32' "
+            sql_where = f" WHERE sck_dt >= '2024-01-18 11:41:32' "
         # ---------
         sql = f" SELECT * FROM g5_1_socket {sql_where} ORDER BY sck_dt "
         # print(sql)
@@ -66,6 +71,9 @@ def handle_data():
 
         # Close PostgreSQL cursor
         pg1.close()
+
+
+
 
 
         # MySQL -------------------------------------------------------------
@@ -79,8 +87,7 @@ def handle_data():
             sck_idx = row[0]
             sck_dt = row[1].strftime('%Y-%m-%d %H:%M:%S')
             sck_date = sck_dt[:10]
-            sck_minute = sck_dt[-2:]
-            # print(sck_minute)
+            # print(sck_date)
             ip = row[2]
             port = row[3]
             print(f'\n{sck_dt} {ip} {port} --------------------------------')
@@ -148,21 +155,10 @@ def handle_data():
                             now_count = int(v)
                             count = now_count - old_count
                             count = 1 if abs(count)>10 else abs(count)   # 30000 이상에서 다시 초기화되는 부분이 있어서 추가 (터무니 없는 값이면 일단 1로 설정)
-                            # (테스트 카운터)해당 지그에 1로 세팅된 것이 하나라도 있으면 1분마다 count 넣어줌
-                            try:
-                                # print(f'{i}. now:{v} old:{old_count} - [{data_type}] mms_idx={mms_idx} jig_code={jig_code} count: {count}')
-                                for row1 in data_jig[str(mms_idx)][str(jig_code)]:
-                                    # print(row1['boj_test_yn'])
-                                    if row1['boj_test_yn']=='1' and sck_minute=='00':
-                                        count = 1
-                            except:
-                                pass
-                                
                             if count>0: #----------------------------------
                                 # print(f'{i}. now:{v} old:{old_count} - [{data_type}] mms_idx={mms_idx} jig_code={jig_code} count: {count}')
 
                                 # get bom_idxs from data_jig dict. (/data/python/data_jig.py)
-                                # This is originated by the db table g5_1_bom_jig
                                 bom_idxs = []
                                 try:
                                     # print(len(data_jig[str(mms_idx)][str(jig_code)]))
@@ -188,7 +184,7 @@ def handle_data():
                                     # print(result)
                                     if result is not None:
                                         print(f'{i}. now:{v} old:{old_count} - [{data_type}] mms_idx={mms_idx} jig_code={jig_code} count: {count}')
-                                        # print(sql1)
+                                        print(sql1)
                                         # Get column names from the description attribute
                                         columns = [column[0] for column in my1.description]
                                         # Create a dictionary using zip with column names as keys
@@ -201,7 +197,7 @@ def handle_data():
                                         di['bom_idx'] = pri['bom_idx']
                                         di['count'] = count
                                         di['sck_dt'] = sck_dt
-                                        pri_idx = myfunction.production_count(di)
+                                        pri_idx = myfunction.production_count(di, myconn1, my1)
                                         del di
                                         print(pri_idx)
                                     # else:
