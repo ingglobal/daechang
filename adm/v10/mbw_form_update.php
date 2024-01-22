@@ -119,58 +119,6 @@ if ($_POST['act_button'] == "등록"){
     }
     sql_query($bmw_sql,1);
 
-
-
-
-    // 캐시 업데이트
-    $cache_file = G5_DATA_PATH.'/cache/socket-jig.php';
-    @unlink($cache_file);
-        
-    $list = array();
-    // $list_idx2 = array();
-    $sql = "SELECT * FROM {$g5['bom_jig_table']} WHERE boj_status = 'ok' ORDER BY mms_idx, bom_idx";
-    $result = sql_query($sql,1);
-    // echo $sql;
-    for($i=0; $row=sql_fetch_array($result); $i++) {
-        $row['mms'] = get_table('mms','mms_idx',$row['mms_idx']);
-        $row['bom'] = get_table('bom','bom_idx',$row['bom_idx']);
-        // print_r2($row);
-        $ar['mms_name'] = addslashes($row['mms']['mms_name']);
-        $ar['boj_code'] = $row['boj_code'];
-        $ar['bom_part_no'] = $row['bom']['bom_part_no'];
-        $ar['bom_name'] = addslashes($row['bom']['bom_name']);
-        $ar['bom_idx'] = $row['bom_idx'];
-        $ar['mms_idx'] = $row['mms_idx'];
-        $ar['boj_test_yn'] = $row['boj_test_yn'];
-        $ar['boj_status'] = $row['boj_status'];
-        $list[$row['mms_idx']][$row['bom_idx']][] = $ar;
-        $list2[$row['mms_idx']][$row['boj_code']][] = $ar;
-        unset($ar);
-    }
-    // print_r2($list);
-    // print_r2($list_idx2);
-
-    // 캐시파일 생성
-    $handle = fopen($cache_file, 'w');
-    $cache_content = "<?php\n";
-    $cache_content .= "if (!defined('_GNUBOARD_')) exit;\n";
-    $cache_content .= "\$g5['socket_jig']=".var_export($list2, true).";\n";
-    $cache_content .= "?>";
-    fwrite($handle, $cache_content);
-    fclose($handle);
-
-
-    // python용 변수 생성
-    $cache_file = G5_DATA_PATH.'/python/data_jig.py';
-    @unlink($cache_file);
-    // 캐시파일 생성
-    $handle = fopen($cache_file, 'w');
-    // PHP 배열을 JSON 형식으로 인코딩
-    $cache_content = "data_jig=".json_encode($list2, JSON_PRETTY_PRINT)."\n";
-    fwrite($handle, $cache_content);
-    fclose($handle);
-
-
 }
 else if ($_POST['act_button'] == "테스트데이터전부삭제"){
     $boj_sql = " DELETE FROM {$g5['bom_jig_table']} WHERE boj_test_yn = '1'
@@ -182,8 +130,53 @@ else if ($_POST['act_button'] == "테스트데이터전부삭제"){
 }
 
 
+// 캐시 업데이트
+$cache_file = G5_DATA_PATH.'/cache/socket-jig.php';
+@unlink($cache_file);
+    
+$list = array();
+// $list_idx2 = array();
+$sql = "SELECT * FROM {$g5['bom_jig_table']} WHERE boj_status = 'ok' ORDER BY mms_idx, bom_idx";
+$result = sql_query($sql,1);
+// echo $sql;
+for($i=0; $row=sql_fetch_array($result); $i++) {
+    $row['mms'] = get_table('mms','mms_idx',$row['mms_idx']);
+    $row['bom'] = get_table('bom','bom_idx',$row['bom_idx']);
+    // print_r2($row);
+    $ar['mms_name'] = addslashes($row['mms']['mms_name']);
+    $ar['boj_code'] = $row['boj_code'];
+    $ar['bom_part_no'] = $row['bom']['bom_part_no'];
+    $ar['bom_name'] = addslashes($row['bom']['bom_name']);
+    $ar['bom_idx'] = $row['bom_idx'];
+    $ar['mms_idx'] = $row['mms_idx'];
+    $ar['boj_test_yn'] = $row['boj_test_yn'];
+    $ar['boj_status'] = $row['boj_status'];
+    $list[$row['mms_idx']][$row['bom_idx']][] = $ar;
+    $list2[$row['mms_idx']][$row['boj_code']][] = $ar;
+    unset($ar);
+}
+// print_r2($list);
+// print_r2($list_idx2);
+
+// 캐시파일 생성
+$handle = fopen($cache_file, 'w');
+$cache_content = "<?php\n";
+$cache_content .= "if (!defined('_GNUBOARD_')) exit;\n";
+$cache_content .= "\$g5['socket_jig']=".var_export($list2, true).";\n";
+$cache_content .= "?>";
+fwrite($handle, $cache_content);
+fclose($handle);
 
 
+// python용 변수 생성
+$cache_file = G5_DATA_PATH.'/python/data_jig.py';
+@unlink($cache_file);
+// 캐시파일 생성
+$handle = fopen($cache_file, 'w');
+// PHP 배열을 JSON 형식으로 인코딩
+$cache_content = "data_jig=".json_encode($list2, JSON_PRETTY_PRINT)."\n";
+fwrite($handle, $cache_content);
+fclose($handle);
 
 
 
