@@ -126,7 +126,7 @@ include_once('./_head.sub.php');
 </div><!--//.tbl_frm01-->
 <div id="btn_box">
     <button type="button" class="btn btn_05 btn_close">창닫기</button>
-    <button type="button" bom_idx="" mms_idx="" mb_id="" prd_idx="" prm_idx="" boc_idx="" bom_idx_parent="" pri_value="" pri_ing="" pri_date="" onclick="pri_reg(this);" class="btn btn_submit">등록</button>
+    <a href="javascript:" bom_idx="" mms_idx="" mb_id="" prd_idx="" prm_idx="" boc_idx="" bom_idx_parent="" pri_value="" pri_ing="" pri_date="" onclick="pri_reg(this);" class="btn btn_01 btn_reg">등록</a>
 </div>
 </form>
 </div><!--//#sch_target_frm-->
@@ -203,7 +203,7 @@ function obj_change(obj){
                 mbSel.empty();
                 mbSel.html(res);
                 mb_id = mbSel.val();
-                if(btn.hasClass('btn_submit')){
+                if(btn.hasClass('btn_reg')){
                     btn.attr({
                         'bom_idx': bom_idx,
                         'mms_idx': mms_idx,
@@ -225,7 +225,7 @@ function obj_change(obj){
         });
     }
 
-    if(btn.hasClass('btn_submit')){
+    if(btn.hasClass('btn_reg')){
         btn.attr({
             'bom_idx': bom_idx,
             'mms_idx': mms_idx,
