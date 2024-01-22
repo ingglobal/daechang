@@ -792,7 +792,7 @@ function form01_submit(f){
         }
     }
     // console.log(pri_value_count_error);
-    if(pri_value_count_error>0) {
+    if(false){ //(pri_value_count_error>0) {
         alert('완제품의 지시수량과 각 하위제품의 지시수량 합계가 일치하지 않습니다.\n제품의 지시 수량을 확인하세요.');
         return false;
     }
