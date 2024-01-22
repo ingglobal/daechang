@@ -83,12 +83,9 @@ $colspan = 16;
     <option value="ppr.mms_idx"<?php echo get_selected($_GET['sfl'], "ppr.mms_idx"); ?>>설비번호</option>
     <option value="ppr_ip"<?php echo get_selected($_GET['sfl'], "ppr_ip"); ?>>아이피</option>
     <option value="ppr_port"<?php echo get_selected($_GET['sfl'], "ppr_port"); ?>>포트</option>
-<<<<<<< HEAD
     <option value="ppr_no"<?php echo get_selected($_GET['sfl'], "ppr_no"); ?>>배열번호</option>
     <option value="ppr_bit"<?php echo get_selected($_GET['sfl'], "ppr_bit"); ?>>bit</option>
     <option value="ppr_jig_code"<?php echo get_selected($_GET['sfl'], "ppr_jig_code"); ?>>지그코드</option>
-=======
->>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
 </select>
 <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
 <input type="text" name="stx" value="<?php echo $stx ?>" id="stx" required class="required frm_input">
@@ -96,16 +93,11 @@ $colspan = 16;
 
 </form>
 
-<<<<<<< HEAD
 <div class="local_desc01 local_desc" style="display:no ne;">
     <p>PLC 통신규약 엑셀 정보가 업데이트되면 [수정] 버튼에서 들어가서 수정을 한번 해 줘야 합니다. (php배열 및 python배열 변수를 자동으로 생성합니다.)</p>
     <p>동시에 원격 엣지서버에 있는 PLC통신규약(python dictionary) 파일을 동기화해 주셔야 합니다.</p>
     <p>표준 엑셀을 참고하세요. <a href="https://docs.google.com/spreadsheets/d/1BDxTudbNcYy8Uuwds45uQtep-lCN5fEF/edit?usp=sharing&ouid=103655811572310865604&rtpof=true&sd=true" target="_blank">바로가기</a></p>
     <p>PLC 통신규약 엑셀등록을 하려면 해당 페이지로 이동하세요. <a href="./plc_protocol_excel.php">바로가기</a></p>
-=======
-<div class="local_desc01 local_desc" style="display:none;">
-    <p>새로운 고객을 등록</p>
->>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
 </div>
 
 
@@ -135,10 +127,7 @@ $colspan = 16;
         <th scope="col"><?php echo subject_sort_link('ppr_port_no') ?>PLC Port</a></th>
         <th scope="col"><?php echo subject_sort_link('ppr_no') ?>PLC No</a></th>
         <th scope="col"><?php echo subject_sort_link('ppr_bit') ?>Bit No</a></th>
-<<<<<<< HEAD
         <th scope="col"><?php echo subject_sort_link('ppr_jig_code') ?>지그</a></th>
-=======
->>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
         <th scope="col"><?php echo subject_sort_link('ppr_reg_dt') ?>등록일</a></th>
         <th scope="col">관리</th>
     </tr>
@@ -165,10 +154,7 @@ $colspan = 16;
         <td class="td_ppr_port"><a href="?sfl=ppr_port&stx=<?=$row['ppr_port_no']?>"><?=$row['ppr_port_no']?></a></td>
         <td class="td_ppr_no"><?=$row['ppr_no']?></td>
         <td class="td_ppr_bit"><?=$row['ppr_bit']?></td>
-<<<<<<< HEAD
         <td class="td_ppr_jig_code"><?=$row['ppr_jig_code']?></td>
-=======
->>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
         <td class="td_ppr_reg_dt"><?=$row['ppr_reg_dt']?></td>
         <td class="td_mng td_mng_s">
 			<?php echo $s_mod ?><!-- 수정 -->

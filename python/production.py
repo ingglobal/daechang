@@ -14,7 +14,8 @@ sys.path.append(os.path.join(os.getcwd(), f'{data_path}/python'))
 from data_socket import data_socket
 from data_jig import data_jig
 
-demo = 1
+# ------------------------------------------> 실제 운영시 0 으로 세팅해 주세요.
+demo = 0
 
 def handle_data():
     try:
@@ -57,7 +58,7 @@ def handle_data():
         # ---------
         if demo:
             sql_where = f" WHERE sck_dt >= '{d3}' "
-            sql_where = f" WHERE sck_dt >= '2024-01-19 15:41:32' "
+            sql_where = f" WHERE sck_dt >= '2024-01-20 15:41:32' "
         # ---------
         sql = f" SELECT * FROM g5_1_socket {sql_where} ORDER BY sck_dt "
         # print(sql)
@@ -184,15 +185,14 @@ def handle_data():
                                             f" ORDER BY pri_idx DESC LIMIT 1 "
                                     # print(sql1)
                                     my1.execute(sql1)
+                                    fields = [column[0] for column in my1.description]
                                     result = my1.fetchone()
                                     # print(result)
                                     if result is not None:
                                         print(f'{i}. now:{v} old:{old_count} - [{data_type}] mms_idx={mms_idx} jig_code={jig_code} count: {count}')
                                         # print(sql1)
                                         # Get column names from the description attribute
-                                        columns = [column[0] for column in my1.description]
-                                        # Create a dictionary using zip with column names as keys
-                                        pri = dict(zip(columns, result))
+                                        pri = dict(zip(fields, result))
                                         # Now, pri is a dictionary with field names as keys
                                         # print(pri)
                                         # print(pri['bom_idx'])
@@ -203,7 +203,7 @@ def handle_data():
                                         di['sck_dt'] = sck_dt
                                         pri_idx = myfunction.production_count(di)
                                         del di
-                                        print(pri_idx)
+                                        print('pri_idx =',pri_idx)
                                     # else:
                                     #     print("No rows were fetched.")
 

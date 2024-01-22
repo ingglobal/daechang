@@ -122,3 +122,92 @@ With code above I want to get result data like below.
 data_jig={["set_name":"set_worker_test_yn","set_value":1],["set_name":"set_hp_test_yn","set_value":0],["set_name":"set_production_test_yn","set_value":1]}
 ------------
 how do I code?
+
+
+python code....
+
+from datetime import datetime, timedelta
+import mysql.connector
+import myfunction
+
+# MySQL database connection
+my1_config = {
+    'host': '172.18.0.3',
+    'database': 'daechang_www',
+    'user': 'daechang',
+    'password': 'daechang@ingglobal'
+}
+
+try:
+    myconn1 = mysql.connector.connect(**my1_config)
+    my1 = myconn1.cursor()
+except Exception as e:
+    print(e)
+
+dic = {'pri_idx': 666, 'bom_idx': 2010, 'count': 1, 'sck_dt': '2024-01-20 15:41:32'}
+
+# get related info form db
+pri = myfunction.get_table('g5_1_production_item','pri_idx',dic['pri_idx'])
+prd = myfunction.get_table('g5_1_production','prd_idx',pri['prd_idx'])
+bom = myfunction.get_table('g5_1_bom', 'bom_idx', dic['bom_idx'])
+mms = myfunction.get_table('g5_1_mms', 'mms_idx', pri['mms_idx'])
+# print(mms)
+
+bom_idx = 2010
+pic_date = '2024-01-20'
+shf_idx = 644
+
+# 모든 하위 구조 추출해서 재고 먼저 떨어줍니다.
+sql1 = f"SELECT bom.bom_idx, bom.bom_type, bom.bom_name, bom_part_no, bom_price, bom_status, cst_idx_provider, cst_idx_customer " \
+        f"     , bit.bit_idx, bit.bom_idx AS bit_bom_idx, bit.bit_main_yn, bit.bom_idx_child, bit.bit_reply, bit.bit_count " \
+        f"FROM g5_1_bom_item AS bit " \
+        f"     LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = bit.bom_idx_child " \
+        f" WHERE bit.bom_idx = '{bom_idx}' " \
+        f" ORDER BY bit.bit_reply "
+# print(sql1)
+my1.execute(sql1)
+rows = my1.fetchall()
+for row in rows:
+    # print(row[0], row[1])
+    columns = [column[0] for column in my1.description]
+    row = dict(zip(columns, row))
+    # print(row)
+    for i in range(dic['count']):
+        if row['bom_type']=='half':
+            print('half')
+            # count 갯수만큼 생성
+        elif row['bom_type']=='material':
+            print('material')
+
+            # 만약 레코드가 존재하지 않는다면 생성을 해 주고 update를 해야 함
+            sql3 = f"   SELECT COUNT(mtr_idx) AS cnt FROM g5_1_material " \
+                    f"   WHERE bom_idx = '{row['bom_idx']}' AND prd_idx = '0' AND pri_idx = '0' " \
+                    f"   AND mtr_type = 'material' AND mtr_status = 'ok' "
+            print(sql3)
+            my1.execute(sql3)
+            one = my1.fetchone()
+            if one is not None:
+                replenish = dic['count'] - int(one[0])
+            else:
+                replenish = dic['count']
+                # print("No rows returned:", sql)
+
+-------------
+
+Ubuntu cron log
+
+I found cron.cron.service in the directory /lib/systemd/system/cron.service.
+I think the cron doesn't leave log at the moment.
+How can i make cron leave log?
+
+
+Yes, My system is working within a Docker container.
+I just modified according your dictation.
+But it is not linkly that the cron is working ok.
+How can i check the cron is working right or not?
+
+
+Assume that your system is working within a Docker container Ubuntu 20.04
+I made a python program which is located in '/home/daechang/daechang_www/python/production.py'
+I want to execute the file every 10 minutes.
+How can I make it?

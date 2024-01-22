@@ -1,11 +1,15 @@
 import os
+import re
 from time import sleep
 from config import *
 # from config import myconn1, my1
 from datetime import datetime, timedelta
 
+def addslashes(input_str):
+    return input_str.replace('\\', '\\\\').replace("'", "\\'")
+    
 def production_count(dic):
-    # print(lst)
+    # print(dic)
 
     # get related info form db
     pri = get_table('g5_1_production_item','pri_idx',dic['pri_idx'])
@@ -33,9 +37,10 @@ def production_count(dic):
             f" pic_date = '{pic_date}', " \
             f" pic_reg_dt = '{dic['sck_dt']}', " \
             f" pic_update_dt = now() "
-        my1.execute(sql)
         # print(sql)
+        my1.execute(sql)
 
+    # 대표상품인지 아닌지 확인
     sql = f" SELECT bit_main_yn, bom_idx FROM g5_1_bom_item WHERE bom_idx_child = '{pri['bom_idx']}' "
     # print(sql)
     my1.execute(sql)
@@ -45,7 +50,7 @@ def production_count(dic):
         main = {"bit_main_yn": one[0], "bom_idx": one[1]}
         # print(main)
     else:
-        print("No rows returned:", sql)
+        print("Am i main product? No:", sql)
 
     # 내가 대표상품이거나 혹은 최상위 상품인 경우, 하위의 모든 제품 재고를 사용으로 처리해야 함
     if main['bit_main_yn'] or bom['bom_type']=='product':
@@ -62,65 +67,127 @@ def production_count(dic):
                f" ORDER BY bit.bit_reply "
         # print(sql1)
         my1.execute(sql1)
+        fields = [column[0] for column in my1.description]
         rows = my1.fetchall()
 
         # 대표상품이 아닌 완제품(product)인 경우...혹시 내 하위 다른 대표상품이 있다면 재고를 이미 반영한 것이므로 재고 털어주면 안 되요.
         if main['bit_main_yn']==0 or bom['bom_type']=='product':
             for row in rows:
                 # print(row[0], row[1])
-                columns = [column[0] for column in my1.description]
-                row = dict(zip(columns, row))
+                row = dict(zip(fields, row))
                 if row['bit_main_yn']:
                     return None
 
         # print('-----------')
         for row in rows:
-            # print(row[0], row[1])
-            columns = [column[0] for column in my1.description]
-            row = dict(zip(columns, row))
+            row = dict(zip(fields, row))
+            bom_name = addslashes(row['bom_name'])
             # print(row)
+            # count 갯수만큼 생산카운터 반영
             for i in range(dic['count']):
                 if row['bom_type']=='half':
-                    sql2 = f" INSERT INTO g5_1_production_item_count SET " \
+                    # 반제품 생산카운터 레코드 생성
+                    sql2 = f" INSERT INTO g5_1_material SET " \
+                        f" com_idx = '13', " \
+                        f" cst_idx_provider = '{row['cst_idx_provider']}', " \
+                        f" cst_idx_customer = '{row['cst_idx_customer']}', " \
+                        f" mms_idx = '{pri['mms_idx']}', " \
+                        f" ori_idx = '{prd['ori_idx']}', " \
+                        f" prd_idx = '{prd['prd_idx']}', " \
                         f" pri_idx = '{dic['pri_idx']}', " \
+                        f" bom_idx = '{row['bom_idx']}', " \
+                        f" shf_idx = '{shf_idx}', " \
                         f" mb_id = '{pri['mb_id']}', " \
-                        f" pic_ing = '{pri['pri_ing']}', " \
-                        f" pic_value = '{dic['count']}', " \
-                        f" pic_date = '{pic_date}', " \
-                        f" pic_reg_dt = '{dic['sck_dt']}', " \
-                        f" pic_update_dt = now() "
-                    # my1.execute(sql2)
-                    print(sql2)
+                        f" mtr_part_no = '{row['bom_part_no']}', " \
+                        f" mtr_name = '{bom_name}', " \
+                        f" mtr_type = '{row['bom_type']}', " \
+                        f" mtr_value = '{dic['count']}', " \
+                        f" mtr_price = '{row['bom_price']}', " \
+                        f" mtr_history = 'finish|{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}', " \
+                        f" mtr_status = 'finish', " \
+                        f" mtr_date = '{pic_date}', " \
+                        f" mtr_reg_dt = now(), " \
+                        f" mtr_update_dt = now() "
+                    # print(sql2)
+                    my1.execute(sql2)
                 elif row['bom_type']=='material':
-                    # 해당 usage 갯수만큼 추출 (2이면 2개 업데이트)
+                    # 해당 usage 갯수만큼 update (2이면 2개 업데이트)
                     limit_count = dic['count'] * row['bit_count']
+
+                    # 만약 레코드가 존재하지 않는다면 생성을 해 주고 update를 해야 함
+                    sql3 = f"   SELECT COUNT(mtr_idx) AS cnt FROM g5_1_material " \
+                           f"   WHERE bom_idx = '{row['bom_idx']}' AND prd_idx = '0' AND pri_idx = '0' " \
+                           f"   AND mtr_type = 'material' AND mtr_status = 'ok' "
+                    # print(sql3)
+                    my1.execute(sql3)
+                    one = my1.fetchone()
+                    if one is not None:
+                        replenish = dic['count'] - int(one[0])
+                    else:
+                        replenish = dic['count']
+                        # print("No rows returned:", sql)
+                    if replenish>0:
+                        # 없는 만큼 부족분 자재(material)를 먼저 생성해 두고...
+                        for j in range(row['bit_count']*replenish):
+                            sql2 = f" INSERT INTO g5_1_material SET " \
+                                f" com_idx = '13', " \
+                                f" cst_idx_provider = '{row['cst_idx_provider']}', " \
+                                f" cst_idx_customer = '{row['cst_idx_customer']}', " \
+                                f" mms_idx = '{pri['mms_idx']}', " \
+                                f" bom_idx = '{row['bom_idx']}', " \
+                                f" mtr_part_no = '{row['bom_part_no']}', " \
+                                f" mtr_name = '{addslashes(row['bom_name'])}', " \
+                                f" mtr_type = '{row['bom_type']}', " \
+                                f" mtr_value = '1', " \
+                                f" mtr_price = '{row['bom_price']}', " \
+                                f" mtr_history = 'ok|{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}', " \
+                                f" mtr_status = 'ok', " \
+                                f" mtr_reg_dt = now(), " \
+                                f" mtr_update_dt = now() "
+                            # print(sql2)
+                            my1.execute(sql2)
+                           
                     sql2 = f"   UPDATE g5_1_material SET " \
-                           f"         mms_idx = '{pri['mms_idx']}', " \
-                           f"         ori_idx = '{prd['ori_idx']}', " \
-                           f"         prd_idx = '{pri['prd_idx']}', " \
-                           f"         pri_idx = '{dic['pri_idx']}', " \
-                           f"         shf_idx = '{shf_idx}', " \
-                           f"         mb_id = '', " \
-                           f"         mtr_history = '\nused|{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}', " \
-                           f"         mtr_status = 'used', " \
-                           f"         mtr_update_dt = 'now()' " \
+                           f"       mms_idx = '{pri['mms_idx']}', " \
+                           f"       ori_idx = '{prd['ori_idx']}', " \
+                           f"       prd_idx = '{pri['prd_idx']}', " \
+                           f"       pri_idx = '{dic['pri_idx']}', " \
+                           f"       shf_idx = '{shf_idx}', " \
+                           f"       mb_id = '', " \
+                           f"       mtr_history = '\nused|{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}', " \
+                           f"       mtr_status = 'used', " \
+                           f"       mtr_update_dt = now() " \
                            f"     WHERE bom_idx = '{row['bom_idx']}' AND prd_idx = '0' AND pri_idx = '0' AND mtr_type = 'material' AND mtr_status = 'ok' " \
-                           f"     ORDER BY mtr_reg_dt LIMIT"
-                    print(sql2)
+                           f"     ORDER BY mtr_reg_dt LIMIT {limit_count}"
+                    # print(sql2)
+                    my1.execute(sql2)
 
 
-        # 제품(item) 테이블에 레코드 생성해 줍니다.
+        # 제품(item) 테이블에 레코드 생성해 줍니다. count 갯수만큼 생성
         for i in range(dic['count']):
-            sql2 = f" INSERT INTO g5_1_production_item_count SET " \
+            sql2 = f" INSERT INTO g5_1_item SET " \
+                f" com_idx = '13', " \
+                f" cst_idx_provider = '{bom['cst_idx_provider']}', " \
+                f" cst_idx_customer = '{bom['cst_idx_customer']}', " \
+                f" mms_idx = '{pri['mms_idx']}', " \
+                f" ori_idx = '{prd['ori_idx']}', " \
+                f" prd_idx = '{prd['prd_idx']}', " \
                 f" pri_idx = '{dic['pri_idx']}', " \
+                f" bom_idx = '{bom['bom_idx']}', " \
+                f" shf_idx = '{shf_idx}', " \
                 f" mb_id = '{pri['mb_id']}', " \
-                f" pic_ing = '{pri['pri_ing']}', " \
-                f" pic_value = '{dic['count']}', " \
-                f" pic_date = '{pic_date}', " \
-                f" pic_reg_dt = '{dic['sck_dt']}', " \
-                f" pic_update_dt = now() "
-            # my1.execute(sql2)
-            print(sql2)
+                f" itm_part_no = '{bom['bom_part_no']}', " \
+                f" itm_name = '{addslashes(row['bom_name'])}', " \
+                f" itm_type = '{bom['bom_type']}', " \
+                f" itm_value = '{dic['count']}', " \
+                f" itm_price = '{bom['bom_price']}', " \
+                f" itm_history = 'finish|{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}', " \
+                f" itm_status = 'finish', " \
+                f" itm_date = '{pic_date}', " \
+                f" itm_reg_dt = now(), " \
+                f" itm_update_dt = now() "
+            # print(sql2)
+            my1.execute(sql2)
 
 
     return dic['pri_idx']
@@ -202,10 +269,10 @@ def get_table(table_name, db_field, db_id, db_fields='*'):
     sql = f" SELECT {db_fields} FROM {table_name} WHERE {db_field} = {db_id} LIMIT 1 "
     # print(sql)
     my1.execute(sql)
+    fields = [column[0] for column in my1.description]
     one = my1.fetchone()
     if one is not None:
-        columns = [column[0] for column in my1.description]
-        row = dict(zip(columns, one))
+        row = dict(zip(fields, one))
     else:
         row = {db_field:0}
     # print(row)

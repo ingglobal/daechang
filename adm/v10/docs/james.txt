@@ -3380,25 +3380,25 @@ part_no = 89406-T1100
 
 // 생산계획 정보 입력 ------------------------------------------------------------
 INSERT INTO `g5_1_production` (`prd_idx`, `com_idx`, `boc_idx`, `ori_idx`, `bom_idx`, `prd_id`, `prd_type`, `prd_value`, `prd_price`, `prd_date`, `prd_order_no`, `prd_start_date`, `prd_done_date`, `prd_memo`, `prd_status`, `prd_reg_dt`, `prd_update_dt`)
-VALUES  (NULL, '13', '2267', '0', '2010', '23423543', 'normal', '1000', '0', '2024-01-19', 'order_no1234245', '2024-01-19', '2024-01-19', NULL, 'confirm', '2024-01-19 14:40:49', '2024-01-19 14:40:49');
+VALUES  (NULL, '13', '2267', '0', '2010', '23423543', 'normal', '1000', '0', '2024-01-20', 'order_no1234245', '2024-01-20', '2024-01-20', NULL, 'confirm', '2024-01-20 14:40:49', '2024-01-20 14:40:49');
 
-prd_idx = 801 (새로 생성된 번호를 넣어줘야 함) <-------------------------------------
+prd_idx = 871 (새로 생성된 번호를 넣어줘야 함) <-------------------------------------
 boc_idx = 2267
 bom_idx = 2010
 
 INSERT INTO `g5_1_production_main` (`prm_idx`, `com_idx`, `prd_idx`, `bom_idx`, `boc_idx`, `prm_order_no`, `prm_date`, `prm_value`, `prm_memo`, `prm_status`, `prm_reg_dt`, `prm_update_dt`)
-VALUES (NULL, '13', '801', '2010', '2267', 'order_no1234245', '2024-01-19', '1000', NULL, 'confirm', '2024-01-19 14:44:11', '2024-01-19 14:44:11');
+VALUES (NULL, '13', '871', '2010', '2267', 'order_no1234245', '2024-01-20', '1000', NULL, 'confirm', '2024-01-20 14:44:11', '2024-01-20 14:44:11');
 
-prm_idx = 463  (새로 생성된 번호를 넣어줘야 함) <-------------------------------------
+prm_idx = 545  (새로 생성된 번호를 넣어줘야 함) <-------------------------------------
 mb_id = 01073861823 (코요) 생산 500개 37호기(mms_idx=132)
 mb_id = 01068849127 (코이) 생산 500개 32호기(mms_idx=90)
 ....
 INSERT INTO `g5_1_production_item` (`pri_idx`, `com_idx`, `boc_idx`, `prd_idx`, `prm_idx`, `bom_idx`, `bom_idx_parent`, `pri_order_no`, `mms_idx`, `mb_id`, `trm_idx_operation`, `trm_idx_line`, `pri_value`, `pri_date`, `pri_memo`, `pri_ing`, `pri_status`, `pri_reg_dt`, `pri_update_dt`)
-VALUES (NULL, '13', '2267', '801', '463', '2010', '2010', 'order_no1234245', '132', '01073861823', '0', '0', '1000', '2024-01-19', NULL, '1', 'confirm', '2024-01-19 14:45:58', '2024-01-19 14:45:58');
+VALUES (NULL, '13', '2267', '871', '545', '2010', '2010', 'order_no1234245', '132', '01073861823', '0', '0', '1000', '2024-01-20', NULL, '1', 'confirm', '2024-01-20 14:45:58', '2024-01-20 14:45:58');
 
 (제품이 안 맞아서 안 되겠다. 코이 작업을 따로 하세요.)
 INSERT INTO `g5_1_production_item` (`pri_idx`, `com_idx`, `boc_idx`, `prd_idx`, `prm_idx`, `bom_idx`, `bom_idx_parent`, `pri_order_no`, `mms_idx`, `mb_id`, `trm_idx_operation`, `trm_idx_line`, `pri_value`, `pri_date`, `pri_memo`, `pri_ing`, `pri_status`, `pri_reg_dt`, `pri_update_dt`)
-VALUES (NULL, '13', '2267', '801', '463', '2010', '2010', 'order_no1234245', '90', '01068849127', '0', '0', '500', '2024-01-19', NULL, '1', 'confirm', '2024-01-19 14:45:58', '2024-01-19 14:45:58');
+VALUES (NULL, '13', '2267', '871', '545', '2010', '2010', 'order_no1234245', '90', '01068849127', '0', '0', '500', '2024-01-20', NULL, '1', 'confirm', '2024-01-20 14:45:58', '2024-01-20 14:45:58');
 .....
 
 
@@ -3412,10 +3412,28 @@ SELECT * FROM g5_1_bom_jig WHERE mms_idx = 132 AND boj_code = 'R1';
 
 SELECT bom.bom_idx, bom.bom_type, bom.bom_name, bom_part_no, bom_price, bom_status, cst_idx_provider, cst_idx_customer      
     , bit.bit_idx, bit.bom_idx AS bit_bom_idx, bit.bit_main_yn, bit.bom_idx_child, bit.bit_reply, bit.bit_count
-FROM g5_1_bom_item AS bit      
+FROM g5_1_bom_item AS bit
     LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = bit.bom_idx_child
 WHERE bit.bom_idx = '2010'
 ORDER BY bit.bit_reply
 
 
+UPDATE g5_1_material SET        mms_idx = '132',        ori_idx = '0',        prd_idx = '871',        pri_idx = '666',        shf_idx = '426',        mb_id = '',        mtr_history = '
+used|2024-01-21 10:53:19',        mtr_status = 'used',        mtr_update_dt = 'now()'
+WHERE bom_idx = '2024' AND prd_idx = '0' AND pri_idx = '0' AND mtr_type = 'material' AND mtr_status = 'ok'
+ORDER BY mtr_reg_dt LIMIT 1
+.....
+SELECT * FROM g5_1_material 
+WHERE bom_idx = '2024' AND prd_idx = '0' AND pri_idx = '0' AND mtr_type = 'material' AND mtr_status = 'ok'
+ORDER BY mtr_reg_dt LIMIT 1
+.....
 
+TRUNCATE TABLE g5_1_item;
+TRUNCATE TABLE g5_1_material;
+TRUNCATE TABLE g5_1_production_item_count;
+
+sudo grep production /var/log/syslog
+
+pgsql sck_idx = 3607549
+
+sudo vi /lib/systemd/system/cron.service
