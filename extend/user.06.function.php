@@ -158,6 +158,7 @@ function production_count($arr)
     }
 
     $pri = get_table('production_item','pri_idx',$arr['pri_idx']);
+    $prm = get_table('production_main','prm_idx',$pri['prm_idx']);
     $prd = get_table('production','prd_idx',$pri['prd_idx']);
     $bom = get_table('bom','bom_idx',$pri['bom_idx']);
     $arr['pic_date'] = statics_date($arr['sck_dt']);
@@ -222,6 +223,7 @@ function production_count($arr)
                 $ar['mms_idx'] = $pri['mms_idx'];
                 $ar['ori_idx'] = $prd['ori_idx'];
                 $ar['prd_idx'] = $prd['prd_idx'];
+                $ar['prm_idx'] = $prm['prm_idx'];
                 $ar['pri_idx'] = $arr['pri_idx'];
                 $ar['bom_idx'] = $row1['bom_idx'];
                 $ar['shf_idx'] = $arr['shf_idx'];
@@ -244,6 +246,7 @@ function production_count($arr)
                                 mms_idx = '".$pri['mms_idx']."',
                                 ori_idx = '".$prd['ori_idx']."',
                                 prd_idx = '".$prd['prd_idx']."',
+                                prm_idx = '".$prm['prm_idx']."',
                                 pri_idx = '".$arr['pri_idx']."',
                                 shf_idx = '".$arr['shf_idx']."',
                                 mb_id = '',
@@ -266,6 +269,7 @@ function production_count($arr)
         $ar['mms_idx'] = $pri['mms_idx'];
         $ar['ori_idx'] = $prd['ori_idx'];
         $ar['prd_idx'] = $prd['prd_idx'];
+        $ar['prm_idx'] = $prm['prm_idx'];
         $ar['pri_idx'] = $arr['pri_idx'];
         $ar['bom_idx'] = $bom_idx;      // 최상위 bom_idx.
         $ar['shf_idx'] = $arr['shf_idx'];
@@ -964,12 +968,14 @@ function update_db($arr)
         }
     }
 	else if($arr['table']=='g5_1_item') {
-        if(!$arr['mms_idx']||!$arr['ori_idx']||!$arr['prd_idx']||!$arr['pri_idx']||!$arr['bom_idx']||!$arr['itm_status']) {
+        if(!$arr['mms_idx']||!$arr['prm_idx']||!$arr['prd_idx']||!$arr['pri_idx']||!$arr['bom_idx']||!$arr['itm_status']) {
+            // echo 1;
             return false;
         }
+        // echo 2;
     }
 	else if($arr['table']=='g5_1_material') {
-        if(!$arr['mms_idx']||!$arr['ori_idx']||!$arr['prd_idx']||!$arr['pri_idx']||!$arr['bom_idx']||!$arr['mtr_status']) {
+        if(!$arr['mms_idx']||!$arr['prm_idx']||!$arr['prd_idx']||!$arr['pri_idx']||!$arr['bom_idx']||!$arr['mtr_status']) {
             return false;
         }
     }
@@ -1080,7 +1086,8 @@ function update_db($arr)
 	}
 	else {
 		$sql = " INSERT INTO {$arr['table']} SET {$sql_common}, ".$pre."_reg_dt = '".G5_TIME_YMDHIS."' ";
-		sql_query($sql,1);
+		// echo $sql.BR;
+        sql_query($sql,1);
         $row[$pre."_idx"] = sql_insert_id();
         
         if($arr['table']=='g5_1_bom' && $arr['bct_idx']){
@@ -3523,6 +3530,24 @@ function create_boc($cst=0,$bom=0,$typ='customer'){
     }
 
     return $boc_idx;
+}
+}
+
+//완제품(부모)의 bom_idx를 가진 bit_idx중에 bit_main_yn = 1이 존재하는지 확인하는 함수
+if(!function_exists('main_bom_exist')){
+function main_bom_exist($bom_idx_parent=0){
+    global $g5;
+    $main_bom_exist = 0;
+    if($bom_idx_parent){
+        $sql = " SELECT COUNT(*) AS cnt FROM {$g5['bom_item_table']} 
+                    WHERE bom_idx = '{$bom_idx_parent}'
+                        AND bit_main_yn = '1'
+        ";
+        $res = sql_fetch($sql);
+        $main_bom_exist = ($res['cnt']) ? 1 : 0;
+    }
+
+    return $main_bom_exist;
 }
 }
 ?>

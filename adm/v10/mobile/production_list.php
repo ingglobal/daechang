@@ -12,7 +12,8 @@ if($mms_idx){
 }
 $plt_arr = array();
 $sql = " SELECT prd.prd_idx
-            , prd.prd_start_date
+            , prm.prm_date
+            , pri.prm_idx
             , pri.pri_idx
             , pri.bom_idx
             , bom.bct_idx
@@ -20,6 +21,8 @@ $sql = " SELECT prd.prd_idx
             , bom.bom_name
             , bom.cst_idx_customer
             , bom.bom_type
+            , boi.bit_main_yn
+            , boi.bom_idx AS bom_idx_parent
             , cst.cst_name
             , pri_value
             , pri.mms_idx
@@ -30,15 +33,17 @@ $sql = " SELECT prd.prd_idx
             , pri_reg_dt
             , pri_update_dt
         FROM {$g5['production_item_table']} pri
+            LEFT JOIN {$g5['production_main_table']} prm ON pri.prm_idx = prm.prm_idx
             LEFT JOIN {$g5['production_table']} prd ON pri.prd_idx = prd.prd_idx
             LEFT JOIN {$g5['bom_table']} bom ON pri.bom_idx = bom.bom_idx
+            LEFT JOIN {$g5['bom_item_table']} boi ON bom.bom_idx = boi.bom_idx_child
             LEFT JOIN {$g5['customer_table']} cst ON bom.cst_idx_customer = cst.cst_idx
             LEFT JOIN {$g5['member_table']} mb ON pri.mb_id = mb.mb_id
         WHERE pri.mb_id = '{$member['mb_id']}'
             AND pri.mms_idx = '{$mms_idx}'
-            AND prd.prd_start_date = '".statics_date(G5_TIME_YMDHIS)."'
-            AND prd.prd_status = 'confirm'
-            AND bom.bom_type IN ('product','half')
+            AND prm.prm_date = '".statics_date(G5_TIME_YMDHIS)."'
+            AND prm.prm_status = 'confirm'
+            AND bom.bom_type IN ('product','half','material')
 ";
 // echo $sql;
 $result = sql_query($sql,1);
@@ -71,7 +76,13 @@ include_once('./_head.php');
             $pres = sql_fetch($psql);
             $ptotal = ($pres['ptotal']) ? $pres['ptotal'] : 0;
             
-            
+            $row['main_box_exist'] = 0;
+            if(!$row['bom_idx_parent'] && $row['bom_type'] == 'product'){
+                $row['main_box_exist'] = main_bom_exist($row['bom_idx']);
+            }
+            else if($row['bom_idx_parent']){
+                $row['main_box_exist'] = main_bom_exist($row['bom_idx_parent']);
+            }
         ?>
         <li class="li_desc">
             <dd class="dd_des dd_mms">
@@ -107,9 +118,13 @@ include_once('./_head.php');
                     <input type="hidden" name="call" value="0">
                     <input type="hidden" name="mms_idx" value="<?=$row['mms_idx']?>">
                     <input type="hidden" name="prd_idx" value="<?=$row['prd_idx']?>">
+                    <input type="hidden" name="prm_idx" value="<?=$row['prm_idx']?>">
                     <input type="hidden" name="pri_idx" value="<?=$row['pri_idx']?>">
                     <input type="hidden" name="bom_idx" value="<?=$row['bom_idx']?>">
                     <input type="hidden" name="bom_type" value="<?=$row['bom_type']?>">
+                    <input type="hidden" name="bit_main_yn" value="<?=$row['bit_main_yn']?>">
+                    <input type="hidden" name="bom_idx_parent" value="<?=$row['bom_idx_parent']?>">
+                    <input type="hidden" name="main_bom_exist" value="<?=$row['main_box_exist']?>">
                     <input type="hidden" name="pri_ing" value="<?=$row['pri_ing']?>">
                     <input type="submit" value="<?=(($row['pri_ing'])?'END':'START')?>" onclick="document.pressed=this.value" class="mbtn btn_toggle<?=(($row['pri_ing'])?' focus':'')?>">
                     <?php if($row['pri_ing'] && ($mms_manual_yn || $mms_testmanual_yn)){ ?>
@@ -167,6 +182,7 @@ function form01_submit(f){ //inp
     var flag = true;
     if(document.pressed == 'END'){
         
+        // if(mms_manual_yn || mms_testmanual_yn){
         if(!f.pri_cnt.value && (mms_manual_yn || mms_testmanual_yn)){
             $(f).find('.tooltip').addClass('focus');
             flag = false;
@@ -191,17 +207,22 @@ function form01_submit(f){ //inp
             dataType: "text",
             data: {
                 "prd_idx": f.prd_idx.value,
+                "prm_idx": f.prm_idx.value,
                 "pri_idx":f.pri_idx.value,
                 "mms_idx": mms_idx,
                 "mb_id": '<?=$member['mb_id']?>',
                 "bom_idx": f.bom_idx.value,
                 "bom_type": f.bom_type.value,
+                "bit_main_yn": f.bit_main_yn.value,
+                "bom_idx_parent": f.bom_idx_parent.value,
+                "main_bom_exist": f.main_bom_exist.value,
                 "pri_cnt": f.pri_cnt.value,
                 "mms_manual_yn": mms_manual_yn,
                 "mms_testmanual_yn": mms_testmanual_yn
             },
             async: false,
             success: function(res){
+                // console.log(res);return false;
                 if(res == 'ok')
                     $('#loading_box').removeClass('focus');
             },
