@@ -3437,3 +3437,8 @@ sudo grep production /var/log/syslog
 pgsql sck_idx = 3607549
 
 sudo vi /lib/systemd/system/cron.service
+
+prm_idx 추가해 주세요.
+item & material 테이블에서 추가해라.
+
+
