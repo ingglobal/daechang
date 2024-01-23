@@ -253,5 +253,5 @@ if(G5_IS_MOBILE){
     echo "\n<!-- 사용스킨 : ".($board['bo_adm_skin'] ? $board['bo_adm_skin'] : $board['bo_skin'])." -->\n";
 
 }
-
-include_once(G5_PATH.'/tail.sub.php');
+include_once(G5_USER_ADMIN_PATH.'/admin.tail.php');
+// include_once(G5_PATH.'/tail.sub.php');

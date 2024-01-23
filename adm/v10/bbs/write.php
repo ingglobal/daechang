@@ -449,4 +449,5 @@ include_once ($board_skin_path.'/write.skin.php');
 
 include_once('./board_tail.php');
 @include_once ($board_skin_path.'/write.tail.skin.php');
-include_once(G5_PATH.'/tail.sub.php');
+include_once(G5_USER_ADMIN_PATH.'/admin.tail.php');
+// include_once(G5_PATH.'/tail.sub.php');
