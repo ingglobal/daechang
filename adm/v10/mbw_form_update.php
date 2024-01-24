@@ -131,28 +131,27 @@ else if ($_POST['act_button'] == "테스트데이터전부삭제"){
 
 
 // 캐시 업데이트
-$cache_file = G5_DATA_PATH.'/cache/socket-jig.php';
+$cache_file = G5_DATA_PATH.'/cache/socket-worker.php';
 @unlink($cache_file);
     
 $list = array();
 // $list_idx2 = array();
-$sql = "SELECT * FROM {$g5['bom_jig_table']} WHERE boj_status = 'ok' ORDER BY mms_idx, bom_idx";
+$sql = "SELECT * FROM {$g5['bom_mms_worker_table']} WHERE bmw_status = 'ok' ORDER BY mms_idx, mb_id";
 $result = sql_query($sql,1);
 // echo $sql;
 for($i=0; $row=sql_fetch_array($result); $i++) {
     $row['mms'] = get_table('mms','mms_idx',$row['mms_idx']);
-    $row['bom'] = get_table('bom','bom_idx',$row['bom_idx']);
+    $row['mb'] = get_table('member','mb_id',$row['mb_id']);
     // print_r2($row);
     $ar['mms_name'] = addslashes($row['mms']['mms_name']);
-    $ar['boj_code'] = $row['boj_code'];
-    $ar['bom_part_no'] = $row['bom']['bom_part_no'];
-    $ar['bom_name'] = addslashes($row['bom']['bom_name']);
-    $ar['bom_idx'] = $row['bom_idx'];
     $ar['mms_idx'] = $row['mms_idx'];
-    $ar['boj_test_yn'] = $row['boj_test_yn'];
-    $ar['boj_status'] = $row['boj_status'];
-    $list[$row['mms_idx']][$row['bom_idx']][] = $ar;
-    $list2[$row['mms_idx']][$row['boj_code']][] = $ar;
+    $ar['mb_name'] = addslashes($row['mb']['mb_name']);
+    $ar['mb_id'] = $row['mb_id'];
+    $ar['bmw_type'] = $row['bmw_type'];
+    $ar['bmw_sort'] = $row['bmw_sort'];
+    $ar['bmw_main_yn'] = $row['bmw_main_yn'];
+    $ar['bmw_test_yn'] = $row['bmw_test_yn'];
+    $list[$row['mms_idx']][$row['bom_idx']][$ar['mb_id']] = $ar;
     unset($ar);
 }
 // print_r2($list);
@@ -162,19 +161,19 @@ for($i=0; $row=sql_fetch_array($result); $i++) {
 $handle = fopen($cache_file, 'w');
 $cache_content = "<?php\n";
 $cache_content .= "if (!defined('_GNUBOARD_')) exit;\n";
-$cache_content .= "\$g5['socket_jig']=".var_export($list2, true).";\n";
+$cache_content .= "\$g5['socket_worker']=".var_export($list, true).";\n";
 $cache_content .= "?>";
 fwrite($handle, $cache_content);
 fclose($handle);
 
 
 // python용 변수 생성
-$cache_file = G5_DATA_PATH.'/python/data_jig.py';
+$cache_file = G5_DATA_PATH.'/python/data_worker.py';
 @unlink($cache_file);
 // 캐시파일 생성
 $handle = fopen($cache_file, 'w');
 // PHP 배열을 JSON 형식으로 인코딩
-$cache_content = "data_jig=".json_encode($list2, JSON_PRETTY_PRINT)."\n";
+$cache_content = "data_worker=".json_encode($list, JSON_PRETTY_PRINT)."\n";
 fwrite($handle, $cache_content);
 fclose($handle);
 
