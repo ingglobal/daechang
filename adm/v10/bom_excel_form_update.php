@@ -29,6 +29,7 @@ for($i=0;$i<count($cats);$i++){
 }
 // print_r2($cat_arr);
 // echo array_search('za',$cat_arr);
+$bom_type_arr = array("E"=>"product","I"=>"half","D"=>"material","A"=>"material","G"=>"goods");
 
 
 // bom db update for excel upload.
@@ -170,7 +171,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     }
     // print_r3($list);
     $arr['no'] = $list[0];
-    $arr['bct_name'] = addslashes($list[1]); // 차종
+    $arr['bct_name'] = str_replace("\n"," ",addslashes($list[1])); // 차종
     $arr['bct_idx'] = $list[2]; // 차종ID
     $arr['end_product'] = $list[3]; 
     $arr['lv1'] = $list[4];
@@ -183,7 +184,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     $arr['lv8'] = $list[11];
     $arr['lv9'] = $list[12];
     $arr['lv10'] = $list[13];
-    $arr['bom_code'] = $list[14];
+    $arr['bom_code'] = $list[14];               // CODE =>      E : MIP END, I : MIP 공정품, D : 협력사 입고품, A : 협력사 SUB품, G : 상품
     $arr['bom_part_no'] = $list[15];            // 품번
     $arr['bom_name'] = addslashes($list[16]);   // 품명
     $arr['q1'] = $list[17];
@@ -257,7 +258,9 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
             }
         }
         
-        $arr['bom_type'] = ($arr['end_product'] == 'E') ? 'product' : 'material';
+        // $arr['bom_type'] = ($arr['end_product'] == 'E') ? 'product' : 'material';
+        $arr['bom_code'] = $arr['bom_code'] ?: $arr['end_product'];
+        $arr['bom_type'] = ($arr['bom_code']) ? $bom_type_arr[$arr['bom_code']] : 'material';
 
         // bom 생성
         $ar['table']  = 'g5_1_bom';
