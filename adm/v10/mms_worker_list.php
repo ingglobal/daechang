@@ -8,7 +8,7 @@ $g5['title'] = '설비별작업자관리';
 include_once('./_top_menu_mms.php');
 include_once('./_head.php');
 echo $g5['container_sub_title'];
-exit;
+
 $sql_common = " FROM {$g5['bom_mms_worker_table']} AS bmw
                 LEFT JOIN {$g5['bom_table']} AS bom ON bom.bom_idx = bmw.bom_idx
                 LEFT JOIN {$g5['member_table']} AS mb ON mb.mb_id = bmw.mb_id
