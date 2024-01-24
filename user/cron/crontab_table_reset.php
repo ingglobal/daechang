@@ -1,7 +1,7 @@
 <?php
 /*
 crontab -e
-* * * * * wget -O - -q -t 1 http://daechang.epcs.co.kr/user/cron/crontab_table_reset.php
+0 4 * * * wget -O - -q -t 1 http://daechang.epcs.co.kr/user/cron/crontab_table_reset.php
 */
 include_once('./_common.php');
 

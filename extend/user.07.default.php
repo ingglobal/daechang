@@ -162,19 +162,19 @@ for($j=0;$j<sizeof($g5['jig_arr']);$j++){
 
 $g5['mmw_arr'] = array();
 //설비별 담당자배열
-$mmw_sql = " SELECT mmw.mms_idx
-                , mmw.mb_id
+$mmw_sql = " SELECT bmw.mms_idx
+                , bmw.mb_id
                 , mb.mb_name
-                , mmw_type
-                , mmw_sort
-            FROM {$g5['mms_worker_table']} mmw
-                LEFT JOIN {$g5['member_table']} mb ON mmw.mb_id = mb.mb_id
-            WHERE mmw_status IN ('ok')
+                , bmw_type
+                , bmw_sort
+            FROM {$g5['bom_mms_worker_table']} bmw
+                LEFT JOIN {$g5['member_table']} mb ON bmw.mb_id = mb.mb_id
+            WHERE bmw_status IN ('ok')
                 -- AND mms_name REGEXP '([^포장] | [^검사])$'
-                AND mmw.mb_id NOT IN ('없음', '')
+                AND bmw.mb_id NOT IN ('없음', '')
                 AND mb.mb_name != ''
                 AND mb.mb_8 != ''
-            ORDER BY mmw.mms_idx, mmw_sort
+            ORDER BY bmw.mms_idx, bmw_sort
             ";
 $mmw_res = sql_query($mmw_sql,1);
 

@@ -6,8 +6,8 @@ if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 if(!$mms_idx)
     alert('[mms_idx] does not exist.');
 
-$wsql = " SELECT mb.mb_name, mmw.mb_id FROM {$g5['mms_worker_table']} mmw
-            LEFT JOIN {$g5['member_table']} mb ON mmw.mb_id = mb.mb_id
+$wsql = " SELECT mb.mb_name, mmw.mb_id FROM {$g5['bom_mms_worker_table']} bmw
+            LEFT JOIN {$g5['member_table']} mb ON bmw.mb_id = mb.mb_id
         WHERE mb_leave_date = ''
             AND mb_intercept_date = ''
             AND mms_idx = '{$mms_idx}'

@@ -785,10 +785,10 @@ function update_mms_worker($arr)
 	$arr['mmw_status'] = $arr['mmw_status'] ?: 'ok';
     // calculate sort_no
     if(!$arr['mmw_sort']) {
-        $sql = "SELECT max(mmw_sort) AS max_sort FROM {$g5['mms_worker_table']}
+        $sql = "SELECT max(bmw_sort) AS max_sort FROM {$g5['bom_mms_worker_table']}
                 WHERE mms_idx='{$arr['mms_idx']}'
-                    AND mmw_type='".$arr['mmw_type']."'
-                    AND mmw_status='ok'
+                    AND bmw_type='".$arr['mmw_type']."'
+                    AND bmw_status='ok'
         ";
         $one1 = sql_fetch($sql,1);
         $arr['mmw_sort'] = $one1['max_sort'] + 1;
@@ -799,39 +799,39 @@ function update_mms_worker($arr)
 
 	$sql_common = " mb_id = '{$arr['mb_id']}'
 					, mms_idx = '{$arr['mms_idx']}'
-					, mmw_type = '{$arr['mmw_type']}'
-					, mmw_sort = '{$arr['mmw_sort']}'
-					, mmw_memo = '{$arr['mmw_memo']}'
-					, mmw_status = '{$arr['mmw_status']}'
-					, mmw_update_dt = '".G5_TIME_YMDHIS."'
+					, bmw_type = '{$arr['mmw_type']}'
+					, bmw_sort = '{$arr['mmw_sort']}'
+					, bmw_memo = '{$arr['mmw_memo']}'
+					, bmw_status = '{$arr['mmw_status']}'
+					, bmw_update_dt = '".G5_TIME_YMDHIS."'
 	";	
 
-    $sql = "SELECT * FROM {$g5['mms_worker_table']}
+    $sql = "SELECT * FROM {$g5['bom_mms_worker_table']}
             WHERE mb_id='{$arr['mb_id']}'
                 AND mms_idx='{$arr['mms_idx']}'
-                AND mmw_type='{$arr['mmw_type']}'
-                AND mmw_status='{$arr['mmw_status']}'
+                AND bmw_type='{$arr['mmw_type']}'
+                AND bmw_status='{$arr['mmw_status']}'
     ";
     // if($arr['mb_id']=='01053818229') {
     //     print_r3($sql);
     // }
     $one = sql_fetch($sql,1);
 	// 있으면 UPDATE
-	if($one['mmw_idx']) {
-		$sql = "UPDATE {$g5['mms_worker_table']} SET
+	if($one['bmw_idx']) {
+		$sql = "UPDATE {$g5['bom_mms_worker_table']} SET
                     {$sql_common}
-                WHERE mmw_idx='".$one['mmw_idx']."'
+                WHERE bmw_idx='".$one['bmw_idx']."'
         ";
 		sql_query($sql,1);
 	}
 	// 없으면 INSERT
 	else {
-		$sql = "INSERT INTO {$g5['mms_worker_table']} SET
+		$sql = "INSERT INTO {$g5['bom_mms_worker_table']} SET
                     {$sql_common}
-                    , mmw_reg_dt='".G5_TIME_YMDHIS."'
+                    , bmw_reg_dt='".G5_TIME_YMDHIS."'
         ";
 		sql_query($sql,1);
-		$one['mmw_idx'] = sql_insert_id();
+		$one['bmw_idx'] = sql_insert_id();
 	}
     // if($arr['mb_id']=='01053818229') {
     //     print_r3($sql);
