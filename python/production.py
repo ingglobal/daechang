@@ -13,6 +13,7 @@ sys.path.append(os.path.join(os.getcwd(), f'{data_path}/python'))
 # plc protocal 정의된 dictionary 배열 삽입
 from data_socket import data_socket
 from data_jig import data_jig
+from data_worker import data_worker
 
 # ------------------------------------------> 실제 운영시 0 으로 세팅해 주세요.
 demo = 0
@@ -180,8 +181,11 @@ def handle_data():
                                 
                                 # now get the worker info from production_item table.
                                 if bom_idxs_string:
+                                    # sql1 =  f" SELECT * FROM g5_1_production_item " \
+                                    #         f" WHERE pri_ing = 1 AND bom_idx IN ({bom_idxs_string}) AND pri_date = '{sck_date}' " \
+                                    #         f" ORDER BY pri_idx DESC LIMIT 1 "
                                     sql1 =  f" SELECT * FROM g5_1_production_item " \
-                                            f" WHERE pri_ing = 1 AND bom_idx IN ({bom_idxs_string}) AND pri_date = '{sck_date}' " \
+                                            f" WHERE bom_idx IN ({bom_idxs_string}) AND pri_date = '{sck_date}' " \
                                             f" ORDER BY pri_idx DESC LIMIT 1 "
                                     # print(sql1)
                                     my1.execute(sql1)
@@ -196,14 +200,23 @@ def handle_data():
                                         # Now, pri is a dictionary with field names as keys
                                         # print(pri)
                                         # print(pri['bom_idx'])
-                                        di = {}
-                                        di['pri_idx'] = pri['pri_idx']
-                                        di['bom_idx'] = pri['bom_idx']
-                                        di['count'] = count
-                                        di['sck_dt'] = sck_dt
-                                        pri_idx = myfunction.production_count(di)
-                                        del di
-                                        print('pri_idx =',pri_idx)
+                                        # 해당 설비, bom제품에 test_yn 1로 세팅된 작업자라면 pri_ing=1 인 걸로 보고 테스트 카운터 넣어줘야 함 (data/python/data_worker.py참고)
+                                        try:
+                                            if data_worker[str(mms_idx)][str(pri['bom_idx'])][str(pri['mb_id'])]["bmw_test_yn"]=='1':
+                                                pri['pri_ing'] = 1
+                                                print(pri['mb_id'], data_worker[str(mms_idx)][str(pri['bom_idx'])][str(pri['mb_id'])]["mb_name"], 'test 작업중')
+                                        except Exception as e:
+                                            print(f"data_worker.py read exception.(maybe not existed) {e}")
+
+                                        if pri['pri_ing']:
+                                            di = {}
+                                            di['pri_idx'] = pri['pri_idx']
+                                            di['bom_idx'] = pri['bom_idx']
+                                            di['count'] = count
+                                            di['sck_dt'] = sck_dt
+                                            pri_idx = myfunction.production_count(di)
+                                            del di
+                                            print('pri_idx =',pri_idx)
                                     # else:
                                     #     print("No rows were fetched.")
 
