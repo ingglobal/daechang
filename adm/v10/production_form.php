@@ -186,7 +186,7 @@ include_once('./_head.php');
                             LEFT JOIN {$g5['bom_customer_table']} boc ON bom.bom_idx = boc.bom_idx AND boc.boc_type = 'customer'
                         WHERE bom.bom_idx = '{$prm['bom_idx']}'
                     )
-                    UNION ALL
+                    UNION DISTINCT
                     ( SELECT bom.bom_idx
                             , bom.bom_name
                             , bom_part_no
@@ -205,7 +205,6 @@ include_once('./_head.php');
                             LEFT JOIN {$g5['bom_customer_table']} boc ON bom.bom_idx = boc.bom_idx AND boc.boc_type = 'provider'
                             LEFT JOIN {$g5['customer_table']} cst ON boc.cst_idx = cst.cst_idx
                         WHERE bot.bom_idx = '{$prm['bom_idx']}'
-                        ORDER BY bot.bit_reply
                     )
         ) db1
         ORDER BY bit_reply
@@ -214,6 +213,7 @@ include_once('./_head.php');
         $rs1 = sql_query($sql1,1);
         $row['rows'] = sql_num_rows($rs1);
         $row['rows_text'] = $row['rows'] ? '<span class="font_size_8 ml_10">(구성품수: '.$row['rows'].')</span>' : '';
+        
         for ($i=0; $row1=sql_fetch_array($rs1); $i++) {
             $row1['bit_main_class'] = $row1['bit_main_yn'] ? 'bit_main' : ''; // 대표제품 색상
             $len = strlen($row1['bit_reply'])/2+1;
@@ -267,7 +267,7 @@ include_once('./_head.php');
                             LEFT JOIN {$g5['bom_table']} AS bom USING(bom_idx)
                         WHERE prm_idx = '".$prm['prm_idx']."' 
                             AND pri.bom_idx = '".$row1['bom_idx']."' 
-                            AND bom.bom_type IN ('product','half','material')
+                            AND pri_date = '{$prm['prm_date']}'
                         ORDER BY pri_idx
             ";
             $rs3 = sql_query($sql3,1);

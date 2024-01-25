@@ -23,6 +23,7 @@ $chk_sql = " SELECT COUNT(*) AS cnt FROM {$g5['production_item_table']}
                     AND mb_id = '{$mb_id}'
                     AND pri_date = '{$pri_date}'
 ";
+// echo $msg = $chk_sql;exit;
 $chk_res = sql_fetch($chk_sql);
 
 if(!$chk_res['cnt']){
