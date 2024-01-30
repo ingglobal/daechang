@@ -588,7 +588,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                 ?>
                     <tr class="tr_total" tr_id="">
                         <td class="td_chk" style="display:none;"></td>
-                        <td colspan="5">합계 (UPH는 평균)</td>
+                        <td colspan="6">합계 (UPH는 평균)</td>
                         <td class="td_pri_hours font_size_7"></td><!-- 생산시간 -->
                         <td class="td_offdown"></td>
                         <td class="td_pri_uph"><?= $row['pri_uph_ave'] ?></td><!-- UPH -->
