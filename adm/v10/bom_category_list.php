@@ -133,7 +133,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
         $s_upd = '<a href="./bom_category_form.php?w=u&amp;bct_id='.$row['bct_idx'].'&amp;'.$qstr.'" class="btn btn_02"><span class="sound_only">'.get_text($row['bct_name']).' </span>수정</a> ';
 
         if ($is_admin == 'super'){ //(auth_check($auth[$sub_menu],"w",1)) { //($is_admin == 'super')
-            $s_del = '<a href="./bom_category_form_update.php?w=d&amp;bct_id='.$row['bct_idx'].'&amp;'.$qstr.'" onclick="return delete_confirm(this);" class="btn btn_02"><span class="sound_only">'.get_text($row['bct_name']).' </span>삭제</a> ';
+            $s_del = '<a href="./bom_category_form_update.php?w=d&amp;bct_idx='.$row['bct_idx'].'&amp;'.$qstr.'" onclick="return delete_confirm(this);" class="btn btn_02"><span class="sound_only">'.get_text($row['bct_name']).' </span>삭제</a> ';
         }
         // 해당 분류에 속한 제품의 수
         $sql1 = " SELECT COUNT(*) AS cnt FROM {$g5['bom_table']} WHERE bct_idx = '{$row['bct_idx']}' ";

@@ -63,6 +63,8 @@ else if ($w == "d")
                 and bct_idx <> '$bct_idx'
                 AND com_idx = '".$_SESSION['ss_com_idx']."'                
     ";
+    // print_r2($_GET);
+    // echo $sql;exit;
     $row = sql_fetch($sql);
     if ($row['cnt'] > 0)
         alert("이 분류에 속한 하위 분류가 있으므로 삭제 할 수 없습니다.\\n\\n하위분류를 우선 삭제하여 주십시오.");
