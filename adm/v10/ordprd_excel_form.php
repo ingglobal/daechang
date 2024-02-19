@@ -45,6 +45,7 @@ foreach ($files as $file) {
   }
 }
 
+
 $g5['title'] = '수주정보 엑셀등록';
 include_once('./_top_menu_order.php');
 include_once('./_head.php');
@@ -88,7 +89,10 @@ echo $g5['container_sub_title'];
         <td>
             <?php
             foreach ($latest_files as $file) {
-                echo $file.BR;
+                // echo $file.BR;
+                $file_arr = explode("/",$file);
+                // print_r2($file_arr);
+                echo $file_arr[sizeof($file_arr)-1].BR;
             }
             ?> 
         </td>

@@ -13,7 +13,6 @@ echo $g5['container_sub_title'];
 $sql_common = " FROM {$g5['bom_table']} AS bom
                     LEFT JOIN {$g5['bom_category_table']} AS bct ON bct.bct_idx = bom.bct_idx
                         AND bct.com_idx = '".$_SESSION['ss_com_idx']."'
-                    LEFT JOIN {$g5['bom_customer_table']} AS boc ON 
                     LEFT JOIN {$g5['customer_table']} AS cst ON cst.cst_idx = bom.cst_idx_provider
 "; 
 

@@ -34,6 +34,7 @@ else {
 
 // 엑셀 파일 저장
 $destfile = $prd_date.'.xlsx';
+// $destfile = '2024-02-09.xlsx';
 $dir = '/data/excels/order';
 if(is_file(G5_PATH.$dir.'/'.$destfile)) {
     @unlink(G5_PATH.$dir.'/'.$destfile);
