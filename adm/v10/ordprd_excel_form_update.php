@@ -32,6 +32,15 @@ else {
 	exit;
 }
 
+// 엑셀 파일 저장
+$destfile = $prd_date.'.xlsx';
+$dir = '/data/excels/order';
+if(is_file(G5_PATH.$dir.'/'.$destfile)) {
+    @unlink(G5_PATH.$dir.'/'.$destfile);
+}
+upload_common_file($_FILES[$file_name]['tmp_name'], $destfile, $dir);
+exit;
+
 // $upload_file=$_FILES['file_excel']['tmp_name'];
 // $reader->setReadDataOnly(TRUE);
 $spreadsheet = $reader->load($upload_file);	

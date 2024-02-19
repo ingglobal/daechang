@@ -6,6 +6,45 @@ include_once('./_common.php');
 auth_check($auth[$sub_menu],'w');
 
 
+// 예전 엑셀 파일 삭제!!
+
+// Define a function to compare files by modification time
+function compare_by_mtime($file1, $file2) {
+    $time1 = filemtime($file1);
+    $time2 = filemtime($file2);
+    if ($time1 == $time2) {
+      return 0;
+    }
+    return ($time1 > $time2) ? -1 : 1;
+}
+  
+// Get the files in the images folder
+$dir = '/data/excels/order';
+$files = glob(G5_PATH.$dir."/*");
+
+// Sort the files by modification time in descending order
+usort($files, "compare_by_mtime");
+
+// Get the first 10 files
+$latest_files = array_slice($files, 0, 10);
+
+
+// Delete the files that are older than today
+// $threshold = strtotime('today');
+// foreach ($files as $file) {
+//   if ($threshold >= filemtime($file)) {
+//     unlink($file);
+//   }
+// }
+
+// Delete the files that are not in the last 10 files
+$last_files = array_slice($files, -10);
+foreach ($files as $file) {
+  if (!in_array($file, $last_files)) {
+    unlink($file);
+  }
+}
+
 $g5['title'] = '수주정보 엑셀등록';
 include_once('./_top_menu_order.php');
 include_once('./_head.php');
@@ -42,6 +81,16 @@ echo $g5['container_sub_title'];
         <td>
             <?=help('엑셀은 표준 양식으로 등록해 주셔야 합니다.')?>
             <input type="file" name="file_excel_k1" class="frm_input">
+        </td>
+    </tr>
+	<tr>
+        <th scope="row">파일업로드기록</th>
+        <td>
+            <?php
+            foreach ($latest_files as $file) {
+                echo $file.BR;
+            }
+            ?> 
         </td>
     </tr>
 	</tbody>
