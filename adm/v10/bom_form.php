@@ -204,7 +204,8 @@ input[type="file"]::after{display:block;content:'파일선택\A(드래그앤드�
             ?>
 		</td>
     </tr>
-	<tr>
+    <!-- 거래처가 복수개로 변경되어서 거래처 선택하는 부분이 의미가 없어져서 숨김처리합니다.  -->
+	<tr style="display:none;">
         <th scope="row">고객사</th>
 		<td>
             <input type="hidden" name="cst_idx_customer" value="<?=${$pre}['cst_idx_customer']?>">

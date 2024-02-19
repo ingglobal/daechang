@@ -237,14 +237,22 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
         $com_c = get_table_meta('company','com_idx',$row['cst_idx_customer']);
         // bom_item 에서 뽑아야 하는 제품만 (완제품, 반제품)
         if(@in_array($row['bom_type'], $g5['set_bom_type_displays'])) {
-            $sql1 = "SELECT bom.bom_idx, cst_idx_provider, bom.bom_name, bom_part_no, bom_type, bom_price, bom_status, cst_name
+            // 업체 연동 부분이 cross 테이블로 분리되어서 조인으로 해결 불가
+            $sql1 = "SELECT bom.bom_idx, bom.bom_name, bom_part_no, bom_type, bom_price, bom_status
                         , bit.bit_idx, bit.bom_idx, bit.bit_main_yn, bit.bom_idx_child, bit.bit_reply, bit.bit_count
                     FROM {$g5['bom_item_table']} AS bit
                         LEFT JOIN {$g5['bom_table']} AS bom ON bom.bom_idx = bit.bom_idx_child
-                        LEFT JOIN {$g5['customer_table']} AS cst ON cst.cst_idx = bom.cst_idx_provider
                     WHERE bit.bom_idx = '".$row['bom_idx']."'
                     ORDER BY bit.bit_reply
             ";
+            // $sql1 = "SELECT bom.bom_idx, cst_idx_provider, bom.bom_name, bom_part_no, bom_type, bom_price, bom_status, cst_name
+            //             , bit.bit_idx, bit.bom_idx, bit.bit_main_yn, bit.bom_idx_child, bit.bit_reply, bit.bit_count
+            //         FROM {$g5['bom_item_table']} AS bit
+            //             LEFT JOIN {$g5['bom_table']} AS bom ON bom.bom_idx = bit.bom_idx_child
+            //             LEFT JOIN {$g5['customer_table']} AS cst ON cst.cst_idx = bom.cst_idx_provider
+            //         WHERE bit.bom_idx = '".$row['bom_idx']."'
+            //         ORDER BY bit.bit_reply
+            // ";
             // echo $sql1.BR;
             $rs1 = sql_query($sql1,1);
             $row['rows'] = sql_num_rows($rs1);
@@ -252,17 +260,32 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
             // echo $rowspan.'<br>';
             for ($j=0; $row1=sql_fetch_array($rs1); $j++) {
                 // print_r2($row1);
+                // 업체명 추출
+                $sql2 = "SELECT bom_idx, GROUP_CONCAT(cst_idx) AS cst_idxs, GROUP_CONCAT(cst_name) AS cst_names
+                        FROM {$g5['bom_customer_table']} AS boc
+                            LEFT JOIN {$g5['customer_table']} AS cst USING(cst_idx)
+                        WHERE bom_idx = '".$row1['bom_idx_child']."' AND boc_type = 'provider'
+                        GROUP BY bom_idx
+                ";
+                // echo $sql2.BR;
+                $one = sql_fetch($sql2,1);
+                $row1['cst_idxs_arr'] = explode(",",$one['cst_idxs']);
+                $row1['cst_names_arr'] = explode(",",$one['cst_names']);
+                if($row1['cst_idxs_arr'][0]) {
+                    $row1['cst_names'] = implode(", ",$row1['cst_names_arr']);
+                }
+                
                 $row1['bit_main_class'] = $row1['bit_main_yn'] ? 'bit_main' : ''; // 대표제품 색상
                 $row1['bit_main_class2'] = $row1['bit_main_yn'] ? 'bit_main2' : ''; // 대표제품 색상
                 $len = strlen($row1['bit_reply'])/2;
                 $row1['len'] = '<span class="btn_number">'.$len.'</span>';
                 for ($k=1; $k<$len; $k++) { $row1['nbsp'] .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; } // 들여쓰기공백
-                $row['parts_list'][] = '<div class="div_part" bom_idx="'.$row1['bom_idx'].'" bit_idx="'.$row1['bit_idx'].'">
+                $row['parts_list'][] = '<div class="div_part" bom_idx="'.$row1['bom_idx'].'" bom_idx_child="'.$row1['bom_idx_child'].'" bit_idx="'.$row1['bit_idx'].'">
                                             <span class="span_bom_part_no '.$row1['bit_main_class'].' font_size_7 font_color_white">'.$row1['nbsp'].$row1['len'].$row1['bom_part_no'].'</span>
                                             <spna class="sp_main_flag '.$row1['bit_main_class2'].' font_size_8">대표제품으로 설정</spna>
                                             <span class="span_bom_name">'.$row1['bom_name'].'</span>
                                             <span class="span_bom_type font_size_7">'.$g5['set_bom_type_value'][$row1['bom_type']].'</span>
-                                            <span class="span_cst_name font_size_8">'.$row1['cst_name'].'</span>
+                                            <span class="span_cst_name font_size_8">'.$row1['cst_names'].'</span>
                                             <span class="span_bom_price font_size_8">'.number_format($row1['bom_price']).'원</span>
                                             <span class="span_bit_count font_size_8">'.$row1['bit_count'].'개</span>
                                             <span class="span_bom_edit"><a href="./bom_form.php?w=u&bom_idx='.$row1['bom_idx_child'].'" target="_blank"><i class="fa fa-external-link"></i></a></span>
