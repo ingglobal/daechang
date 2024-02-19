@@ -89,7 +89,9 @@ SELECT * FROM g5_1_socket WHERE sck_idx = '4758550';
 
 
 DELETE FROM g5_1_socket WHERE sck_dt < '2023-05-03 00:00:00';
-SELECT COUNT(sck_idx) AS sck_sul FROM g5_1_socket;
+DELETE FROM g5_1_socket WHERE sck_dt < '2024-02-05 00:00:00';
+DELETE FROM g5_1_socket WHERE sck_dt < '2024-02-07 00:00:00';
+SELECT COUNT(sck_idx) AS sck_total FROM g5_1_socket;
 
 
 

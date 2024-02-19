@@ -142,15 +142,12 @@ include_once ('./_head.php');
 		</td>
     </tr>
 	<tr> 
-<<<<<<< HEAD
         <th scope="row">지그코드</th>
 		<td>
 			<input type="text" name="ppr_jig_code" value="<?=${$pre}['ppr_jig_code']?>" class="frm_input" style="width:40px;">
 		</td>
     </tr>
 	<tr> 
-=======
->>>>>>> 6648baf8549918dacbf80998f646bf2e62ddea83
         <th scope="row">소수점표현</th>
 		<td>
 			<input type="text" name="ppr_decimal" value="<?=${$pre}['ppr_decimal']?>" class="frm_input" style="width:40px;">

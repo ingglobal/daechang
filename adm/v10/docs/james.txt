@@ -3539,3 +3539,19 @@ WHERE n <= 2
 GROUP BY item_name
 ORDER BY n DESC, item_name
 
+네이버메일
+jamesjoa
+P5XE625F7MVY
+
+
+
+
+
+BOM 엑셀!!
+1. 설비별지그
+2. 작업자엑셀
+3. 설비엑셀
+
+수주등록... BOM 에 없다.
+
+

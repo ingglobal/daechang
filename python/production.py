@@ -66,9 +66,6 @@ def handle_data():
         pg1.execute(sql)
         data = pg1.fetchall()
 
-        # Close PostgreSQL cursor
-        pg1.close()
-
 
         # MySQL -------------------------------------------------------------
         idx = 0
@@ -266,6 +263,14 @@ def handle_data():
         # print(type(prev["192.168.100.137"]))
         # print(type(prev["192.168.100.137"][20480]))
         # Close database connections in the 'finally' block to ensure they are closed even if an exception occurs
+
+        sql = f"DELETE FROM g5_1_socket WHERE sck_dt < NOW() - INTERVAL '1 day' "
+        print(sql)
+        pg1.execute(sql)
+
+        # Commit changes and close curosr in Postgres
+        pgcon1.commit()
+        pg1.close()
         pgcon1.close()
         myconn1.close()
         

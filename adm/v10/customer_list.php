@@ -28,7 +28,7 @@ if ($stx) {
 		case 'cst_name' :
             $where[] = " ( cst_name LIKE '%{$stx}%' OR cst_names LIKE '%{$stx}%' ) ";
             break;
-		case ( $sfl == 'mb_id' || $sfl == 'cst_idx' ) :
+		case ( $sfl == 'mb_id' || $sfl == 'cst.cst_idx' ) :
             $where[] = " ({$sfl} = '{$stx}') ";
             break;
 		case ($sfl == 'mb_hp') :
@@ -75,7 +75,7 @@ $sql = " SELECT SQL_CALC_FOUND_ROWS DISTINCT cst.cst_idx, cst_name, cst_names, c
         {$sql_order}
 		LIMIT {$from_record}, {$rows} 
 ";
-// echo $sql;
+// echo $sql.BR;
 $result = sql_query($sql,1);
 $count = sql_fetch_array( sql_query(" SELECT FOUND_ROWS() as total ") ); 
 $total_count = $count['total'];
@@ -119,9 +119,9 @@ $qstr .= $qstr.'&ser_trm_idxs='.$ser_trm_idxs.'&ser_cst_type='.$ser_cst_type.'&s
     <!--option value="mb_name"<?php ;//echo get_selected($_GET['sfl'], "mb_name"); ?>>담당자</option-->
     <!--option value="mb_hp"<?php ;//echo get_selected($_GET['sfl'], "mb_hp"); ?>>담당자휴대폰</option-->
     <option value="cst_president"<?php echo get_selected($_GET['sfl'], "cst_president"); ?>>대표자</option>
-	<!--option value="cst.cst_idx"<?php ;//echo get_selected($_GET['sfl'], "cst.cst_idx"); ?>>업체고유번호</option-->
 	<!--option value="ctm.mb_id"<?php //echo get_selected($_GET['sfl'], "ctm.mb_is"); ?>>담당자아이디</option-->
     <option value="cst_status"<?php echo get_selected($_GET['sfl'], "cst_status"); ?>>상태</option>
+	<option value="cst.cst_idx"<?php echo get_selected($_GET['sfl'], "cst.cst_idx"); ?>>업체고유번호(ID)</option>
 </select>
 <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
 <input type="text" name="stx" value="<?php echo $stx ?>" id="stx" class="frm_input">
