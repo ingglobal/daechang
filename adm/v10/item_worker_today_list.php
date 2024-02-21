@@ -332,6 +332,9 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
             <tbody>
                 <?php
                 $testmatnual_total = 0;
+                // $uph_cnt = 0;
+                // $uph_total = 0;
+                // $pic_sum_total = 0;
                 for ($i = 0; $row = sql_fetch_array($result); $i++) {
                     // print_r2($row);
                     $row['cst_customer'] = get_table('customer', 'cst_idx', $row['cst_idx_customer'], 'cst_name');
@@ -526,6 +529,9 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                         $row['pri_uph_text'] = $row['pic']['pic_sum'] ? '<span title="' . $row['pri_work_seconds'] . '(s)=' . number_format($row['pri_work_hour'], 2) . '(h)">' . $row['pri_uph'] . '</span>' : 0;
                         $pri_uph_arr[] = $row['pri_uph'];
                         $pri_uph_total += $row['pri_uph'];
+                        // $uph_total += $row['pri_uph'];
+                        // $uph_cnt += ($row['pri_uph']) ? 1 : 0;
+                        // $pic_sum_total += (int)$row['pic']['pic_sum'];
                     }
                     //// 생산 시작 및 종료시간이 존재할 때 ----------------------------------------------------------
 
@@ -557,6 +563,8 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
 
                     $pri_ing_class = ($row['pri_ing'])?' btn_ing':'';
                     $pri_ing_state = ($row['pri_ing'])?'작업중':'비작업';
+
+                    
 
                     $bg = 'bg' . ($i % 2);
                 ?>
@@ -616,14 +624,14 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                     }
                 ?>
                     <tr class="tr_total" tr_id="">
-                        <td class="td_chk" style="display:none;"></td>
+                        <td class="td_chk" style="display:no ne;"></td>
                         <td colspan="6">합계 (UPH는 평균)</td>
                         <td class="td_pri_hours font_size_7"></td><!-- 생산시간 -->
                         <td class="td_offdown"></td>
                         <td class="td_pri_uph"><?= $row['pri_uph_ave'] ?></td><!-- UPH -->
                         <td class="td_pri_value"><?= number_format($target_goal) ?></td>
                         <td class="td_pic_value color_red"><?= number_format($production_total) ?></td>
-                        <td class="td_testmanual_cnt"><?=$testmatnual_total?></td>
+                        <td class="td_testmanual_cnt" style="display:none;"><?=$testmatnual_total?></td>
                         <td class="td_pri_rate color_yellow font_size_7"><?= number_format($row['rate'], 1) ?> %</td><!-- 달성율 -->
                         <td class="td_graph td_left"><?= $row['graph'] ?></td>
                     </tr>
