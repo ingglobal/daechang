@@ -315,7 +315,12 @@ $('#ser_prd_status').val('<?=$ser_prd_status?>');
             <?php ;//$row['shp_detail']?>
             <a href="./shipment_list.php?sfl=shp.prd_idx&stx=<?=$row['prd_idx']?>" target="_blank"><?=number_format($row['shp_total'])?></a>
         </td>
-        <td class="td_prd_status"><?=$g5['set_prd_status_value'][$row['prd_status']]?></td>
+        <td class="td_prd_status">
+            <select name="prd_status[<?=$i?>]" id="prd_status_<?=$i?>">
+                <?=$g5['set_prd_status_value_options']?>
+            </select>
+            <script>$('#prd_status_<?=$i?>').val('<?=(($row['prd_status'])?$row['prd_status']:'pending')?>');</script>
+        </td>
         <td class="td_mng td_mng_s">
 			<?php echo $s_mod ?><!-- 수정 -->
 		</td>
@@ -332,7 +337,7 @@ $('#ser_prd_status').val('<?=$ser_prd_status?>');
 
 <div class="btn_fixed_top">
     <input type="submit" name="act_button" value="선택출하" onclick="document.pressed=this.value" class="btn btn_03" style="display:no ne;">
-    <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02" style="display:none;">
+    <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02" style="display:no ne;">
     <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn btn_02" style="display:none;">
     <?php if (!auth_check($auth[$sub_menu],'w',1)) { ?>
         <a href="./<?=$fname?>_form.php" class="btn btn_01">추가하기</a>

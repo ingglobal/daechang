@@ -36,8 +36,15 @@ else {
 // $reader->setReadDataOnly(TRUE);
 $spreadsheet = $reader->load($upload_file);	
 $sheetCount = $spreadsheet->getSheetCount();
-
-
+for ($i = 0; $i < $sheetCount; $i++) {
+    $sheet = $spreadsheet->getSheet($i);
+    $sheetData = $sheet->toArray(null, true, true, true);
+    // echo $i.' ------------- <br>';
+    // print_r2($sheetData);
+    $allData[$i] = $sheetData;
+}
+// print_r2($allData[0]);
+// exit;
 // 엑셀 파일 저장 (최근 10개만 남겨놓기)
 $destfile = date("YmdHis").'.xlsx';
 // $destfile = '2024-02-09.xlsx';
@@ -75,15 +82,18 @@ $reg_boms = array(); //등록된 배열
 $err_boms = array();//저장이 안된 bom요소
 flush();
 ob_flush();
-$sheet = $spreadsheet->getSheet(0);
-$sheetData = $sheet->toArray(null, true, true, true);
+// $sheet = $spreadsheet->getSheet(0);
+// $sheetData = $sheet->toArray(null, true, true, true);
 $prd_date = $prd_date ? $prd_date : G5_TIME_YMD; // 발주일
 $idx = 0;
-for($i=1;$i<=sizeof($sheetData);$i++){
-    $a['bom_part_no'] = trim($sheetData[$i]['S']);//품번
-    $a['mms_serial_no'] = trim($sheetData[$i]['X']);//설비시리얼번호
-    $a['mb_8'] = trim($sheetData[$i]['Z']);//작업자번호
-    $a['bmw_type'] = $bmw_types[trim($sheetData[$i]['AA'])];//작업자유형
+for($i=1;$i<=sizeof($allData[0]);$i++){
+    if($i<=6) continue;
+    if(!trim($allData[0][$i]['S']) && !trim($allData[0][$i]['X']) && !trim($allData[0][$i]['Z']) && !trim($allData[0][$i]['AA']))
+        continue;
+    $a['bom_part_no'] = trim($allData[0][$i]['S']);//품번
+    $a['mms_serial_no'] = trim($allData[0][$i]['X']);//설비시리얼번호
+    $a['mb_8'] = trim($allData[0][$i]['Z']);//작업자번호
+    $a['bmw_type'] = $bmw_types[trim($allData[0][$i]['AA'])];//작업자유형
 
     // 품번이 없거나 형식에 맞지 않으면 건너뛴다.
     if(!$a['bom_part_no'] || !preg_match('/[A-Z0-9-]{5,20}/',$a['bom_part_no'])){
@@ -115,7 +125,7 @@ for($i=1;$i<=sizeof($sheetData);$i++){
                     AND bom_status = 'ok' ORDER BY bom_reg_dt DESC LIMIT 1
     ");
     if(!$bom_res['bom_idx']){
-        array_push($err_boms,'품번검색 error-'.$a['bom_part_no']);
+        array_push($err_boms,'품번검색 error-'.$i.':'.$a['bom_part_no']);
         continue;
     }
     else $bom_idx = $bom_res['bom_idx'];
@@ -125,7 +135,7 @@ for($i=1;$i<=sizeof($sheetData);$i++){
                     AND mms_status = 'ok'
     ");
     if(!$mms_res['mms_idx']){
-        array_push($err_boms,'설비검색 error-'.$a['mms_serial_no']);
+        array_push($err_boms,'설비검색 error-'.$i.':'.$a['mms_serial_no']);
         continue;
     }
     else $mms_idx = $mms_res['mms_idx'];
@@ -135,17 +145,17 @@ for($i=1;$i<=sizeof($sheetData);$i++){
                     AND mb_7 = 'ok' AND mb_leave_date = '' AND mb_intercept_date = ''
     ");
     if(!$mb_res['mb_id']){
-        array_push($err_boms,'작업자검색 error-'.$a['mb_8']);
+        array_push($err_boms,'작업자검색 error-'.$i.':'.$a['mb_8']);
         continue;
     }
     else $mb_id = $mb_res['mb_id'];
 
 
     /*
-    $a['bom_part_no'] = trim($sheetData[$i]['S']);//품번
-    $a['mms_serial_no'] = trim($sheetData[$i]['X']);//설비시리얼번호
-    $a['mb_8'] = trim($sheetData[$i]['Z']);//작업자번호
-    $a['bmw_type'] = $bmw_types[trim($sheetData[$i]['AA'])];//자업자유형
+    $a['bom_part_no'] = trim($allData[0][$i]['S']);//품번
+    $a['mms_serial_no'] = trim($allData[0][$i]['X']);//설비시리얼번호
+    $a['mb_8'] = trim($allData[0][$i]['Z']);//작업자번호
+    $a['bmw_type'] = $bmw_types[trim($allData[0][$i]['AA'])];//자업자유형
     */
     
 
@@ -171,7 +181,7 @@ for($i=1;$i<=sizeof($sheetData);$i++){
     $bmw_sort = ($bmw_sort_res['bmw_sort']) ? $bmw_sort_res['bmw_sort'] : 0;
     // 기존정보 있으면 건너뛰기
     if($chk_res['bmw_idx'])
-        continue;
+        ;//continue;
     // 기존정보 없으면 INSERT
     else {
         //혹시라도 같은 제품의 같은 설비에서 day또는 night가 존재하면 등록할 수 없다.
@@ -187,7 +197,7 @@ for($i=1;$i<=sizeof($sheetData);$i++){
             // echo $chk_sql."<br>";
             $chk_res = sql_fetch($chk_sql);
             if($chk_res['cnt']){
-                array_push($err_boms,$a['bmw_type'].'(중복) error- 설비:'.$a['mms_serial_no'].' / 품번: '.$a['bom_part_no'].' / 작업자번호:'.$a['mb_8']);
+                array_push($err_boms,$a['bmw_type'].'(중복) error-'.$i.' 설비:'.$a['mms_serial_no'].' / 품번: '.$a['bom_part_no'].' / 작업자번호:'.$a['mb_8']);
                 continue;
             }
         }
@@ -235,7 +245,7 @@ for($i=1;$i<=sizeof($sheetData);$i++){
 
     $idx++;
 
-    echo "<script> cont.innerHTML += '".$idx." - (bom:".$a['bom_part_no'].") / (mms:".$a['mms_serial_no'].") / (mb: ".$mb_id.") /  (mb_no: ".$a['mb_8'].") ---->> 완료<br>';</script>\n";
+    echo "<script> cont.innerHTML += '".$idx." - (bom:".$a['bom_part_no'].") / (mms:".$a['mms_serial_no'].") / (mb: ".$mb_id.") /  (mb_no: ".$a['mb_8'].") ---->> ".(($chk_res['bmw_idx'])?'기존에 이미 등록된 정보':'등록완료')."<br>';</script>\n";
 
     
     flush();
