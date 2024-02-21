@@ -23,6 +23,9 @@ if($is_member){
       else if(get_session('ss_kiosk_yn')){
         goto_url(G5_USER_ADMIN_KIOSK_URL);
       }
+      else{
+        goto_url(G5_BBS_URL.'/logout.php');
+      }
       return;
     }
   }

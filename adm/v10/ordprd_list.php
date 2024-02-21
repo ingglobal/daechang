@@ -342,7 +342,6 @@ $('#ser_prd_status').val('<?=$ser_prd_status?>');
     <?php if (!auth_check($auth[$sub_menu],'w',1)) { ?>
         <a href="./<?=$fname?>_form.php" class="btn btn_01">추가하기</a>
     <?php } ?>
-
 </div>
 </form>
 
