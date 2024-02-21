@@ -2535,6 +2535,16 @@ function get_dayAddDate($dateInfo,$dayNum){//임채완이 재정의 한 함수(�
 } 
 }
 
+//특정 날짜에 일수를 더한 날짜를 반환해 주는 함수
+if(!function_exists('get_secAddDateTime')){
+function get_secAddDateTime($dateInfo,$secNum){//임채완이 재정의 한 함수(일수계산)
+	$datetime = new DateTime($dateInfo);
+	$datetime->add(new DateInterval('PT'.abs($secNum).'S'));
+	$newDateTime = $datetime->format('Y-m-d H:i:s');
+	return $newDateTime;
+} 
+}
+
 //연관배열을 랜덤하게 재배치해 주는 함수
 if(!function_exists('key_array_shuffle')){
 function key_array_shuffle($arr){

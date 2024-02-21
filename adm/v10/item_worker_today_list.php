@@ -10,11 +10,27 @@ include_once('./_head.php');
 echo $g5['container_sub_title'];
 
 // st_date, en_date
-$st_date = $st_date ?: date("Y-m-d", G5_SERVER_TIME);
+$st_date = $ser_st_date ?: date("Y-m-d", G5_SERVER_TIME);
 $st_time = $st_time ?: '00:00:00';
 $en_time = $en_time ?: '23:59:59';
 $st_datetime = $st_date . ' ' . $st_time;
 $en_datetime = $st_date . ' ' . $en_time;
+
+foreach($_REQUEST as $key => $value ) {
+    if(substr($key,0,4)=='ser_') {
+        if(is_array($value)) {
+            foreach($value as $k2 => $v2 ) {
+                $qstr .= '&'.$key.'[]='.$v2;
+                $form_input .= '<input type="hidden" name="'.$key.'[]" value="'.$v2.'" class="frm_input">'.PHP_EOL;
+            }
+        }
+        else {
+            $qstr .= '&'.$key.'='.(($key == 'ser_stx')?urlencode(cut_str($value, 40, '')):$value);
+            $form_input .= '<input type="hidden" name="'.$key.'" value="'.(($key == 'ser_stx')?urlencode(cut_str($value, 40, '')):$value).'" class="frm_input">'.PHP_EOL;
+        }
+    }
+}
+
 
 // 검색일자
 $stat_date = $st_date ?: statics_date(G5_TIME_YMDHIS);
@@ -153,7 +169,7 @@ $rows = $g5['setting']['set_' . $g5['file_name'] . '_page_rows'] ? $g5['setting'
 if (!$page) $page = 1; // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
-$sql = " SELECT pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.*
+$sql = " SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.*
 		{$sql_common}
 		{$sql_search}
         {$sql_order}
@@ -212,7 +228,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
         background-color: #162037;
     }
 
-    .btn_pri_ing{background:#61677A;border:0px;color:#ddd;height:26px;line-height:26px;padding:0 3px;border-radius:3px;}
+    .btn_pri_ing{display:inline-block;background:#61677A;border:0px;color:#ddd;height:26px;line-height:26px;padding:0 3px;border-radius:3px;}
     .btn_ing{background:#4E4FEB;}
 </style>
 
@@ -229,7 +245,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
 
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get" style="width:100%;">
     <label for="sfl" class="sound_only">검색대상</label>
-    <input type="text" name="st_date" value="<?= $st_date ?>" id="st_date" class="frm_input" autocomplete="off" style="width:90px;">
+    <input type="text" name="ser_st_date" value="<?= $st_date ?>" id="st_date" class="frm_input" autocomplete="off" style="width:90px;">
     <select name="ser_mms_idx" id="ser_mms_idx">
         <option value="">설비전체</option>
         <?php
@@ -274,9 +290,8 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
     <input type="submit" class="btn_submit btn_submit2" value="검색">
 </form>
 
-
-<!-- <form name="form01" id="form01" action="./<?= $g5['file_name'] ?>_update.php" onsubmit="return form01_submit(this);" method="post"> -->
-<div name="form01" id="form01">
+<form name="form01" id="form01" action="./<?= $g5['file_name'] ?>_update.php" onsubmit="return form01_submit(this);" method="post">
+<!-- <div name="form01" id="form01"> -->
     <input type="hidden" name="sst" value="<?php echo $sst ?>">
     <input type="hidden" name="sod" value="<?php echo $sod ?>">
     <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
@@ -284,14 +299,17 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
     <input type="hidden" name="page" value="<?php echo $page ?>">
     <input type="hidden" name="token" value="">
     <input type="hidden" name="w" value="">
+    <input type="hidden" name="target_day" value="<?php echo $st_date ?>">
     <?= $form_input ?>
-
+    <script>
+    
+    </script>
     <div class="tbl_head01 tbl_wrap">
         <table>
             <caption><?php echo $g5['title']; ?> 목록</caption>
             <thead>
                 <tr>
-                    <th scope="col" id="pri_list_chk" style="display:none;">
+                    <th scope="col" id="pri_list_chk" style="display:no ne;">
                         <label for="chkall" class="sound_only">전체</label>
                         <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
                     </th>
@@ -306,7 +324,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                     <th scope="col">UPH</th>
                     <th scope="col">목표</th>
                     <th scope="col">생산수량</th>
-                    <th scope="col">입력수량</th>
+                    <!-- <th scope="col">입력수량</th> -->
                     <th scope="col" style="width:60px;">달성율</th>
                     <th scope="col" style="width:200px;">그래프</th>
                 </tr>
@@ -543,9 +561,17 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                     $bg = 'bg' . ($i % 2);
                 ?>
                     <tr class="<?= $bg ?>" tr_id="<?= $row[$pre . '_idx'] ?>">
-                        <td class="td_chk" style="display:none;">
-                            <input type="hidden" name="<?= $pre ?>_idx[<?= $i ?>]" value="<?= $row[$pre . '_idx'] ?>" id="<?= $pre ?>_idx_<?= $i ?>">
-                            <input type="checkbox" name="chk[]" value="<?= $i ?>" id="chk_<?= $i ?>">
+                        <td class="td_chk" style="display:no ne;">
+                            <input type="checkbox" name="chk[]" value="<?=$i?>" id="chk_<?=$i?>">
+                            <input type="hidden" name="prd_idx[<?=$i?>]" value="<?=$row['prd_idx']?>">
+                            <input type="hidden" name="pri_idx[<?=$i?>]" value="<?=$row['pri_idx']?>">
+                            <input type="hidden" name="bom_idx[<?=$i?>]" value="<?=$row['bom_idx']?>">
+                            <input type="hidden" name="bom_type[<?=$i?>]" value="<?=$row['bom_type']?>">
+                            <input type="hidden" name="bom_part_no[<?=$i?>]" value="<?=$row['bom_part_no']?>">
+                            <input type="hidden" name="bom_name[<?=$i?>]" value="<?=$row['bom_name']?>">
+                            <input type="hidden" name="mms_idx[<?=$i?>]" value="<?=$row['mms_idx']?>">
+                            <input type="hidden" name="mb_id[<?=$i?>]" value="<?=$row['mb_id']?>">
+                            <input type="hidden" name="pri_value[<?=$i?>]" value="<?=$row['pri_value']?>">
                         </td>
                         <td class="td_part_no_name td_left"><!-- 품번/품명 -->
                             <?= $row['bom_part_no'] ?><br><?= $row['bom_name'] ?>
@@ -555,14 +581,17 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                         <td class="td_mms_name"><a href="?ser_mms_idx=<?= $row['mms_idx'] ?>"><?= $g5['mms'][$row['mms_idx']]['mms_name'] ?></a></td><!-- 설비 -->
                         <td class="td_mb_name"><a href="?ser_mb_id=<?= $row['mb_id'] ?>"><?= $row['mb1']['mb_name'] ?></a></td><!-- 작업자 -->
                         <td class="td_pri_ing">
-                            <button pri_idx="<?=$row['pri_idx']?>" class="btn_pri_ing<?=$pri_ing_class?>"><?=$pri_ing_state?></button>
+                            <a href="javascript:" pri_idx="<?=$row['pri_idx']?>" class="btn_pri_ing<?=$pri_ing_class?>"><?=$pri_ing_state?></a>
                         </td><!--작업상태-->
                         <td class="td_pri_hours font_size_7"><?= $row['pri_hours'] ?><?= $row['pri_work_min_text'] ?></td><!-- 생산시간 -->
                         <td class="td_pri_offdown font_size_7"><?= $row['offdown_text'] ?></td><!-- 비가동 -->
                         <td class="td_pri_uph"><?= $row['pri_uph'] ?></td><!-- UPH -->
                         <td class="td_pri_value"><?= $row['pri_value'] ?></td><!-- 목표 -->
-                        <td class="td_pic_value color_red"><a href="./item_today_list.php?ser_mms_idx=<?= $row['mms_idx'] ?>&ser_mb_id=<?= $row['mb_id'] ?>"><?= (int)$row['pic']['pic_sum'] ?></a></td><!-- 수량 -->
-                        <td class="td_testmanual_cnt"><?=$row['testmanual_cnt']?></td><!-- 입력수량 -->
+                        <td class="td_pic_value color_red">
+                            <input type="hidden" name="pic_sum_old[<?=$i?>]" value="<?=(int)$row['pic']['pic_sum']?>">
+                            <input type="text" name="pic_sum[<?=$i?>]" value="<?=number_format((int)$row['pic']['pic_sum'])?>" onclick="javascript:numtoprice(this)" class="frm_input wg_wdx60 wg_right inp_pic_sum" style="color:#ff5e5e !important;">
+                        </td><!-- 수량 -->
+                        <!--td class="td_testmanual_cnt"><?=$row['testmanual_cnt']?></td--><!-- 입력수량 -->
                         <td class="td_pri_rate color_yellow font_size_7"><?= number_format($row['rate_percent'], 1) ?> %</td><!-- 달성율 -->
                         <td class="td_graph td_left"><!-- 그래프 -->
                             <?= $row['graph'] ?>
@@ -610,8 +639,13 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
         <a href="<?= G5_USER_URL ?>/cron/socket_read.php?sync=1" class="btn btn_02 btn_production_sync" style="display:none;">생산현황동기화</a>
     </div>
 
-</div><!--#form01-->
-
+    <div class="btn_fixed_top">
+        <?php if (!auth_check($auth[$sub_menu],'w',1)) { ?>
+        <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02" style="display:no ne;">
+        <?php } ?>
+    </div>
+<!-- </div> -->
+</form><!--#form01-->
 <?php echo get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, '?' . $qstr . '&amp;page='); ?>
 
 <script>
