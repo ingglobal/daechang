@@ -37,6 +37,20 @@ else {
 $spreadsheet = $reader->load($upload_file);	
 $sheetCount = $spreadsheet->getSheetCount();
 
+
+// 엑셀 파일 저장 (최근 10개만 남겨놓기)
+$destfile = date("YmdHis").'.xlsx';
+// $destfile = '2024-02-09.xlsx';
+$dir = '/data/excels/worker';
+if(is_file(G5_PATH.$dir.'/'.$destfile)) {
+    @unlink(G5_PATH.$dir.'/'.$destfile);
+}
+upload_common_file($upload_file, $destfile, $dir);
+// exit;
+
+
+
+
 $g5['title'] = '엑셀 업로드';
 // include_once('./_top_menu_applicant.php');
 include_once('./_head.php');
@@ -69,7 +83,7 @@ for($i=1;$i<=sizeof($sheetData);$i++){
     $a['bom_part_no'] = trim($sheetData[$i]['S']);//품번
     $a['mms_serial_no'] = trim($sheetData[$i]['X']);//설비시리얼번호
     $a['mb_8'] = trim($sheetData[$i]['Z']);//작업자번호
-    $a['bmw_type'] = $bmw_types[trim($sheetData[$i]['AA'])];//자업자유형
+    $a['bmw_type'] = $bmw_types[trim($sheetData[$i]['AA'])];//작업자유형
 
     // 품번이 없거나 형식에 맞지 않으면 건너뛴다.
     if(!$a['bom_part_no'] || !preg_match('/[A-Z0-9-]{5,20}/',$a['bom_part_no'])){

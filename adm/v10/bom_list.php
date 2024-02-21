@@ -25,10 +25,9 @@ if ($stx != "") {
 		case ( $sfl == 'bct_idx' ) :
 			$where[] = " {$sfl} LIKE '".trim($stx)."%' ";
             break;
-		case ( $sfl == 'bom_part_no' ) :
-			$where[] = " {$sfl} = '".trim($stx)."' ";
-            break;
-        
+		// case ( $sfl == 'bom_part_no' ) :
+		// 	$where[] = " {$sfl} = '".trim($stx)."' ";
+        //     break;
 		case ( $sfl == 'bom_idx' ) :
 			$where[] = " {$sfl} = '".trim($stx)."' ";
             break;

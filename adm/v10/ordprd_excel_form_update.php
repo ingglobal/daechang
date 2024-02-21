@@ -32,20 +32,24 @@ else {
 	exit;
 }
 
-// 엑셀 파일 저장
+// $upload_file=$_FILES['file_excel']['tmp_name'];
+// $reader->setReadDataOnly(TRUE);
+$spreadsheet = $reader->load($upload_file);	
+$sheetCount = $spreadsheet->getSheetCount();
+
+
+// 엑셀 파일 저장 (최근 10개만 남겨놓기)
 $destfile = $prd_date.'.xlsx';
 // $destfile = '2024-02-09.xlsx';
 $dir = '/data/excels/order';
 if(is_file(G5_PATH.$dir.'/'.$destfile)) {
     @unlink(G5_PATH.$dir.'/'.$destfile);
 }
-upload_common_file($_FILES[$file_name]['tmp_name'], $destfile, $dir);
-exit;
+upload_common_file($upload_file, $destfile, $dir);
+// exit;
 
-// $upload_file=$_FILES['file_excel']['tmp_name'];
-// $reader->setReadDataOnly(TRUE);
-$spreadsheet = $reader->load($upload_file);	
-$sheetCount = $spreadsheet->getSheetCount();
+
+
 
 $g5['title'] = '엑셀 업로드';
 // include_once('./_top_menu_applicant.php');

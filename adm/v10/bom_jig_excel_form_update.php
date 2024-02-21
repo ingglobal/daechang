@@ -33,6 +33,7 @@ else {
 	exit;
 }
 
+
 $upload_file=$_FILES['file_excel']['tmp_name'];
 // $reader->setReadDataOnly(TRUE);
 $spreadsheet = $reader->load($upload_file);	
@@ -47,6 +48,18 @@ for ($i = 0; $i < $sheetCount; $i++) {
 // print_r3($allData[0]);
 // print_r3(sizeof($allData));
 // exit;
+
+
+// 엑셀 파일 저장 (최근 10개만 남겨놓기)
+$destfile = date("YmdHis").'.xlsx';
+// $destfile = '2024-02-09.xlsx';
+$dir = '/data/excels/jig';
+if(is_file(G5_PATH.$dir.'/'.$destfile)) {
+    @unlink(G5_PATH.$dir.'/'.$destfile);
+}
+upload_common_file($upload_file, $destfile, $dir);
+// exit;
+
 
 
 
@@ -69,6 +82,7 @@ include_once ('./_tail.php');
 $countgap = 10; // 몇건씩 보낼지 설정
 $sleepsec = 1000;  // 백만분의 몇초간 쉴지 설정, default=200
 $maxscreen = 100; // 몇건씩 화면에 보여줄건지?
+$err_boms = array();    //저장이 안된 bom요소
 
 flush();
 ob_flush();
@@ -105,7 +119,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     // print_r3($arr);
 
     // 조건에 맞는 해당 라인만 추출
-    if( preg_match("/[0-9A-Z]/",$arr['serial']) || preg_match("/[-0-9A-Z]/",$arr['bom_part_no']) )
+    if( preg_match("/[0-9A-Z]/",$arr['location']) && preg_match("/[-0-9A-Z]/",$arr['bom_part_no']) )
     {
         // print_r3($arr);
 
@@ -118,10 +132,17 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
         $sql = " SELECT mms_idx, mms_name FROM {$g5['mms_table']} WHERE mms_serial_no = '".$arr['serial']."' ";
         $mms = sql_fetch($sql);
         // print_r3($mms);
+        if(!$mms['mms_idx']){
+            array_push($err_boms,'설비없음 error -> '.$arr['machine_name'].'('.$arr['serial'].')');
+        }
+    
         // 품번 찾기
         $sql = " SELECT bom_idx, bom_name FROM {$g5['bom_table']} WHERE bom_part_no = '".$arr['bom_part_no']."' ";
         $bom = sql_fetch($sql);
         // print_r3($bom);
+        if(!$bom['bom_idx']){
+            array_push($err_boms,'품번없음 error -> '.$arr['bom_part_no'].'('.$arr['bom_name'].')');
+        }
 
         // if only mms_idx, bom_idx exists.
         if( $mms['mms_idx'] && $bom['bom_idx'] &&preg_match("/[-0-9A-Z]/",$arr['bom_part_no']) ) {
@@ -197,4 +218,16 @@ if( is_array($g5['debug_msg']) ) {
 
 <script>
 	document.all.cont.innerHTML += "<br><br>총 <?php echo number_format($idx) ?>건 완료<br><br><font color=crimson><b>[끝]</b></font>";
+    var err_boms = <?=json_encode($err_boms)?>;
+	cont.innerHTML += "<br><br>등록 오류 (오류가 있는 경우 엑셀 파일에서 아래 사항을 확인해 주세요.)<br>----------------------------<br>";
+    if(err_boms.length > 0){
+        // reg_boms.forEach(function(e){
+        //     document.all.cont.innerHTML += e+"<br>";
+        // });
+        for(var idx in err_boms){
+            cont.innerHTML += err_boms[idx]+"<br>"; 
+        }
+    } else {
+        cont.innerHTML += "에러 없이 잘 등록되었습니다.<br>"; 
+    }
 </script>

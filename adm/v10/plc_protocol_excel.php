@@ -5,6 +5,35 @@ include_once('./_common.php');
 
 auth_check($auth[$sub_menu],'w');
 
+// Define a function to compare files by modification time
+function compare_by_mtime($file1, $file2) {
+    $time1 = filemtime($file1);
+    $time2 = filemtime($file2);
+    if ($time1 == $time2) {
+      return 0;
+    }
+    return ($time1 > $time2) ? -1 : 1;
+}
+  
+// Get the files in the images folder
+$dir = '/data/excels/plc';
+$files = glob(G5_PATH.$dir."/*");
+
+// Sort the files by modification time in descending order
+usort($files, "compare_by_mtime");
+
+// Get the first 10 files
+$latest_files = array_slice($files, 0, 10);
+
+// Delete the files that are not in the last 10 files
+$last_files = array_slice($files, -10);
+foreach ($files as $file) {
+  if (!in_array($file, $last_files)) {
+    unlink($file);
+  }
+}
+
+
 
 $g5['title'] = 'PLC프로토콜 엑셀관리';
 include_once('./_top_menu_bom.php');
@@ -62,6 +91,23 @@ echo $g5['container_sub_title'];
         <th scope="row">엑셀 파일</th>
         <td>
             <input type="file" name="file_excel" class="frm_input">
+        </td>
+    </tr>
+	<tr>
+        <th scope="row">파일업로드기록</th>
+        <td>
+            <?php
+            foreach ($latest_files as $file) {
+                // echo $file.BR;
+                $file_arr = explode("/",$file);
+                $file_name = $file_arr[sizeof($file_arr)-1];
+                // print_r2($file_arr);
+                // echo $file_arr[sizeof($file_arr)-1].BR;
+                $file_fullpath = $file;
+                $file_name_orig = $file_name;
+                echo '<a href="'.G5_USER_ADMIN_URL.'/lib/download.php?file_fullpath='.$file_fullpath.'&file_name_orig='.$file_name_orig.'">'.$file_arr[sizeof($file_arr)-1].'</a>'.BR;
+            }
+            ?>
         </td>
     </tr>
 	</tbody>
