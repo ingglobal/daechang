@@ -141,6 +141,9 @@ $colspan = 15;
     .td_shp_count.lacking a{color:darkorange;}
     .td_shp_detail a.btn {height: 25px;line-height: 25px;}
     .td_shp_detail a {text-decoration:underline;color:dodgerblue;line-height:1.3em;font-size:1.3em;}
+
+    .tbl_head01 tbody .tr_cancel td,
+    .tbl_head01 tbody .tr_cancel td a{color:#555 !important;}
 </style>
 
 <div class="local_ov01 local_ov">
@@ -288,7 +291,7 @@ $('#ser_prd_status').val('<?=$ser_prd_status?>');
         $prd_date = $row['prd_date']; //get_dayAddDate($row['ori_date'],1);
     ?>
 
-    <tr class="<?php echo $bg; ?>" tr_id="<?php echo $row['prd_idx'] ?>">
+    <tr class="<?php echo $bg; ?><?=(($row['prd_status']=='cancel')?' tr_cancel':'')?>" tr_id="<?php echo $row['prd_idx'] ?>">
         <td class="td_chk">
             <input type="hidden" name="<?=$pre?>_idx[<?=$i?>]" value="<?=$row[$pre.'_idx']?>" id="<?=$pre?>_idx_<?=$i?>">
             <input type="hidden" name="boc_idx[<?=$i?>]" value="<?=$row['boc_idx']?>" id="boc_idx_<?=$i?>">

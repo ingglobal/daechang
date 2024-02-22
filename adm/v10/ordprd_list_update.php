@@ -23,7 +23,6 @@ if ($_POST['act_button'] == "선택수정") {
 
         // 천단위 제거
         $_POST['prd_price'][$k] = preg_replace("/,/","",$_POST['prd_price'][$k]);
-
         // $sql = "UPDATE {$g5['production_table']} SET
         //             ori_name = '".sql_real_escape_string($_POST['ori_name'][$k])."',
         //             ori_price = '".$_POST['ori_price'][$k]."',
@@ -31,11 +30,17 @@ if ($_POST['act_button'] == "선택수정") {
         //             ori_min_cnt = '".$_POST['ori_min_cnt'][$k]."'
         //         WHERE ori_idx = '".$_POST['ori_idx'][$k]."'
         // ";
-        // // echo $sql.'<br>';
-        // sql_query($sql,1);
+        $sql = "UPDATE {$g5['production_table']} SET
+                    prd_status = '".$_POST['prd_status'][$k]."'
+                    , prd_update_dt = '".G5_TIME_YMDHIS."'
+                WHERE prd_idx = '".$_POST['prd_idx'][$k]."'
+        ";
+        
+        // echo $sql.'<br>';
+        sql_query($sql,1);
 
     }
-
+    // exit;
 } else if ($_POST['act_button'] == "선택삭제") {
     for ($i=0; $i<count($_POST['chk']); $i++)
     {
