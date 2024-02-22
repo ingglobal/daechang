@@ -1,5 +1,14 @@
 @charset "utf-8";
 
+#fsearch{padding:10px 0;position:fixed;top:55px;right:218px;z-index:550;}
+#fsearch input[type="text"]{padding-left:5px;}
+#fsearch #mms_idx{width:60px;}
+#fsearch input[type="submit"]{padding:0 10px;}
+#fsearch .sch_obj{height:34px;line-height:34px;}
+
+.ui-datepicker select.ui-datepicker-month,
+.ui-datepicker select.ui-datepicker-year{color:#fff !important;}
+
 .td_prd_id{}
 .td_prd_bom_part_no{width:160px;}
 .td_plt_in_cnt{width:100px;}

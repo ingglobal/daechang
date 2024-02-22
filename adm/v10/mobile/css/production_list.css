@@ -15,10 +15,14 @@
 .num_box .num span{position:absolute;top:5px;left:5px;}
 .num_box .num strong{}
 
-#fmms_idx{padding:10px 0;}
-#fmms_idx input[type="text"]{height:34px;line-height:34px;padding-left:5px;}
-#fmms_idx input[type="submit"]{height:34px;line-height:34px;padding:0 10px;}
+#fsearch{padding:10px 0;}
+#fsearch input[type="text"]{padding-left:5px;}
+#fsearch #mms_idx{width:60px;}
+#fsearch input[type="submit"]{padding:0 10px;}
+#fsearch .sch_obj{height:34px;line-height:34px;}
 
+.ui-datepicker select.ui-datepicker-month,
+.ui-datepicker select.ui-datepicker-year{color:#fff !important;}
 
 .formA{display:inline-block;position:relative;}
 .tooltip{display:none;}

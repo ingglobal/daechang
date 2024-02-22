@@ -2,6 +2,8 @@
 include_once('./_common.php');
 // include_once(G5_LIB_PATH.'/thumbnail.lib.php');
 //http://daechang2.epcs.co.kr/adm/v10/mobile/production_list.php?mms_idx=157
+
+$statics_day = ($statics_date) ? $statics_date : statics_date(G5_TIME_YMDHIS);
 $where_mms_idx = "";
 $mms_name = "";
 $mms = array();
@@ -41,7 +43,7 @@ $sql = " SELECT prd.prd_idx
             LEFT JOIN {$g5['member_table']} mb ON pri.mb_id = mb.mb_id
         WHERE pri.mb_id = '{$member['mb_id']}'
             AND pri.mms_idx = '{$mms_idx}'
-            AND prm.prm_date = '".statics_date(G5_TIME_YMDHIS)."'
+            AND prm.prm_date = '".$statics_day."'
             AND prm.prm_status = 'confirm'
             AND bom.bom_type IN ('product','half','material')
 ";
@@ -54,10 +56,30 @@ $g5['box_title'] .= '<br>Prodution for '.$member['mb_name'].' at '.statics_date(
 $mms_call_yn = $mms['mms_call_yn'];
 $mms_manual_yn = $mms['mms_manual_yn'];
 $mms_testmanual_yn = $mms['mms_testmanual_yn'];
+
 include_once('./_head.php');
+
+
+
 ?>
 <div id="plt_list">
     <h4 id="plt_ttl"><?=(($mms_name)?'['.$mms_name.']설비에서의 ':'')?>생산제품</h4>
+    <form id="fsearch" name="fsearch" method="get" autocomplete="off" onsubmit="return form_search(this);">
+        <label for="mms_idx" class="sound_only">설비번호</label>
+        <input type="text" name="mms_idx" id="mms_idx" placeholder="설비번호" value="<?=$mms_idx?>" class="sch_obj sch_input">
+        <label for="statics_date" class="sound_only">통계일</label>
+        <input type="text" name="statics_date" readonly id="statics_date" placeholder="통계일검색" value="<?=$statics_day?>" class="sch_obj sch_input bwg_date" style="width:100px;">
+        <input type="submit" name="act_button" class="sch_obj sch_btn" value="검색" onclick="document.pressed=this.value">
+        <input type="submit" name="act_button" class="sch_obj sch_today" value="오늘" onclick="document.pressed=this.value">
+    </form>
+    <script>
+    function form_search(f){
+        if(document.pressed == '오늘'){
+            f.statics_date.value = '';
+        }
+        return true;
+    }
+    </script>
     <ul class="ul_item">
         <?php for($i=0;$row=sql_fetch_array($result);$i++){ 
             
@@ -149,21 +171,15 @@ include_once('./_head.php');
         </li>
         <?php } ?>
         <?php if($i == 0){ ?>
-        <li class="li_empty">데이터가 존재하지 않습니다.<br>설비고유번호를 입력박스에<br>입력하고 검색해 주세요.</li>
-        <li>
-        <form id="fmms_idx" method="GET">
-            <input type="text" name="mms_idx" value="<?=$mms_idx?>">
-            <input type="submit" value="검색">
-        </form>
-        </li>
+        <li class="li_empty">데이터가 존재하지 않습니다.<br>설비번호를 입력박스에<br>입력하고 검색해 주세요.</li>
         <?php } ?>
     </ul>
 </div>
 <script>
 var url = '<?=G5_USER_ADMIN_MOBILE_URL?>/production_list.php<?=(($mms_idx)?'?mms_idx='.$mms_idx:'')?>';
-var mms_idx = <?=$mms_idx?>;
-var mms_manual_yn = <?=$mms_manual_yn?>;
-var mms_testmanual_yn = <?=$mms_testmanual_yn?>;
+var mms_idx = <?=(($mms_idx)?$mms_idx:0)?>;
+var mms_manual_yn = <?=(($mms_manual_yn)?$mms_manual_yn:0)?>;
+var mms_testmanual_yn = <?=(($mms_testmanual_yn)?$mms_testmanual_yn:0)?>;
 // alert(mms_testmanual_yn);
 
 $('.tooltip_close').on('click',function(){

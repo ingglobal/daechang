@@ -13,6 +13,8 @@ if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 if($config['cf_add_meta'])
     echo $config['cf_add_meta'].PHP_EOL;
 
+echo '<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/ui-darkness/jquery-ui.css">';
+echo '<link rel="stylesheet" href="'.G5_USER_ADMIN_JS_URL.'/jquery-ui-1.12.1/jquery-ui.structure.min.css">';
 echo '<link rel="stylesheet" href="'.G5_USER_ADMIN_MOBILE_URL.'/css/font-awesome.min.css?ver='.G5_CSS_VER.'">'.PHP_EOL;
 echo '<link rel="stylesheet" href="'.G5_USER_ADMIN_MOBILE_URL.'/css/mobile.css?ver='.G5_CSS_VER.'">'.PHP_EOL;
 if(is_file(G5_USER_ADMIN_MOBILE_CSS_PATH.'/'.$g5['file_name'].'.css')){
@@ -36,6 +38,9 @@ var g5_user_admin_url = "<?php echo G5_USER_ADMIN_URL; ?>";
 </script>
 <?php
 add_javascript('<script src="'.G5_JS_URL.'/jquery-1.12.4.min.js"></script>', 0);
+add_javascript('<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>',0);
+//날짜픽커
+add_javascript('<script src="'.G5_USER_ADMIN_JS_URL.'/bwg_datepicker.js"></script>', 0);
 add_javascript('<script src="'.G5_JS_URL.'/jquery-migrate-1.4.1.min.js"></script>', 0);
 add_javascript('<script src="'.G5_JS_URL.'/jquery.menu.js?ver='.G5_JS_VER.'"></script>', 0);
 add_javascript('<script src="'.G5_JS_URL.'/modernizr.custom.70111.js"></script>', 1); // overflow scroll 감지

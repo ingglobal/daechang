@@ -2,12 +2,13 @@
 include_once('./_common.php');
 include_once('./_head.php');
 
-$shif_date = statics_date(G5_TIME_YMDHIS);
+$shif_date = ($statics_date) ? $statics_date : statics_date(G5_TIME_YMDHIS);
 // $shif_date = statics_date('2023-06-05 09:15:20');
 
 $sql = " SELECT prd.prd_idx
             , prd.prd_start_date
             , pri.pri_idx
+            , pri.pri_date
             , pri.bom_idx
             , bom.bom_part_no
             , bom.bom_name
@@ -29,9 +30,13 @@ $sql = " SELECT prd.prd_idx
             LEFT JOIN {$g5['member_table']} mb ON pri.mb_id = mb.mb_id
         WHERE pri.mb_id = '{$member['mb_id']}'
             AND bom.bom_type = 'product'
-            AND prd.prd_start_date = '{$shif_date}'
+            AND pri.pri_date = '{$shif_date}'
             AND prd.prd_status = 'confirm'
 ";
+// echo "<br><br><br><br><br><br><br><br>";
+// echo $sql;
+//AND prd.prd_start_date = '{$shif_date}'를
+//AND pri.pri_date = '{$shif_date}'로 수정
 $result = sql_query($sql,1);
 ?>
 <style>
@@ -144,6 +149,20 @@ $result = sql_query($sql,1);
     <input type="submit" name="act_button" value="선택라벨출력" onclick="document.pressed=this.value" class="btn btn05 btn_label">
 </div>
 </form><!--#form01-->
+<form id="fsearch" name="fsearch" method="get" autocomplete="off" onsubmit="return form_search(this);">
+    <label for="statics_date" class="sound_only">통계일</label>
+    <input type="text" name="statics_date" readonly id="statics_date" placeholder="통계일검색" value="<?=$shif_date?>" class="sch_obj sch_input bwg_date" style="width:120px;">
+    <input type="submit" name="act_button" class="sch_obj sch_btn" value="검색" onclick="document.pressed=this.value">
+    <input type="submit" name="act_button" class="sch_obj sch_today" value="오늘" onclick="document.pressed=this.value">
+</form>
+<script>
+    function form_search(f){
+        if(document.pressed == '오늘'){
+            f.statics_date.value = '';
+        }
+        return true;
+    }
+    </script>
 </div><!--#main-->
 <script>
 $('.input_cnt').on('click',function(){
