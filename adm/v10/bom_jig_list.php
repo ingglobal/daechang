@@ -42,6 +42,11 @@ if ($ser_mms_idx) {
     $where[] = " boj.mms_idx = '".$ser_mms_idx."' ";
 }
 
+// 지그 검색
+if ($ser_boj_code) {
+    $where[] = " boj.boj_code = '".$ser_boj_code."' ";
+}
+
 
 // 최종 WHERE 생성
 if ($where)
@@ -77,10 +82,14 @@ $sql = " SELECT * {$sql_common} {$sql_search} {$sql_order} LIMIT {$from_record},
 // print_r3($sql);
 $result = sql_query($sql);
 
-$qstr .= '&ser_mms_idx='.$ser_mms_idx; // 추가로 확장해서 넘겨야 할 변수들
+$qstr .= '&ser_mms_idx='.$ser_mms_idx.'&ser_boj_code='.$ser_boj_code; // 추가로 확장해서 넘겨야 할 변수들
 
 $colspan = 16;
 ?>
+<style>
+    .btn_test {top:0;right:0;}
+    #fmbw {display:none;}
+</style>
 
 <div class="local_ov01 local_ov">
     <?php echo $listall ?>
@@ -91,12 +100,22 @@ $colspan = 16;
 include_once('./mbw_form.php');
 ?>
 
-<form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get">
+<form id="fsearch" name="fsearch" class="local_sch01 local_sch prelative" method="get">
 <select name="ser_mms_idx" id="ser_mms_idx">
     <option value="">전체설비</option>
     <?=$g5['mms_options']?>
 </select>
 <script>$('select[name=ser_mms_idx]').val("<?=$ser_mms_idx?>").attr('selected','selected');</script>
+<select name="ser_boj_code" id="ser_boj_code">
+    <option value="">지그선택</option>
+    <option value="L1">L1</option>
+    <option value="L2">L2</option>
+    <option value="L3">L3</option>
+    <option value="R1">R1</option>
+    <option value="R2">R2</option>
+    <option value="R3">R3</option>
+</select>
+<script>$('select[name=ser_boj_code]').val("<?=$ser_boj_code?>").attr('selected','selected');</script>
 <label for="sfl" class="sound_only">검색대상</label>
 <select name="sfl" id="sfl">
     <option value="bom_part_no"<?php echo get_selected($_GET['sfl'], "bom_part_no"); ?>>품번</option>
@@ -116,8 +135,14 @@ include_once('./mbw_form.php');
     <input type="text" name="stx2" value="<?php echo $stx2 ?>" id="stx2" class="frm_input">
 </div>
 <input type="submit" class="btn_submit" value="검색">
-
+<a href="" class="btn btn_03 btn_test pabsolute">테스트설정</a>
 </form>
+<script>
+    $(document).on('click','.btn_test',function(e){
+        e.preventDefault();
+        $('#fmbw').toggle();
+    });
+</script>
 
 <div class="local_desc01 local_desc" style="display:no ne;">
     <p>PLC NO는 엑셀의 번호와 차이가 있습니다. (엑셀은 1부터 시작, 배열번호는 0부터 시작)</p>

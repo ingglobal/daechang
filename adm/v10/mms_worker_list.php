@@ -77,6 +77,10 @@ $qstr .= '&sfl2='.$sfl2.'&stx2='.$stx2.'&ser_mms_idx='.$ser_mms_idx; // 추가�
 
 $colspan = 16;
 ?>
+<style>
+    .btn_test {top:0;right:0;}
+    #fmbw {display:none;}
+</style>
 
 <div class="local_ov01 local_ov">
     <?php echo $listall ?>
@@ -87,7 +91,7 @@ $colspan = 16;
 include_once('./mbw_form.php');
 ?>
 
-<form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get">
+<form id="fsearch" name="fsearch" class="local_sch01 local_sch prelative" method="get">
 
 <label for="sfl" class="sound_only">검색대상</label>
 <select name="ser_mms_idx" id="ser_mms_idx">
@@ -123,8 +127,14 @@ include_once('./mbw_form.php');
 <label for="stx2" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
 <input type="text" name="stx2" value="<?php echo $stx2 ?>" id="stx2" class="frm_input">
 <input type="submit" class="btn_submit" value="검색">
-
+<a href="" class="btn btn_03 btn_test pabsolute">테스트설정</a>
 </form>
+<script>
+    $(document).on('click','.btn_test',function(e){
+        e.preventDefault();
+        $('#fmbw').toggle();
+    });
+</script>
 
 <div class="local_desc01 local_desc" style="display:no ne;">
     <p>설비별로 제품 생산 시 작업자 할당이 되어 있지 않으면 정상적인 생산량 관리를 할 수 없습니다.</p>

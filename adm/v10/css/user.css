@@ -93,6 +93,8 @@ label[for^=set_] input[type=radio] {margin-right:2px;}
 .pl_10 {padding-left:10px;}
 .pr_5 {padding-right:5px !important;}
 .pr_10 {padding-right:10px !important;}
+.prelative {position:relative;}
+.pabsolute {position:absolute;}
 
 .set_send_type {margin-right:5px;}
 .set_send_type input {margin-right:4px;}

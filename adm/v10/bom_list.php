@@ -125,6 +125,8 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
 
 .sp_main_flag {padding:1px 3px;background:#000;color:#555;cursor:pointer;border:1px solid #555;}
 .sp_main_flag.bit_main2 {background:#3c2899;color:yellow;}
+.bom_jig {margin-left:10px;}
+.span_jig {margin-right:15px;color:#c8c85e;font-size:0.8em;}
 </style>
 
 <div class="local_ov01 local_ov">
@@ -223,6 +225,20 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
     <tbody>
     <?php
     for ($i=0; $row=sql_fetch_array($result); $i++) {
+        // 업체명 추출
+        $sql3 = "SELECT bom_idx, GROUP_CONCAT(cst_idx) AS cst_idxs, GROUP_CONCAT(cst_name) AS cst_names
+                FROM {$g5['bom_customer_table']} AS boc
+                    LEFT JOIN {$g5['customer_table']} AS cst USING(cst_idx)
+                WHERE bom_idx = '".$row['bom_idx']."' AND boc_type = 'provider'
+                GROUP BY bom_idx
+        ";
+        // echo $sql3.BR;
+        $one = sql_fetch($sql3,1);
+        $row['cst_idxs_arr'] = explode(",",$one['cst_idxs']);
+        $row['cst_names_arr'] = explode(",",$one['cst_names']);
+        if($row['cst_idxs_arr'][0]) {
+            $row['cst_names'] = implode(", ",$row['cst_names_arr']);
+        }
         //print_r2($row);
         // if($row['bct_name']){
         //     $cat_tree = category_tree_array($row['bct_idx']);
@@ -296,6 +312,27 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
             $row['bom_price_material_text'] = number_format($row['bom_price_material']);
             // 재료비율
             $row['bom_profit_ratio'] = ($row['bom_price']) ? number_format(($row['bom_price_material']/$row['bom_price']*100),1).'%' : '-';
+            
+
+            // 지그 연결 정보 추출
+            $sql4 = "SELECT GROUP_CONCAT(mms_idx) AS mms_idxs, GROUP_CONCAT(boj_code) AS boj_codes, GROUP_CONCAT(boj_test_yn) AS boj_test_yns, GROUP_CONCAT(boj_status) AS boj_statuses
+                    FROM {$g5['bom_jig_table']} AS boj
+                    WHERE bom_idx = '".$row['bom_idx']."'
+                    GROUP BY bom_idx
+            ";
+            // echo $sql4.BR;
+            $one = sql_fetch($sql4,1);
+            $row['mms_idxs_arr'] = explode(",",$one['mms_idxs']);
+            $row['boj_codes_arr'] = explode(",",$one['boj_codes']);
+            // print_r2($row['mms_idxs_arr']);
+            // echo sizeof($row['mms_idxs_arr']);
+            if($row['mms_idxs_arr'][0]) {
+                for($k=0;$k<sizeof($row['mms_idxs_arr']);$k++) {
+                    // echo $k.BR;
+                    $row['jig_list'][] = '<span class="span_jig">'.$g5['mms'][$row['mms_idxs_arr'][$k]]['mms_name'].' '.$row['boj_codes_arr'][$k].'</span>';
+                }
+            }
+        
         }
         // 자재인 경우
         else {
@@ -335,7 +372,7 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
             <input type="text" name="bom_name[<?php echo $i; ?>]" value="<?php echo htmlspecialchars2(cut_str($row['bom_name'],250, "")); ?>" required class="tbl_input required" style="width:250px;display:none;">
             ( ID: <?=$row['bom_idx']?> )&nbsp;&nbsp;&nbsp;<?=$row['bom_name']?><?=$row['rows_text']?>
         </td>
-        <td class="td_cst_name"><?=$row['cst_name']?></td><!-- 업체명 -->
+        <td class="td_cst_name"><?=$row['cst_names']?></td><!-- 업체명 -->
         <td class="td_bct_name"><?=$row['bct_name']?></td><!-- 차종 -->
         <td class="td_bom_type"><?=$g5['set_bom_type_value'][$row['bom_type']]?></td><!-- 타입 -->
         <td class="td_mng">
@@ -347,12 +384,13 @@ $qstr .= '&ser_bct_idx='.$ser_bct_idx.'&ser_bom_type='.$ser_bom_type; // 추가�
         <td>
         </td>
         <td class="td_bom_items" colspan="10">
+            <div class="bom_jig"><?=($row['jig_list'][0])?implode(" ",$row['jig_list']):''?></div>
             <?php
             if(is_array($row['parts_list'])) {
                 echo implode(" ",$row['parts_list']);
             }
             else {
-                echo '구성품 없음';
+                echo '&nbsp;&nbsp;구성품 없음';
             }
             ?>
         </td>
