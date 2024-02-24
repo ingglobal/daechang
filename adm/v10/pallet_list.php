@@ -5,9 +5,11 @@ include_once('./_common.php');
 auth_check($auth[$sub_menu], 'r');
 
 $g5['title'] = '파렛트조회';
-// include_once('./_top_menu_orp.php');
+include_once('./_top_menu_pallet.php');
 include_once('./_head.php');
-// echo $g5['container_sub_title'];
+if($is_admin){
+    echo $g5['container_sub_title'];
+}
 $sql_common = " FROM {$g5['pallet_table']} "; 
 $where = array();
 // 디폴트 검색조건 (used 제외)
