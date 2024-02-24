@@ -147,6 +147,11 @@ if ($ser_cst_idx_provider) {
     $cst_provider = get_table('customer', 'cst_idx', $ser_cst_idx_provider);
 }
 
+// 차종
+if($ser_bct_idx) {
+    $where[] = " bom.bct_idx = '".trim($ser_bct_idx)."' ";
+}
+
 // 작업자
 if ($ser_mb_id) {
     $where[] = " pri.mb_id = '" . $ser_mb_id . "' ";
@@ -268,6 +273,12 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
         $('select[name=ser_mms_idx]').val("<?= $ser_mms_idx ?>").attr('selected', 'selected');
     </script>
 
+    <select name="ser_bct_idx" id="ser_bct_idx">
+        <option value="">차종선택</option>
+        <?php foreach($g5['cats_key_val'] as $k => $v) { ?>
+        <option value="<?=$k?>" <?=get_selected($_GET['ser_bct_idx'], $k)?>><?=$v?></option>
+        <?php } ?>
+    </select>
     <select name="ser_mb_id" id="ser_mb_id">
         <option value="">작업자전체</option>
         <?php
