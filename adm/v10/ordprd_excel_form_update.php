@@ -39,7 +39,8 @@ $sheetCount = $spreadsheet->getSheetCount();
 
 
 // 엑셀 파일 저장 (최근 10개만 남겨놓기)
-$destfile = $prd_date.'.xlsx';
+$extension = pathinfo($upload_file_name, PATHINFO_EXTENSION);
+$destfile = date("YmdHis").'.'.$extension;
 // $destfile = '2024-02-09.xlsx';
 $dir = '/data/excels/order';
 if(is_file(G5_PATH.$dir.'/'.$destfile)) {

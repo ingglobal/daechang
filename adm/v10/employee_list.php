@@ -190,8 +190,9 @@ $colspan = 16;
 
 <div class="btn_fixed_top">
     <?php if (!auth_check($auth[$sub_menu],"r,w",1)) { ?>
-       <a href="javascript:" id="btn_excel_upload2" class="btn btn_02">임직원엑셀등록</a>
-       <a href="javascript:" id="btn_excel_upload" class="btn btn_02" style="margin-right:50px;">작업자엑셀등록</a>
+        <!-- 240224 이병구 대표가 숨김처리해 달라고 요청하심 -->
+        <a href="javascript:" id="btn_excel_upload2" class="btn btn_02" style="display:none;">임직원엑셀등록</a>
+        <a href="javascript:" id="btn_excel_upload" class="btn btn_02" style="margin-right:50px;display:none;">작업자엑셀등록</a>
     <?php } ?>
     <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02" style="display:none;">
     <?php if (!auth_check($auth[$sub_menu],'w',1)) { //($member['mb_manager_yn']) { ?>

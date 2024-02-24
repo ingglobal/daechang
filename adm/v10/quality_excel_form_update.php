@@ -54,6 +54,18 @@ for ($i = 0; $i < $sheetCount; $i++) {
 // exit;
 
 
+// 엑셀 파일 저장 (최근 10개만 남겨놓기)
+$extension = pathinfo($_FILES['file_excel']['name'], PATHINFO_EXTENSION);
+$destfile = date("YmdHis").'.'.$extension;
+// $destfile = '2024-02-09.xlsx';
+$dir = '/data/excels/quality';
+if(is_file(G5_PATH.$dir.'/'.$destfile)) {
+    @unlink(G5_PATH.$dir.'/'.$destfile);
+}
+upload_common_file($upload_file, $destfile, $dir);
+// exit;
+
+
 
 $g5['title'] = '엑셀 업로드';
 //include_once('./_top_menu_applicant.php');

@@ -22,7 +22,7 @@ $files = glob(G5_PATH.$dir."/*");
 usort($files, "compare_by_mtime");
 
 // Get the first 10 files
-$latest_files = array_slice($files, 0, 10);
+$latest_files = array_slice($files, 0, 30);
 
 // Delete the files that are not in the last 10 files
 $last_files = array_slice($files, -30);

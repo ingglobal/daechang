@@ -47,7 +47,7 @@ if($ser_bct_idx) {
 }
 
 // 타입
-$ser_bom_type = $ser_bom_type ?: 'all';
+$ser_bom_type = $ser_bom_type ?: 'product';
 if($ser_bom_type!='all') {  // all 인 경우는 조건이 필요없음
     $where[] = " bom_type = '".trim($ser_bom_type)."' ";
 }

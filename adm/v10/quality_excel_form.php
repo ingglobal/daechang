@@ -4,6 +4,35 @@ include_once('./_common.php');
 
 auth_check($auth[$sub_menu],'w');
 
+// Define a function to compare files by modification time
+function compare_by_mtime($file1, $file2) {
+    $time1 = filemtime($file1);
+    $time2 = filemtime($file2);
+    if ($time1 == $time2) {
+      return 0;
+    }
+    return ($time1 > $time2) ? -1 : 1;
+}
+  
+// Get the files in the images folder
+$dir = '/data/excels/quality';
+$files = glob(G5_PATH.$dir."/*");
+
+// Sort the files by modification time in descending order
+usort($files, "compare_by_mtime");
+
+// Get the first 10 files
+$latest_files = array_slice($files, 0, 10);
+
+// Delete the files that are not in the last 10 files
+$last_files = array_slice($files, -30);
+foreach ($files as $file) {
+  if (!in_array($file, $last_files)) {
+    unlink($file);
+  }
+}
+
+
 $g5['title'] = '불량엑셀등록';
 include_once('./_top_menu_quality.php');
 include_once('./_head.php');
@@ -48,6 +77,23 @@ echo $g5['container_sub_title'];
         <th scope="row">적용 년월</th>
         <td>
             <input type="text" name="ym" class="frm_input" style="width:65px;" value="<?=substr(G5_TIME_YMD,0,7)?>"> 엑셀에서 제공하는 월 정보가 우선합니다. (엑셀에는 년도가 없음)
+        </td>
+    </tr>
+	<tr>
+        <th scope="row">파일업로드기록</th>
+        <td>
+            <?php
+            foreach ($latest_files as $file) {
+                // echo $file.BR;
+                $file_arr = explode("/",$file);
+                $file_name = $file_arr[sizeof($file_arr)-1];
+                // print_r2($file_arr);
+                // echo $file_arr[sizeof($file_arr)-1].BR;
+                $file_fullpath = $file;
+                $file_name_orig = $file_name;
+                echo '<a href="'.G5_USER_ADMIN_URL.'/lib/download.php?file_fullpath='.$file_fullpath.'&file_name_orig='.$file_name_orig.'">'.$file_arr[sizeof($file_arr)-1].'</a>'.BR;
+            }
+            ?>
         </td>
     </tr>
 	</tbody>

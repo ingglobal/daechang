@@ -45,8 +45,11 @@ for ($i = 0; $i < $sheetCount; $i++) {
 }
 // print_r2($allData[0]);
 // exit;
+
+
 // 엑셀 파일 저장 (최근 10개만 남겨놓기)
-$destfile = date("YmdHis").'.xlsx';
+$extension = pathinfo($upload_file_name, PATHINFO_EXTENSION);
+$destfile = date("YmdHis").'.'.$extension;
 // $destfile = '2024-02-09.xlsx';
 $dir = '/data/excels/worker';
 if(is_file(G5_PATH.$dir.'/'.$destfile)) {
