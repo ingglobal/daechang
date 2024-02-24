@@ -4,6 +4,12 @@ include_once('./_common.php');
 
 check_demo();
 
+if ($_POST['w'] == 'u'){
+    $_POST['act_button'] = '선택수정';
+}
+
+// echo $_POST['act_button'];exit;
+
 if (!count($_POST['chk'])) {
     alert($_POST['act_button']." 하실 항목을 하나 이상 체크하세요.");
 }
@@ -13,6 +19,7 @@ if (!count($_POST['chk'])) {
 auth_check($auth[$sub_menu], 'w');
 
 check_admin_token();
+// print_r2($_POST);exit;
 if ($_POST['act_button'] == "선택수정") {
     /*
     $target_day

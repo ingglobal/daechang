@@ -16,17 +16,16 @@ $en_time = $en_time ?: '23:59:59';
 $st_datetime = $st_date . ' ' . $st_time;
 $en_datetime = $st_date . ' ' . $en_time;
 
-foreach($_REQUEST as $key => $value ) {
-    if(substr($key,0,4)=='ser_') {
-        if(is_array($value)) {
-            foreach($value as $k2 => $v2 ) {
-                $qstr .= '&'.$key.'[]='.$v2;
-                $form_input .= '<input type="hidden" name="'.$key.'[]" value="'.$v2.'" class="frm_input">'.PHP_EOL;
+foreach ($_REQUEST as $key => $value) {
+    if (substr($key, 0, 4) == 'ser_') {
+        if (is_array($value)) {
+            foreach ($value as $k2 => $v2) {
+                $qstr .= '&' . $key . '[]=' . $v2;
+                $form_input .= '<input type="hidden" name="' . $key . '[]" value="' . $v2 . '" class="frm_input">' . PHP_EOL;
             }
-        }
-        else {
-            $qstr .= '&'.$key.'='.(($key == 'ser_stx')?urlencode(cut_str($value, 40, '')):$value);
-            $form_input .= '<input type="hidden" name="'.$key.'" value="'.(($key == 'ser_stx')?urlencode(cut_str($value, 40, '')):$value).'" class="frm_input">'.PHP_EOL;
+        } else {
+            $qstr .= '&' . $key . '=' . (($key == 'ser_stx') ? urlencode(cut_str($value, 40, '')) : $value);
+            $form_input .= '<input type="hidden" name="' . $key . '" value="' . (($key == 'ser_stx') ? urlencode(cut_str($value, 40, '')) : $value) . '" class="frm_input">' . PHP_EOL;
         }
     }
 }
@@ -148,8 +147,8 @@ if ($ser_cst_idx_provider) {
 }
 
 // 차종
-if($ser_bct_idx) {
-    $where[] = " bom.bct_idx = '".trim($ser_bct_idx)."' ";
+if ($ser_bct_idx) {
+    $where[] = " bom.bct_idx = '" . trim($ser_bct_idx) . "' ";
 }
 
 // 작업자
@@ -226,15 +225,29 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
     .td_pic_value a {
         color: #ff5e5e;
     }
-    .td_testmanual_cnt{
+
+    .td_testmanual_cnt {
         color: skyblue !important;
     }
+
     .tr_total td {
         background-color: #162037;
     }
 
-    .btn_pri_ing{display:inline-block;background:#61677A;border:0px;color:#ddd;height:26px;line-height:26px;padding:0 3px;border-radius:3px;}
-    .btn_ing{background:#4E4FEB;}
+    .btn_pri_ing {
+        display: inline-block;
+        background: #61677A;
+        border: 0px;
+        color: #ddd;
+        height: 26px;
+        line-height: 26px;
+        padding: 0 3px;
+        border-radius: 3px;
+    }
+
+    .btn_ing {
+        background: #4E4FEB;
+    }
 </style>
 
 <div class="local_ov01 local_ov">
@@ -275,8 +288,8 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
 
     <select name="ser_bct_idx" id="ser_bct_idx">
         <option value="">차종선택</option>
-        <?php foreach($g5['cats_key_val'] as $k => $v) { ?>
-        <option value="<?=$k?>" <?=get_selected($_GET['ser_bct_idx'], $k)?>><?=$v?></option>
+        <?php foreach ($g5['cats_key_val'] as $k => $v) { ?>
+            <option value="<?= $k ?>" <?= get_selected($_GET['ser_bct_idx'], $k) ?>><?= $v ?></option>
         <?php } ?>
     </select>
     <select name="ser_mb_id" id="ser_mb_id">
@@ -302,7 +315,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
 </form>
 
 <form name="form01" id="form01" action="./<?= $g5['file_name'] ?>_update.php" onsubmit="return form01_submit(this);" method="post">
-<!-- <div name="form01" id="form01"> -->
+    <!-- <div name="form01" id="form01"> -->
     <input type="hidden" name="sst" value="<?php echo $sst ?>">
     <input type="hidden" name="sod" value="<?php echo $sod ?>">
     <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
@@ -313,7 +326,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
     <input type="hidden" name="target_day" value="<?php echo $st_date ?>">
     <?= $form_input ?>
     <script>
-    
+
     </script>
     <div class="tbl_head01 tbl_wrap">
         <table>
@@ -383,11 +396,11 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                         // 실제 적용시간 범위
                         $row['dta_start_his'] = preg_replace("/:/", "", substr($row['dt']['pic_min_dt'], 11));
                         $row['dta_end_his'] = preg_replace("/:/", "", substr($row['dt']['pic_max_dt'], 11));
-                        
+
 
                         // 계획정지 (일단은 설비 상관없이 전체 적용), 위에서 만들어둔 배열 활용
                         for ($j = 0; $j < @sizeof($offwork); $j++) {
-                            
+
                             // 같은 값도 있네요. (통과)
                             if ($row['dta_start_his'] == $row['dta_end_his']) {
                                 continue;
@@ -404,13 +417,12 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                             }
                             // 걸쳐 있는 경우
                             else if ($row['dta_start_his'] <= $offwork[$j]['end'] && $row['dta_end_his'] >= $offwork[$j]['start']) {
-                               
+
                                 if ($row['dta_start_his'] >= $offwork[$j]['start']) {
                                     $row['offwork_arr'][$i][$j]['start'] = $row['dta_start_his'];  // 하단 비가동에서 재활용
                                     $row['offwork_arr'][$i][$j]['end'] = $offwork[$j]['end'];      // 하단 비가동에서 재활용
-                                    
+
                                     $row['offwork_sec'][$i] += num2seconds($offwork[$j]['end']) - num2seconds($row['dta_start_his']);
-                                  
                                 }
                                 if ($row['dta_end_his'] <= $offwork[$j]['end']) {
                                     $row['offwork_arr'][$i][$j]['start'] = $offwork[$j]['start'];  // 하단 비가동에서 재활용
@@ -420,7 +432,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                                 }
                             }
                         }
-                        
+
                         $row['offwork_hour'][$i] = $row['offwork_sec'][$i] ? $row['offwork_sec'][$i] / 3600 : 0;  // convert to hour unit.
                         $row['pri_work_hour'] -= $row['offwork_hour'][$i];  // 2. 2차 작업시간 계산: 계획정지 시간 제외해 줌 //<-----------
 
@@ -431,9 +443,9 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
 
                             // 해당 설비인 경우만 적용함
                             if ($downtime[$j]['mms_idx'] == $row['mms_idx']) {
-                                
+
                                 if ($row['bom_idx'] == 261 && $row['mms_idx'] == 140 && $row['mb_id'] == '01056058011') {
-                                
+
                                     // 같은 값도 있네요. (통과)
                                     if ($row['dta_start_his'] == $row['dta_end_his']) {
                                         continue;
@@ -567,30 +579,30 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                                         AND mit_date = '{$st_date}'
                     ";
                     $mit_res = sql_fetch($mit_sql);
-                    $row['testmanual_cnt'] = isset($mit_res['mit_value'])?$mit_res['mit_value']:0;
+                    $row['testmanual_cnt'] = isset($mit_res['mit_value']) ? $mit_res['mit_value'] : 0;
                     $testmatnual_total += $row['testmanual_cnt'];
                     // 버튼들
                     $s_mod = '<a href="./' . $fname . '_form.php?' . $qstr . '&amp;w=u&' . $pre . '_idx=' . $row[$pre . '_idx'] . '" class="btn btn_03">수정</a>';
 
-                    $pri_ing_class = ($row['pri_ing'])?' btn_ing':'';
-                    $pri_ing_state = ($row['pri_ing'])?'작업중':'비작업';
+                    $pri_ing_class = ($row['pri_ing']) ? ' btn_ing' : '';
+                    $pri_ing_state = ($row['pri_ing']) ? '작업중' : '비작업';
 
-                    
+
 
                     $bg = 'bg' . ($i % 2);
                 ?>
                     <tr class="<?= $bg ?>" tr_id="<?= $row[$pre . '_idx'] ?>">
                         <td class="td_chk" style="display:no ne;">
-                            <input type="checkbox" name="chk[]" value="<?=$i?>" id="chk_<?=$i?>">
-                            <input type="hidden" name="prd_idx[<?=$i?>]" value="<?=$row['prd_idx']?>">
-                            <input type="hidden" name="pri_idx[<?=$i?>]" value="<?=$row['pri_idx']?>">
-                            <input type="hidden" name="bom_idx[<?=$i?>]" value="<?=$row['bom_idx']?>">
-                            <input type="hidden" name="bom_type[<?=$i?>]" value="<?=$row['bom_type']?>">
-                            <input type="hidden" name="bom_part_no[<?=$i?>]" value="<?=$row['bom_part_no']?>">
-                            <input type="hidden" name="bom_name[<?=$i?>]" value="<?=$row['bom_name']?>">
-                            <input type="hidden" name="mms_idx[<?=$i?>]" value="<?=$row['mms_idx']?>">
-                            <input type="hidden" name="mb_id[<?=$i?>]" value="<?=$row['mb_id']?>">
-                            <input type="hidden" name="pri_value[<?=$i?>]" value="<?=$row['pri_value']?>">
+                            <input type="checkbox" name="chk[]" value="<?= $i ?>" id="chk_<?= $i ?>">
+                            <input type="hidden" name="prd_idx[<?= $i ?>]" value="<?= $row['prd_idx'] ?>">
+                            <input type="hidden" name="pri_idx[<?= $i ?>]" value="<?= $row['pri_idx'] ?>">
+                            <input type="hidden" name="bom_idx[<?= $i ?>]" value="<?= $row['bom_idx'] ?>">
+                            <input type="hidden" name="bom_type[<?= $i ?>]" value="<?= $row['bom_type'] ?>">
+                            <input type="hidden" name="bom_part_no[<?= $i ?>]" value="<?= $row['bom_part_no'] ?>">
+                            <input type="hidden" name="bom_name[<?= $i ?>]" value="<?= $row['bom_name'] ?>">
+                            <input type="hidden" name="mms_idx[<?= $i ?>]" value="<?= $row['mms_idx'] ?>">
+                            <input type="hidden" name="mb_id[<?= $i ?>]" value="<?= $row['mb_id'] ?>">
+                            <input type="hidden" name="pri_value[<?= $i ?>]" value="<?= $row['pri_value'] ?>">
                         </td>
                         <td class="td_part_no_name td_left"><!-- 품번/품명 -->
                             <?= $row['bom_part_no'] ?><br><?= $row['bom_name'] ?>
@@ -600,17 +612,17 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                         <td class="td_mms_name"><a href="?ser_mms_idx=<?= $row['mms_idx'] ?>"><?= $g5['mms'][$row['mms_idx']]['mms_name'] ?></a></td><!-- 설비 -->
                         <td class="td_mb_name"><a href="?ser_mb_id=<?= $row['mb_id'] ?>"><?= $row['mb1']['mb_name'] ?></a></td><!-- 작업자 -->
                         <td class="td_pri_ing">
-                            <a href="javascript:" pri_idx="<?=$row['pri_idx']?>" class="btn_pri_ing<?=$pri_ing_class?>"><?=$pri_ing_state?></a>
+                            <a href="javascript:" pri_idx="<?= $row['pri_idx'] ?>" class="btn_pri_ing<?= $pri_ing_class ?>"><?= $pri_ing_state ?></a>
                         </td><!--작업상태-->
                         <td class="td_pri_hours font_size_7"><?= $row['pri_hours'] ?><?= $row['pri_work_min_text'] ?></td><!-- 생산시간 -->
                         <td class="td_pri_offdown font_size_7"><?= $row['offdown_text'] ?></td><!-- 비가동 -->
                         <td class="td_pri_uph"><?= $row['pri_uph'] ?></td><!-- UPH -->
                         <td class="td_pri_value"><?= $row['pri_value'] ?></td><!-- 목표 -->
                         <td class="td_pic_value color_red">
-                            <input type="hidden" name="pic_sum_old[<?=$i?>]" value="<?=(int)$row['pic']['pic_sum']?>">
-                            <input type="text" name="pic_sum[<?=$i?>]" value="<?=number_format((int)$row['pic']['pic_sum'])?>" onclick="javascript:numtoprice(this)" class="frm_input wg_wdx60 wg_right inp_pic_sum" style="color:#ff5e5e !important;">
+                            <input type="hidden" name="pic_sum_old[<?= $i ?>]" value="<?= (int)$row['pic']['pic_sum'] ?>">
+                            <input type="text" name="pic_sum[<?= $i ?>]" value="<?= number_format((int)$row['pic']['pic_sum']) ?>" onclick="javascript:numtoprice(this)" class="frm_input wg_wdx60 wg_right inp_pic_sum" style="color:#ff5e5e !important;">
                         </td><!-- 수량 -->
-                        <!--td class="td_testmanual_cnt"><?=$row['testmanual_cnt']?></td--><!-- 입력수량 -->
+                        <!--td class="td_testmanual_cnt"><?= $row['testmanual_cnt'] ?></td--><!-- 입력수량 -->
                         <td class="td_pri_rate color_yellow font_size_7"><?= number_format($row['rate_percent'], 1) ?> %</td><!-- 달성율 -->
                         <td class="td_graph td_left"><!-- 그래프 -->
                             <?= $row['graph'] ?>
@@ -642,7 +654,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                         <td class="td_pri_uph"><?= $row['pri_uph_ave'] ?></td><!-- UPH -->
                         <td class="td_pri_value"><?= number_format($target_goal) ?></td>
                         <td class="td_pic_value color_red"><?= number_format($production_total) ?></td>
-                        <td class="td_testmanual_cnt" style="display:none;"><?=$testmatnual_total?></td>
+                        <td class="td_testmanual_cnt" style="display:none;"><?= $testmatnual_total ?></td>
                         <td class="td_pri_rate color_yellow font_size_7"><?= number_format($row['rate'], 1) ?> %</td><!-- 달성율 -->
                         <td class="td_graph td_left"><?= $row['graph'] ?></td>
                     </tr>
@@ -659,11 +671,11 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
     </div>
 
     <div class="btn_fixed_top">
-        <?php if (!auth_check($auth[$sub_menu],'w',1)) { ?>
-        <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02" style="display:no ne;">
+        <?php if (!auth_check($auth[$sub_menu], 'w', 1)) { ?>
+            <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02" style="display:no ne;">
         <?php } ?>
     </div>
-<!-- </div> -->
+    <!-- </div> -->
 </form><!--#form01-->
 <?php echo get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, '?' . $qstr . '&amp;page='); ?>
 
@@ -688,15 +700,15 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
         });
     });
 
-    $('.btn_pri_ing').on('click',function(){
+    $('.btn_pri_ing').on('click', function() {
         var btn_obj = $(this);
         var pri_idx = $(this).attr('pri_idx');
         var ing_flag = $(this).hasClass('btn_ing') ? 0 : 1;
         pri_ing_update(btn_obj, pri_idx, ing_flag);
     });
 
-    function pri_ing_update(btn_obj, pri_idx, ing_flag){
-        var ajx_url = '<?=G5_USER_ADMIN_AJAX_URL?>/pri_ing_update.php';
+    function pri_ing_update(btn_obj, pri_idx, ing_flag) {
+        var ajx_url = '<?= G5_USER_ADMIN_AJAX_URL ?>/pri_ing_update.php';
         $.ajax({
             type: "POST",
             url: ajx_url,
@@ -706,16 +718,16 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                 "ing_flag": ing_flag
             },
             async: false,
-            success: function(res){
-                if(res == 'ok_1'){
+            success: function(res) {
+                if (res == 'ok_1') {
                     btn_obj.addClass('btn_ing').text('작업중');
-                } else if(res == 'ok_0'){
+                } else if (res == 'ok_0') {
                     btn_obj.removeClass('btn_ing').text('비작업');
                 } else {
                     alert(res);
                 }
             },
-            error: function(xmlReq){
+            error: function(xmlReq) {
                 alert('Status: ' + xmlReq.status + ' \n\rstatusText: ' + xmlReq.statusText + ' \n\rresponseText: ' + xmlReq.responseText);
             }
         });
