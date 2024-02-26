@@ -27,9 +27,9 @@ $latest_files = array_slice($files, 0, 30);
 // Delete the files that are not in the last 10 files
 $last_files = array_slice($files, -30);
 foreach ($files as $file) {
-  if (!in_array($file, $last_files)) {
-    unlink($file);
-  }
+    if (!in_array($file, $latest_files)) {
+        unlink($file);
+    }
 }
 
 

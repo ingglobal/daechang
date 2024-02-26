@@ -25,13 +25,16 @@ usort($files, "compare_by_mtime");
 
 // Get the first 10 files
 $latest_files = array_slice($files, 0, 10);
+// print_r3($latest_files);
 
 // Delete the files that are not in the last 10 files
 $last_files = array_slice($files, -10);
+// print_r3($last_files);
 foreach ($files as $file) {
-  if (!in_array($file, $last_files)) {
-    unlink($file);
-  }
+    // print_r3($file);
+    if (!in_array($file, $latest_files)) {
+        unlink($file);
+    }
 }
 
 
