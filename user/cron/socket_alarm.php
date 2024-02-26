@@ -8,7 +8,7 @@
 // http://daechang1.epcs.co.kr/user/cron/socket_alarm.php
 include_once('./_common.php');
 
-$demo = 0;  // 데모모드 = 1
+$demo = 1;  // 데모모드 = 1
 
 $g5['title'] = '소켓알람처리';
 include_once('./_head.sub.php');

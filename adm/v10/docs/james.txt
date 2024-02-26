@@ -3559,8 +3559,19 @@ touch -t 201306141200 2024-02-18.xlsx
 
 
 
+SELECT SQL_CALC_FOUND_ROWS arm.* , cod.*
+FROM g5_1_alarm AS arm 
+    LEFT JOIN g5_1_code AS cod ON cod.cod_idx = arm.cod_idx 
+WHERE arm_status NOT IN ('trash','delete') AND arm_cod_type IN ('a','p','p2') AND arm.com_idx IN (13)
+ORDER BY arm_idx DESC LIMIT 0, 15
 
-작업자별현황 : 차종추가
+SELECT SQL_CALC_FOUND_ROWS DISTINCT cod.* , com.com_name AS com_name , mms.mms_name AS mms_name 
+FROM g5_1_code AS cod 
+    LEFT JOIN g5_1_company AS com ON com.com_idx = cod.com_idx
+    LEFT JOIN g5_1_mms AS mms ON mms.mms_idx = cod.mms_idx 
+WHERE cod_status NOT IN ('trash','delete') AND cod.com_idx IN (13)
+ORDER BY cod_idx DESC LIMIT 0, 15
+
 
 
 
