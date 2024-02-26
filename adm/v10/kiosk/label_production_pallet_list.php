@@ -2,7 +2,8 @@
 include_once('./_common.php');
 include_once('./_head.php');
 
-$shif_date = statics_date(G5_TIME_YMDHIS);
+$shif_date = ($statics_date) ? $statics_date : statics_date(G5_TIME_YMDHIS);
+// $shif_date = statics_date(G5_TIME_YMDHIS);
 // echo '<br><br><br><br><br>';
 // echo $bom_idx."<br>";
 // echo $member['mb_id'];
@@ -27,7 +28,7 @@ $sql = " SELECT itm.plt_idx
         WHERE plt.mb_id_worker = '{$member['mb_id']}'
             AND bom_idx = '{$bom_idx}'
             AND itm.plt_idx != '0'
-            AND plt_reg_dt >= '".statics_date(G5_TIME_YMDHIS)." 00:00:00'
+            AND plt_reg_dt >= '".statics_date($shif_date.' 07:00:00')." 00:00:00'
             AND plt_status IN ('ok','check','delivery')
         GROUP BY itm.plt_idx
         ORDER BY itm.plt_idx DESC

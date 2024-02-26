@@ -328,6 +328,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                         <label for="chkall" class="sound_only">전체</label>
                         <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
                     </th>
+                    <th scope="col">생산계획ID</th>
                     <th scope="col" style="min-width:200px;">품번/품명</th>
                     <th scope="col">구분</th>
                     <th scope="col">차종</th>
@@ -337,6 +338,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                     <th scope="col">비가동</th>
                     <th scope="col">목표</th>
                     <th scope="col">생산수량</th>
+                    <th scope="col">빠레트수량</th>
                     <th scope="col" style="width:150px;">배송기사</th>
                     <th scope="col">적재수량</th>
                     <th scope="col">빠레트개수</th>
@@ -345,6 +347,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
             <tbody>
                 <?php
                 $testmatnual_total = 0;
+                $plt_stock_total = 0;
                 // $pic_sum_total = 0;
                 for ($i = 0; $row = sql_fetch_array($result); $i++) {
                     // print_r2($row);
@@ -354,14 +357,17 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                     // print_r2($row['cst_customer']);
 
                     // 현재 생산수량 합계
-                    $sql1 = " SELECT SUM(pic_value) AS pic_sum FROM {$g5['production_item_count_table']} 
-                    WHERE pri_idx = '" . $row['pri_idx'] . "' AND pic_date = '" . $stat_date . "' ";
+                    // $sql1 = " SELECT SUM(pic_value) AS pic_sum FROM {$g5['production_item_count_table']} WHERE pri_idx = '" . $row['pri_idx'] . "' AND pic_date = '" . $stat_date . "' ";
+                    $sql1 = " SELECT COUNT(itm_value) AS pic_sum FROM {$g5['item_table']} WHERE pri_idx = '{$row['pri_idx']}' AND itm_date = '{$stat_date}' AND itm_status IN ('finish','check','delivery')  ";
                     // echo $sql1.BR;
                     $row['pic'] = sql_fetch($sql1, 1);
 
                     // 현재 파렛트 갯수
-                    $sqlp = " SELECT COUNT(DISTINCT plt_idx) AS cnt FROM {$g5['item_table']} WHERE pri_idx = '{$row['pri_idx']}' AND itm_status NOT IN ('defect','scrap','trash')
+                    $sqlp = " SELECT COUNT(DISTINCT plt_idx) AS cnt FROM {$g5['item_table']} WHERE pri_idx = '{$row['pri_idx']}' AND plt_idx != '0' AND itm_status NOT IN ('defect','scrap','trash')
                     ";
+                    $resp = sql_fetch($sqlp);
+                    $row['plt_stock'] = $resp['cnt'];
+                    $plt_stock_total += $row['plt_stock'];
 
                     // 생산 시작 및 종료시간 ----------------------------------------------------------
                     $sql1 = "   SELECT MIN(pic_reg_dt) AS pic_min_dt, MAX(pic_reg_dt) AS pic_max_dt
@@ -572,9 +578,11 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                             <input type="hidden" name="bom_part_no[<?=$i?>]" value="<?=$row['bom_part_no']?>">
                             <input type="hidden" name="bom_name[<?=$i?>]" value="<?=$row['bom_name']?>">
                             <input type="hidden" name="mms_idx[<?=$i?>]" value="<?=$row['mms_idx']?>">
+                            <input type="hidden" name="plt_stock[<?=$i?>]" value="<?=$row['plt_stock']?>">
                             <input type="hidden" name="mb_id[<?=$i?>]" value="<?=$row['mb_id']?>">
                             <input type="hidden" name="pri_value[<?=$i?>]" value="<?=$row['pri_value']?>">
                         </td>
+                        <td class=""><?=$row['pri_idx']?></td><!-- 생산계획ID -->
                         <td class="td_part_no_name td_left"><!-- 품번/품명 -->
                             <?= $row['bom_part_no'] ?><br><?= $row['bom_name'] ?>
                         </td>
@@ -589,19 +597,19 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                             <input type="hidden" name="pic_sum[<?=$i?>]" value="<?=(int)$row['pic']['pic_sum']?>">
                             <?=(int)$row['pic']['pic_sum']?>
                         </td><!-- 수량 -->
+                        <td class="">
+                            <?=$row['plt_stock']?>
+                        </td><!-- 빠레트수량 -->
                         <td class="td_dlv_man">
-                            <select name="mb_id[<?=$i?>]" id="mb_id_<?=$i?>">
+                            <select name="dlv_mb_id[<?=$i?>]" id="dlv_mb_id_<?=$i?>">
                                 <?=$dopts?>
                             </select>
                         </td><!-- 배송기사 -->
                         <td class="td_pkg_cnt">
-                            <input type="text" name="pck_cnt[<?=$i?>]" id="pck_cnt_<?=$i?>" no="<?=$i?>" stock="<?=(int)$row['pic']['pic_sum']?>" value="<?=$row['bom_ship_count']?>" onclick="javascript:pck_Number(this)" class="frm_input wg_wdx60 wg_right inp_pic_sum">
+                            <input type="text" name="pck_cnt[<?=$i?>]" id="pck_cnt_<?=$i?>" no="<?=$i?>" stock="<?=(int)$row['pic']['pic_sum']?>" value="" onclick="javascript:pck_Number(this)" class="frm_input wg_wdx60 wg_right inp_pic_sum">
                         </td><!-- 적재수량 -->
                         <td class="td_plt_cnt">
-                            <?php
-                            $init_cnt = ($row['bom_ship_count'] && (int)$row['pic']['pic_sum'] > 0) ? floor((int)$row['pic']['pic_sum']/$row['bom_ship_count']) : 0;
-                            ?>
-                            <input type="text" name="plt_cnt[<?=$i?>]" id="plt_cnt_<?=$i?>" no="<?=$i?>" stock="<?=(int)$row['pic']['pic_sum']?>" value="<?=$init_cnt?>" onclick="javascript:plt_Number(this)" class="frm_input wg_wdx60 wg_right inp_pic_sum">
+                            <input type="text" name="plt_cnt[<?=$i?>]" id="plt_cnt_<?=$i?>" no="<?=$i?>" stock="<?=(int)$row['pic']['pic_sum']?>" value="" onclick="javascript:plt_Number(this)" class="frm_input wg_wdx60 wg_right inp_pic_sum">
                         </td><!-- 빠레트개수 -->
                     </tr>
                 <?php
@@ -616,11 +624,12 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                 ?>
                     <tr class="tr_total" tr_id="">
                         <td class="td_chk" style="display:no ne;"></td>
-                        <td colspan="5">합계</td>
+                        <td colspan="6">합계</td>
                         <td class="td_pri_hours font_size_7"></td><!-- 생산시간 -->
                         <td class="td_offdown"></td>
                         <td class="td_pri_value"><?= number_format($target_goal) ?></td>
                         <td class="td_pic_value color_red"><?= number_format($production_total) ?></td>
+                        <td class="td_plt_stock"><?=$plt_stock_total?></td><!-- 빠레트수량 -->
                         <td class="td_dlv_man"></td><!-- 배송기사 -->
                         <td class="td_pkg_cnt"><!-- 적재수량 -->
                         <td class="td_plt_cnt"><!-- 빠레트개수 -->
@@ -632,14 +641,10 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
         </table>
     </div>
 
-    <div class="btn_fixed_top" style="display:<?= (!$member['mb_manager_yn']) ? 'none' : '' ?>;">
-        <a href="./item_worker_today_excel_down.php?st_date=<?= $st_date ?>&en_date=<?= $en_date ?>" class="btn_03 btn">엑셀다운</a>
-        <a href="<?= G5_USER_URL ?>/cron/socket_read.php?sync=1" class="btn btn_02 btn_production_sync" style="display:none;">생산현황동기화</a>
-    </div>
-
     <div class="btn_fixed_top">
         <?php if (!auth_check($auth[$sub_menu],'w',1)) { ?>
-        <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02" style="display:no ne;">
+        <input type="submit" name="act_button" value="선택빠레트추가" onclick="document.pressed=this.value" class="btn btn_02" style="display:no ne;">
+        <input type="submit" name="act_button" value="선택빠레트삭제" onclick="document.pressed=this.value" class="btn btn_02" style="display:no ne;">
         <?php } ?>
     </div>
 <!-- </div> -->
@@ -700,17 +705,10 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
             return false;
         }
 
-        if (document.pressed == "선택수정") {
+        if (document.pressed == "선택빠레트추가") {
             $('input[name="w"]').val('u');
-        } else if (document.pressed == "선택삭제") {
-            if (!confirm("선택한 항목(들)을 정말 삭제 하시겠습니까?\n복구가 어려우니 신중하게 결정 하십시오.")) {
-                return false;
-            }
-            // else {
-            // 	$('input[name="w"]').val('d');
-            // }
-        } else if (document.pressed == "선택복제") {
-            if (!confirm("선택한 항목(들)을 정말 복제 하시겠습니까?")) {
+        } else if (document.pressed == "선택빠레트삭제") {
+            if (!confirm("선택한 항목(들)의 빠레트를 정말 삭제 하시겠습니까?")) {
                 return false;
             }
         }

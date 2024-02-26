@@ -167,7 +167,7 @@ $qstr .= '&sca='.$sca.'&ser_cod_type='.$ser_cod_type; // 추가로 확장해서 
                         , itm_part_no
                         , bct_idx
                         , bom_delivery_check_yn
-                        , SUM(itm_value) AS itm_sum
+                        , COUNT(itm_value) AS itm_sum
                     FROM {$g5['item_table']} itm
                     LEFT JOIN {$g5['bom_table']} bom ON itm.bom_idx = bom.bom_idx
                     WHERE itm.plt_idx = '{$row['plt_idx']}'

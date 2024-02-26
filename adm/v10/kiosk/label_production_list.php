@@ -97,7 +97,7 @@ $result = sql_query($sql,1);
                         AND mb_id_worker = '{$member['mb_id']}'
                         AND plt.plt_idx = itm.plt_idx
             )
-            AND plt_reg_dt >= '".statics_date(G5_TIME_YMDHIS)." 00:00:00'
+            AND plt_reg_dt >= '".statics_date($shif_date.' 07:00:00')." 00:00:00'
         ";
         // echo $sql3;
         $itm = sql_fetch($sql3,1);
@@ -120,7 +120,7 @@ $result = sql_query($sql,1);
             <input type="hidden" name="mms_idx[<?=$i?>]" value="<?=$row['mms_idx']?>">
             <input type="hidden" name="mms_name[<?=$i?>]" value="<?=$row['mms_name']?>">
         </td>
-        <td class="td_prd_id"><?=$row['prd_idx']?></td><!-- 생산계획ID -->
+        <td class="td_prd_id"><?=$row['pri_idx']?></td><!-- 생산계획ID -->
         <td class="td_prd_bom_part_no"><?=$row['bom_part_no']?></td><!-- 품번 -->
         <td class="td_plt_in_cnt">
             <input type="text" id="plt_in_cnt_<?=$i?>" name="plt_in_cnt[<?=$i?>]" readonly value="<?=$row['bom_ship_count']?>" class="frm_input input_cnt" size="10" maxlength="10" placeholder="적재수량">
@@ -133,7 +133,7 @@ $result = sql_query($sql,1);
         <td class="td_plt_count"><?=number_format($row['plt_count'])?></td><!-- 파레트수량 -->
         <td class="td_plt_reoutput">
             <?php if($row['plt_count']){ ?>
-            <a href="<?=G5_USER_ADMIN_KIOSK_URL?>/label_production_pallet_list.php?bom_idx=<?=$row['bom_idx']?>" class="btn btn04 btn_reoutput">상세</a>
+            <a href="<?=G5_USER_ADMIN_KIOSK_URL?>/label_production_pallet_list.php?bom_idx=<?=$row['bom_idx']?>&statics_date=<?=$statics_date?>" class="btn btn04 btn_reoutput">상세</a>
             <?php } ?>
         </td><!-- 재발행 -->
     </tr>
