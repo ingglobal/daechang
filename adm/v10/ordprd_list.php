@@ -341,7 +341,7 @@ $('#ser_prd_status').val('<?=$ser_prd_status?>');
 <div class="btn_fixed_top">
     <input type="submit" name="act_button" value="선택출하" onclick="document.pressed=this.value" class="btn btn_03" style="display:no ne;">
     <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02" style="display:no ne;">
-    <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn btn_02" style="display:none;">
+    <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn btn_02" style="display:no ne;">
     <?php if (!auth_check($auth[$sub_menu],'w',1)) { ?>
         <a href="./<?=$fname?>_form.php" class="btn btn_01">추가하기</a>
     <?php } ?>

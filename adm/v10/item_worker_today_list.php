@@ -210,7 +210,7 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
 <style>
     .td_mng {
         width: 90px;
-        max-width: 90px;
+        max-width: 90px;새
     }
 
     .td_pri_subject a,
@@ -268,12 +268,12 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
         <option value="">설비전체</option>
         <?php
         // 해당 범위 안의 모든 설비를 select option으로 만들어서 선택할 수 있도록 한다.
-        // Get all the mms_idx values to make them optionf for selection.
+        // Get all the mms_idx values to make them options for selection.
         $sql2 = "SELECT mms_idx, mms_name
-            FROM {$g5['mms_table']}
-            WHERE com_idx = '" . $_SESSION['ss_com_idx'] . "'
-            ORDER BY mms_sort, mms_idx       
-    ";
+                FROM {$g5['mms_table']}
+                WHERE com_idx = '" . $_SESSION['ss_com_idx'] . "' AND mms_status = 'ok'
+                ORDER BY mms_sort, mms_idx
+        ";
         // echo $sql2.'<br>';
         $result2 = sql_query($sql2, 1);
         for ($i = 0; $row2 = sql_fetch_array($result2); $i++) {
@@ -368,16 +368,16 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
 
                     // 현재 생산수량 합계
                     $sql1 = " SELECT SUM(pic_value) AS pic_sum FROM {$g5['production_item_count_table']} 
-                    WHERE pri_idx = '" . $row['pri_idx'] . "' AND pic_date = '" . $stat_date . "'
-        ";
+                                WHERE pri_idx = '" . $row['pri_idx'] . "' AND pic_date = '" . $stat_date . "'
+                    ";
                     // echo $sql1.BR;
                     $row['pic'] = sql_fetch($sql1, 1);
 
                     // 생산 시작 및 종료시간 ----------------------------------------------------------
                     $sql1 = "   SELECT MIN(pic_reg_dt) AS pic_min_dt, MAX(pic_reg_dt) AS pic_max_dt
-                    FROM {$g5['production_item_count_table']} 
-                    WHERE pri_idx = '" . $row['pri_idx'] . "' AND pic_date = '" . $stat_date . "'
-        ";
+                                FROM {$g5['production_item_count_table']} 
+                                WHERE pri_idx = '" . $row['pri_idx'] . "' AND pic_date = '" . $stat_date . "'
+                    ";
                     // echo $sql1.BR;
                     $row['dt'] = sql_fetch($sql1, 1);
                     // print_r2($row['dt']);

@@ -3573,6 +3573,49 @@ WHERE cod_status NOT IN ('trash','delete') AND cod.com_idx IN (13)
 ORDER BY cod_idx DESC LIMIT 0, 15
 
 
+SELECT COUNT(*) AS cnt FROM g5_1_item AS itm WHERE bom_idx = '2127'
+
+
+셀렉박스 오름차순정리!!
+
+고객사별현황 - 과거날짜 검색 가능하게!!
+
+수주관리 - 완전삭제 가능하도록!!!
+
+bom_idx=2131
+bom_part_no = 89312/412-JI000SU	
+뭐 이딴 게 들어가냐??
+
+// echo preg_match("/[-0-9A-Z]/",$arr['bom_part_no']); ///////////// 지금까지 이걸로 알고 있었구만!!
+echo preg_match("/^[-0-9A-Z]+$/",$arr['bom_part_no']);
+
+preg_match("/[0-9A-Z]/"
+to
+preg_match("/^[0-9A-Z]+$/"
+
+
+// 생산현황
+SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.* 
+FROM g5_1_production_item AS pri 
+    LEFT JOIN g5_1_production AS prd USING(prd_idx) 
+    LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+WHERE prd_start_date = '2024-03-08' AND pri.com_idx = '13'
+ORDER BY pri_idx DESC
+LIMIT 0, 200;
+....
+SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.* 
+FROM g5_1_production_item AS pri 
+    LEFT JOIN g5_1_production AS prd USING(prd_idx) 
+    LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+WHERE prd_start_date = '2024-03-08' AND pri.com_idx = '13'
+    AND mb_id = '01080891026'
+ORDER BY pri_idx DESC
+LIMIT 0, 200;
+....
+SELECT *
+FROM g5_1_production AS prd
+WHERE prd_start_date = '2024-03-08'
+....
 
 
 

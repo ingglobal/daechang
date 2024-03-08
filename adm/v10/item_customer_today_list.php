@@ -9,6 +9,16 @@ $g5['title'] = '고객사별현황';
 include_once('./_head.php');
 echo $g5['container_sub_title'];
 
+// st_date, en_date
+$st_date = $ser_st_date ?: date("Y-m-d", G5_SERVER_TIME);
+$st_time = $st_time ?: '00:00:00';
+$en_time = $en_time ?: '23:59:59';
+$st_datetime = $st_date . ' ' . $st_time;
+$en_datetime = $st_date . ' ' . $en_time;
+
+// 검색일자
+$stat_date = $st_date ?: statics_date(G5_TIME_YMDHIS);
+// echo $stat_date;
 
 $sql_common = " FROM {$g5['production_item_table']} AS pri
                 LEFT JOIN {$g5['production_table']} AS prd USING(prd_idx)
@@ -17,7 +27,8 @@ $sql_common = " FROM {$g5['production_item_table']} AS pri
 
 $where = array();
 //$where[] = " (1) ";   // 디폴트 검색조건
-$where[] = " prd_start_date = '".statics_date(G5_TIME_YMDHIS)."' ";    // 오늘 것만
+// $where[] = " prd_start_date = '".statics_date(G5_TIME_YMDHIS)."' ";    // 오늘 것만
+$where[] = " prd_start_date = '".$stat_date."' ";    // 오늘 것만
 
 // 해당 업체만
 $where[] = " pri.com_idx = '".$_SESSION['ss_com_idx']."' ";
@@ -113,6 +124,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
 
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get" style="width:100%;">
 <label for="sfl" class="sound_only">검색대상</label>
+<input type="text" name="ser_st_date" value="<?= $st_date ?>" id="st_date" class="frm_input" autocomplete="off" style="width:90px;">
 <select name="cst_idx_customer" id="cst_idx_customer">
     <option value="">고객사전체</option>
     <?php

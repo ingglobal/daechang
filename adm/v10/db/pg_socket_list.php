@@ -189,7 +189,7 @@ $qstr = $qstr."&st_date=$st_date&en_date=$en_date&st_time=$st_time&en_time=$en_t
 
 <div class="btn_fixed_top">
     <?php if($member['mb_manager_yn']) { ?>
-        <a href="./<?=$fname?>_graph.php" class="btn_04 btn">그래프</a>
+        <a href="./<?=$fname?>_graph.php" class="btn_04 btn" style="display:none;">그래프</a>
         <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn_02 btn" style="display:none;">
     <?php } ?>
     <a href="./<?=$fname?>_form.php" id="btn_add" class="btn btn_01" style="display:none;">추가하기</a> 

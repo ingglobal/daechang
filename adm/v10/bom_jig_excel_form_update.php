@@ -120,7 +120,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     // print_r3($arr);
 
     // 조건에 맞는 해당 라인만 추출
-    if( preg_match("/[0-9A-Z]/",$arr['location']) && preg_match("/[-0-9A-Z]/",$arr['bom_part_no']) )
+    if( preg_match("/[0-9A-Z]/",$arr['location']) && preg_match("/^[-0-9A-Z]+$/",$arr['bom_part_no']) )
     {
         // print_r3($arr);
 
@@ -146,7 +146,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
         }
 
         // if only mms_idx, bom_idx exists.
-        if( $mms['mms_idx'] && $bom['bom_idx'] &&preg_match("/[-0-9A-Z]/",$arr['bom_part_no']) ) {
+        if( $mms['mms_idx'] && $bom['bom_idx'] &&preg_match("/^[-0-9A-Z]+$/",$arr['bom_part_no']) ) {
             // print_r3($arr);
 
             // 카운터를 하는 지그 표시
@@ -163,7 +163,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
 
             $idx++;
             // 메시지 보임
-            if(preg_match("/[-0-9A-Z]/",$arr['bom_part_no'])) {
+            if(preg_match("/^[-0-9A-Z]+$/",$arr['bom_part_no'])) {
                 echo "<script> document.all.cont.innerHTML += '".$idx
                         .". ".$arr['serial']." [".$arr['bom_part_no']."]: ".$arr['bom_name']
                         ." ----------->> 완료<br>'; </script>\n";

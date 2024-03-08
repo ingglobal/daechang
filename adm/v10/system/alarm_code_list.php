@@ -350,8 +350,8 @@ $items1 = array(
     <?php if($member['mb_manager_yn']) { ?>
         <a href="javascript:" id="btn_excel_upload2" class="btn btn_03" style="margin-right:480px;display:<?=(!$member['mb_manager_yn'])?'none':'none'?>;">최호기</a>
         <a href="<?=G5_URL?>/device/error/form.php" target="_blank" class="btn btn_03" style="margin-right:400px;display:<?=(!$member['mb_manager_yn'])?'none':''?>;">테스트입력</a>
-        <a href="./<?=$fname?>_excel_down.php?<?=$qstr?>" id="btn_excel_down" class="btn btn_03">엑셀다운</a>
-        <a href="javascript:" id="btn_excel_upload" class="btn btn_03" style="margin-right:20px;display:<?=(!$member['mb_manager_yn'])?'none':''?>;">엑셀등록</a>
+        <a href="./<?=$fname?>_excel_down.php?<?=$qstr?>" id="btn_excel_down" class="btn btn_03" style="display:none;">엑셀다운</a>
+        <a href="javascript:" id="btn_excel_upload" class="btn btn_03" style="margin-right:20px;display:<?=(!$member['mb_manager_yn'])?'none':'none'?>;">엑셀등록</a>
         <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn_02 btn" style="display:none;">
         <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn_02 btn">
         <a href="./<?=$fname?>_form.php" id="btn_add" class="btn btn_01">추가하기</a>

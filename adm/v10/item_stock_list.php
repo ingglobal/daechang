@@ -141,7 +141,6 @@ $('#ser_cats').val('<?=$ser_cats?>');
 </script>
 <label for="sfl" class="sound_only">검색대상</label>
 <select name="sfl" id="sfl">
-    <option value="">검색항목</option>
     <option value="bom_part_no" <?=get_selected($sfl, 'bom_part_no')?>>품번</option>
     <option value="bom_name" <?=get_selected($sfl, 'bom_name')?>>품명</option>
 </select>
@@ -191,6 +190,11 @@ $('#ser_cats').val('<?=$ser_cats?>');
         $row['cst_customer'] = get_table('customer','cst_idx',$row['cst_idx_customer'],'cst_name');
         $row['mb1'] = get_table('member','mb_id',$row['mb_id'],'mb_name');
         // print_r2($row['cst_customer']);
+        
+        // 재고수량
+        $sql1 = " SELECT COUNT(*) AS cnt FROM g5_1_item AS itm WHERE bom_idx = '".$row['bom_idx']."' ";
+        $row['itm'] = sql_fetch($sql1,1);
+        // print_r2($row['itm']);
 
         // 버튼들
         $s_mod = '<a href="./'.$fname.'_form.php?'.$qstr.'&amp;w=u&'.$pre.'_idx='.$row[$pre.'_idx'].'" class="btn btn_03">수정</a>';
@@ -225,7 +229,7 @@ $('#ser_cats').val('<?=$ser_cats?>');
         <td class="td_input_cnt">
             <input type="text" name="input_cnt[<?=$row['bom_idx']?>]" onclick="javascript:numtoprice(this)" class="frm_input input_cnt wg_wdx60 wg_right">
         </td>
-        <td class="td_bom_stock font_size_8"><?=number_format($row['bom_stock'])?></td><!-- 현재고 -->
+        <td class="td_bom_stock font_size_8"><a href="./item_list.php?sfl=bom_part_no&stx=<?=$row['bom_part_no']?>"><?=number_format($row['itm']['cnt'])?></a></td><!-- 현재고 -->
     </tr>
     <?php
     }

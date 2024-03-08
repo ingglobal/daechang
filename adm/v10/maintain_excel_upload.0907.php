@@ -261,7 +261,7 @@ for ($x=0;$x<sizeof($allData);$x++) {
         // print_r3($arr);
 
         // 조건에 맞는 해당 라인만 추출
-        if( preg_match("/[-0-9A-Z]/",$arr['machine_no'])
+        if( preg_match("/^[-0-9A-Z]+$/",$arr['machine_no'])
             && preg_match("/[가-힝]/",$arr['machine_name'])
             && preg_match("/[-0-9]/",$arr['mnt_date']) )
         {
@@ -342,7 +342,7 @@ for ($x=0;$x<sizeof($allData);$x++) {
 //     // print_r3($arr);
 
 //     // 조건에 맞는 해당 라인만 추출
-//     if( preg_match("/[-0-9A-Z]/",$arr['machine_no'])
+//     if( preg_match("/^[-0-9A-Z]+$/",$arr['machine_no'])
 //         && preg_match("/[가-힝]/",$arr['machine_name'])
 //         && preg_match("/[-0-9]/",$arr['mnt_date']) )
 //     {

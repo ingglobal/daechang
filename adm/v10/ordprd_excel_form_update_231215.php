@@ -124,7 +124,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     // print_r3($arr);
 
     // 조건에 맞는 해당 라인만 추출
-    if( preg_match("/[-0-9A-Z]/",$arr['bom_part_no'])
+    if( preg_match("/^[-0-9A-Z]+$/",$arr['bom_part_no'])
         && ($arr['count']>0)
         && is_numeric($arr['count']) )
     {
@@ -206,7 +206,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
 
             $idx++; 
             // 메시지 보임
-            if(preg_match("/[-0-9A-Z]/",$arr['bom_part_no'])) {
+            if(preg_match("/^[-0-9A-Z]+$/",$arr['bom_part_no'])) {
                 echo "<script> document.all.cont.innerHTML += '".$idx
                         .". [".$arr['bct_name']."] ".$arr['bom_part_no'].": ".$arr['count']
                         ." ----------->> 완료<br>'; </script>\n";

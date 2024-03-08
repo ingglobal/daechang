@@ -185,7 +185,7 @@ for ($x=0;$x<sizeof($allData);$x++) {
         // print_r3($arr);
 
         // 조건에 맞는 해당 라인만 추출
-        if( preg_match("/[-0-9A-Z]/",$arr['mms_idx'])
+        if( preg_match("/^[-0-9A-Z]+$/",$arr['mms_idx'])
             && preg_match("/[a-z]/",$arr['cod_type'])
             && preg_match("/[-0-9]/",$arr['imp_idx']) )
         {

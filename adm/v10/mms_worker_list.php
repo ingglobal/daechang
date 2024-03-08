@@ -94,18 +94,20 @@ include_once('./mbw_form.php');
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch prelative" method="get">
 
 <label for="sfl" class="sound_only">검색대상</label>
+<?php
+// 해당 범위 안의 모든 설비를 select option으로 만들어서 선택할 수 있도록 한다.
+// Get all the mms_idx values to make them optionf for selection.
+$sql2 = "SELECT mms_idx, mms_name
+        FROM {$g5['mms_table']}
+        WHERE com_idx = '".$_SESSION['ss_com_idx']."' AND mms_status ='ok'
+        ORDER BY mms_name
+";
+// echo $sql2.BR;
+$result2 = sql_query($sql2,1);
+?>
 <select name="ser_mms_idx" id="ser_mms_idx">
     <option value="">전체설비</option>
     <?php
-    // 해당 범위 안의 모든 설비를 select option으로 만들어서 선택할 수 있도록 한다.
-    // Get all the mms_idx values to make them optionf for selection.
-    $sql2 = "SELECT mms_idx, mms_name
-            FROM {$g5['mms_table']}
-            WHERE com_idx = '".$_SESSION['ss_com_idx']."'
-            ORDER BY mms_name
-    ";
-    // echo $sql2.'<br>';
-    $result2 = sql_query($sql2,1);
     for ($i=0; $row2=sql_fetch_array($result2); $i++) {
         // print_r2($row2);
         echo '<option value="'.$row2['mms_idx'].'" '.get_selected($ser_mms_idx, $row2['mms_idx']).'>'.$row2['mms_name'].'</option>';

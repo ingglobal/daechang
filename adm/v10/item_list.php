@@ -185,7 +185,6 @@ $('#ser_cats').val('<?=$ser_cats?>');
 </script>
 <label for="sfl" class="sound_only">검색대상</label>
 <select name="sfl" id="sfl">
-    <option value="">검색항목</option>
     <option value="bom_part_no" <?=get_selected($sfl, 'bom_part_no')?>>품번</option>
     <option value="itm_name" <?=get_selected($sfl, 'itm_name')?>>품명</option>
     <option value="plt_idx" <?=get_selected($sfl, 'plt_idx')?>>파레트번호</option>

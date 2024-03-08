@@ -57,23 +57,22 @@ if ($_POST['act_button'] == "선택수정") {
         // echo ($pri_res['pri_idxs'])?$pri_res['pri_idxs']:'없음';
         // echo '<br>';
         
-        // // 혹식 생산된 제품이 있는지 확인하여 있으면 삭제하지 못한다. (근데 디비 부하률이 너무 크다.)
-        // $chk_pic_sql = " SELECT COUNT(pic_idx) AS cnt FROM {$g5['production_item_count_table']}
-        //                     WHERE pri_idx IN ( $pri_sql )
-        // ";
-        // $chk_pic_res = sql_fetch($chk_pic_sql);
+        // 혹시 생산된 제품이 있는지 확인하여 있으면 삭제하지 못한다. (근데 디비 부하률이 너무 크다.)
+        $chk_pic_sql = " SELECT COUNT(pic_idx) AS cnt FROM {$g5['production_item_count_table']}
+                            WHERE pri_idx IN ( $pri_sql )
+        ";
+        $chk_pic_res = sql_fetch($chk_pic_sql);
         // echo ($chk_pic_res['cnt'])?$chk_pic_res['cnt']:'없음';
         // echo "<br>";
         // continue;
-        // 
-        // $sql = "UPDATE {$g5['prodution_table']} SET
-        //             prd_status = 'trash'
-        //             , prd_memo = CONCAT(prd_memo,'\n삭제 by ".$member['mb_name'].", ".G5_TIME_YMDHIS."')
-        //         WHERE prd_idx = '".$_POST['prd_idx'][$k]."'
-        // ";
-        // // echo $sql.'<br>';
-        // sql_query($sql,1);
-
+        
+        $sql = "UPDATE {$g5['production_table']} SET
+                    prd_status = 'trash'
+                    , prd_memo = CONCAT(prd_memo,'\n삭제 by ".$member['mb_name'].", ".G5_TIME_YMDHIS."')
+                WHERE prd_idx = '".$_POST['prd_idx'][$k]."'
+        ";
+        // echo $sql.'<br>';
+        sql_query($sql,1);
     }
 } else if ($_POST['act_button'] == "선택출하"){
     //ori_idx[],cst_idx[],ori_count[],shp_dt[]
