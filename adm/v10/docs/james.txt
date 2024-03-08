@@ -3617,5 +3617,40 @@ FROM g5_1_production AS prd
 WHERE prd_start_date = '2024-03-08'
 ....
 
+DELETE FROM g5_1_production WHERE prd_idx > 2917;
+DELETE FROM g5_1_production_main WHERE prm_idx > 2261;
+DELETE FROM g5_1_production_item WHERE pri_idx > 2554;
+DELETE FROM g5_1_production_item_count WHERE pri_idx > 87523;
+
+
+SELECT COUNT(pri_idx) AS cnt, GROUP_CONCAT(pri_idx) AS pri_idxs FROM g5_1_production_item WHERE com_idx = '13' AND prd_idx = '2918' AND prm_idx = '2262' AND boc_idx = '2436' AND bom_idx = '242' AND bom_idx_parent = '242' AND pri_date = '2024-03-08' AND pri_status NOT IN ('trash');
+SELECT COUNT(pri_idx) AS cnt, GROUP_CONCAT(pri_idx) AS pri_idxs FROM g5_1_production_item WHERE com_idx = '13' AND prd_idx = '2919' AND prm_idx = '2263' AND boc_idx = '2437' AND bom_idx = '243' AND bom_idx_parent = '243' AND pri_date = '2024-03-08' AND pri_status NOT IN ('trash');
+
+SELECT bit_idx , bom_idx , bom_idx_child , bit_count , bit_main_yn , bit_reply FROM g5_1_bom_item WHERE bom_idx = '242' ORDER BY bit_reply;
+SELECT bit_idx , bom_idx , bom_idx_child , bit_count , bit_main_yn , bit_reply FROM g5_1_bom_item WHERE bom_idx = '243' ORDER BY bit_reply;
+
+SELECT COUNT(pri_idx) AS cnt, GROUP_CONCAT(pri_idx) AS pri_idxs FROM g5_1_production_item WHERE com_idx = '13' AND prd_idx = '2918' AND prm_idx = '2262' AND boc_idx = '2436' AND bom_idx = '1302' AND bom_idx_parent = '242' AND pri_date = '2024-03-08' AND pri_status NOT IN ('trash');
+
+SELECT GROUP_CONCAT(mb_id) AS mb_ids , GROUP_CONCAT(mms_idx) AS mms_idxs
+FROM g5_1_bom_mms_worker
+WHERE bom_idx = 1302 AND bmw_type IN('day','night') AND bmw_status = 'ok' AND bmw_main_yn = 1
+ORDER BY mms_idx, bmw_type LIMIT 2
+
+alias cdmysql='cd /var/lib/mysql/daechang_www'
+alias cptest='tar cf - * --exclude="db.opt" | tar xvf - -C ../daechang_test'
+alias cpdemo='tar cf - * --exclude="db.opt" | tar xvf - -C ../daechang_demo'
+
+
+DELETE FROM g5_1_production WHERE prd_date >= '2024-03-08';
+DELETE FROM g5_1_production_main WHERE prm_date >= '2024-03-08';
+DELETE FROM g5_1_production_item WHERE pri_date >= '2024-03-08';
+DELETE FROM g5_1_production_item_count WHERE pic_date >= '2024-03-08';
+
+SELECT COUNT(pri_idx) AS cnt, GROUP_CONCAT(pri_idx) AS pri_idxs FROM g5_1_production_item WHERE com_idx = '13' AND prd_idx = '3836' AND prm_idx = '3009' AND boc_idx = '2436' AND bom_idx = '1302' AND bom_idx_parent = '242' AND pri_date = '2024-03-08' AND pri_status NOT IN ('trash')
+
+SELECT GROUP_CONCAT(mb_id) AS mb_ids , GROUP_CONCAT(mms_idx) AS mms_idxs 
+FROM g5_1_bom_mms_worker 
+WHERE bom_idx = 1302 AND bmw_type IN('day','night') AND bmw_status = 'ok' AND bmw_main_yn = 1
+ORDER BY mms_idx, bmw_type LIMIT 2
 
 

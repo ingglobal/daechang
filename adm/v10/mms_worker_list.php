@@ -125,6 +125,7 @@ $result2 = sql_query($sql2,1);
 <select name="sfl2" id="sfl2">
     <option value="bom_part_no"<?php echo get_selected($_GET['sfl2'], "bom_part_no"); ?>>품번</option>
     <option value="bom_name"<?php echo get_selected($_GET['sfl2'], "bom_name"); ?>>품명</option>
+    <option value="bmw.bom_idx"<?php echo get_selected($_GET['sfl2'], "bmw.bom_idx"); ?>>BOMidx</option>
 </select>
 <label for="stx2" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
 <input type="text" name="stx2" value="<?php echo $stx2 ?>" id="stx2" class="frm_input">

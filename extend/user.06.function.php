@@ -485,6 +485,7 @@ function insert_production_item($prd=0,$prm=0,$boc=0,$bom=0,$day='',$count=0,$st
                         AND pri_date = '{$date}'
                         AND pri_status NOT IN ('trash')
     ";
+    // echo $chk_sql.BR;
     $chk_res = sql_fetch($chk_sql,1);
     $num = $chk_res['cnt'];
 
@@ -541,6 +542,7 @@ function insert_production_item($prd=0,$prm=0,$boc=0,$bom=0,$day='',$count=0,$st
             WHERE bom_idx = '{$bom_idx}' 
             ORDER BY bit_reply 
     ";
+    // echo $vsql.BR;
     $vres = sql_query($vsql,1);
     if($vres->num_rows){
         for($i=0;$row=sql_fetch_array($vres);$i++){
@@ -556,20 +558,24 @@ function insert_production_item($prd=0,$prm=0,$boc=0,$bom=0,$day='',$count=0,$st
                                 AND pri_date = '{$date}'
                                 AND pri_status NOT IN ('trash')
             ";
+            // echo $chk_sql2.BR;
             $chk_res2 = sql_fetch($chk_sql2,1);
             $num2 = $chk_res2['cnt'];
             if(!$num2){
                 // 해당제품의 담당작업자를 불러온다.
-                $w_res2 = sql_fetch(" SELECT GROUP_CONCAT(mb_id) AS mb_ids
-                        , GROUP_CONCAT(mms_idx) AS mms_idxs 
-                FROM {$g5['bom_mms_worker_table']} 
-                WHERE bom_idx = {$row['bom_idx_child']}
-                    AND bmw_type IN('day','night')
-                    AND bmw_status = 'ok'
-                    AND bmw_main_yn = 1
-                ORDER BY mms_idx, bmw_type
-                LIMIT 2
-                ");
+                $w_sql2 = " SELECT GROUP_CONCAT(mb_id) AS mb_ids
+                                            , GROUP_CONCAT(mms_idx) AS mms_idxs 
+                                    FROM {$g5['bom_mms_worker_table']} 
+                                    WHERE bom_idx = {$row['bom_idx_child']}
+                                        AND bmw_type IN('day','night')
+                                        AND bmw_status = 'ok'
+                                        AND bmw_main_yn = 1
+                                    ORDER BY mms_idx, bmw_type
+                                    LIMIT 2
+                ";
+                $w_res2 = sql_fetch($w_sql2,1);
+                // echo $w_sql2.BR;
+                // print_r3($w_res2);
                 $wks2 = ($w_res2['mb_ids']) ? explode(',',$w_res2['mb_ids']) : array();
                 $mms2 = ($w_res2['mms_idxs']) ? explode(',',$w_res2['mms_idxs']) : array();
                 //$g5['set_bmw_type_share_value']['day']

@@ -248,7 +248,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
     <?php if (!auth_check($auth[$sub_menu],'w')) { ?>
     <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02">
     <?php } ?>
-    <?php if(false){ //(!auth_check($auth[$sub_menu],'w')) { //($is_admin){ ?>
+    <?php if(!auth_check($auth[$sub_menu],'w')) { //($is_admin){ ?>
     <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn btn_02">
     <?php } ?>
     <a href="./production_form.php" id="member_add" class="btn btn_01">생산계획추가</a>
