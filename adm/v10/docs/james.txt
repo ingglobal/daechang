@@ -3653,4 +3653,30 @@ FROM g5_1_bom_mms_worker
 WHERE bom_idx = 1302 AND bmw_type IN('day','night') AND bmw_status = 'ok' AND bmw_main_yn = 1
 ORDER BY mms_idx, bmw_type LIMIT 2
 
+SELECT GROUP_CONCAT(mb_id) AS mb_ids , GROUP_CONCAT(mms_idx) AS mms_idxs FROM g5_1_bom_mms_worker 
+WHERE bom_idx = 1302 AND bmw_type IN('day','night') AND bmw_status = 'ok' AND bmw_main_yn = 1 
+ORDER BY mms_idx, bmw_type LIMIT 2
 
+SELECT COUNT(pri_idx) AS cnt, GROUP_CONCAT(pri_idx) AS pri_idxs FROM g5_1_production_item WHERE com_idx = '13' AND prd_idx = '3725' AND prm_idx = '2847' AND boc_idx = '2436' AND bom_idx = '1302' AND bom_idx_parent = '242' AND pri_date = '2024-03-07' AND pri_status NOT IN ('trash')
+SELECT GROUP_CONCAT(mb_id) AS mb_ids , GROUP_CONCAT(mms_idx) AS mms_idxs FROM g5_1_bom_mms_worker WHERE bom_idx = 1302 AND bmw_type IN('day','night') AND bmw_status = 'ok' AND bmw_main_yn = 1 ORDER BY mms_idx, bmw_type LIMIT 2
+
+bom_idx = 242
+13130-CG050US4
+
+SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.* 
+FROM g5_1_production_item AS pri 
+LEFT JOIN g5_1_production AS prd USING(prd_idx) 
+LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+WHERE prd_start_date = '2024-03-07' AND pri.com_idx = '13'
+....
+SELECT pri.prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date
+FROM g5_1_production_item AS pri 
+LEFT JOIN g5_1_production AS prd ON prd.prd_idx = pri.prd_idx
+WHERE pri_date = '2024-03-07' AND pri.bom_idx = 242
+....
+SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.* 
+FROM g5_1_production_item AS pri 
+LEFT JOIN g5_1_production AS prd USING(prd_idx) 
+LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+WHERE prd_start_date = '2024-03-07' AND pri.com_idx = '13'
+....

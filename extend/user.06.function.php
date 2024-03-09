@@ -493,7 +493,7 @@ function insert_production_item($prd=0,$prm=0,$boc=0,$bom=0,$day='',$count=0,$st
     //이유: 여러유형의 복제레코드가 존재하고 복제레코드간 갯수의 분배도 불분명하기 때문이다.
     if(!$num && $prd_idx){
         // 해당제품의 담당작업자를 불러온다.
-        $w_res = sql_fetch(" SELECT GROUP_CONCAT(mb_id) AS mb_ids
+        $w_sql = " SELECT GROUP_CONCAT(mb_id) AS mb_ids
                                     , GROUP_CONCAT(mms_idx) AS mms_idxs 
                 FROM {$g5['bom_mms_worker_table']} 
                 WHERE bom_idx = {$bom_idx}
@@ -502,7 +502,9 @@ function insert_production_item($prd=0,$prm=0,$boc=0,$bom=0,$day='',$count=0,$st
                     AND bmw_main_yn = 1
                 ORDER BY mms_idx, bmw_type
                 LIMIT 2
-        ");
+        ";
+        // echo $w_sql.BR;
+        $w_res = sql_fetch($w_sql,1);
         $wks = ($w_res['mb_ids']) ? explode(',',$w_res['mb_ids']) : array();
         $mms = ($w_res['mms_idxs']) ? explode(',',$w_res['mms_idxs']) : array();
         //$g5['set_bmw_type_share_value']['day']
