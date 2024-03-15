@@ -146,6 +146,12 @@ if ($ser_cst_idx_provider) {
     $cst_provider = get_table('customer', 'cst_idx', $ser_cst_idx_provider);
 }
 
+// 제품구분
+$ser_bom_type = $ser_bom_type ?: 'product';
+if ($ser_bom_type && $ser_bom_type!=='all') {
+    $where[] = " bom.bom_type = '" . trim($ser_bom_type) . "' ";
+}
+
 // 차종
 if ($ser_bct_idx) {
     $where[] = " bom.bct_idx = '" . trim($ser_bct_idx) . "' ";
@@ -286,6 +292,15 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
         $('select[name=ser_mms_idx]').val("<?= $ser_mms_idx ?>").attr('selected', 'selected');
     </script>
 
+    <select name="ser_bom_type" id="ser_bom_type">
+        <option value="all">제품구분전체</option>
+        <option value="product">완성품</option>
+        <option value="half">서브제품</option>
+    </select>
+    <script>
+        $('#ser_bom_type').val('<?= $ser_bom_type ?>');
+    </script>
+    
     <select name="ser_bct_idx" id="ser_bct_idx">
         <option value="">차종선택</option>
         <?php foreach ($g5['cats_key_val'] as $k => $v) { ?>
