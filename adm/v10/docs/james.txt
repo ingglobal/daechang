@@ -3680,3 +3680,20 @@ LEFT JOIN g5_1_production AS prd USING(prd_idx)
 LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
 WHERE prd_start_date = '2024-03-07' AND pri.com_idx = '13'
 ....
+
+// reset batabase;
+bom
+bom_category
+bom_customer (X)
+bom_item
+bom_jig
+bom_mms_worker
+bom_price
+customer (X)
+customer_member
+production
+production_item
+production_main
+----------------------------
+
+
