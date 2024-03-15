@@ -3515,8 +3515,8 @@ FROM
             , 0 AS output_total
             , 0 AS output_good
             , 0 AS output_defect
-        FROM {$g5['ymd_table']} AS ymd
-        WHERE ymd_date BETWEEN '".$st_date."' AND '".$en_date."'
+        FROM g5_5_ymd AS ymd
+        WHERE ymd_date BETWEEN '2024-01-23' AND '2024-01-30'
         ORDER BY ymd_date
         )
         UNION ALL
@@ -3526,7 +3526,7 @@ FROM
             , COUNT(itm_idx) AS output_total
             , SUM( CASE WHEN itm_status IN ('finish','delivery','check') THEN 1 ELSE 0 END ) AS output_good
             , SUM( CASE WHEN itm_defect_type = 'defect' THEN 1 ELSE 0 END ) AS output_defect
-        FROM {$g5['item_table']}
+        FROM g5_1_item
         WHERE itm_date >= '".$st_date."' AND itm_date <= '".$en_date."'
         GROUP BY ymd_date
         ORDER BY ymd_date
@@ -3684,11 +3684,11 @@ WHERE prd_start_date = '2024-03-07' AND pri.com_idx = '13'
 // reset batabase;
 bom
 bom_category
-bom_customer (X)
 bom_item
 bom_jig
 bom_mms_worker
 bom_price
+bom_customer (X)
 customer (X)
 customer_member
 production
@@ -3697,6 +3697,26 @@ production_main
 ----------------------------
 
 
+TRUNCATE TABLE g5_1_bom;
+TRUNCATE TABLE g5_1_bom_item;
+TRUNCATE TABLE g5_1_bom_jig;
+TRUNCATE TABLE g5_1_bom_mms_worker;
+TRUNCATE TABLE g5_1_bom_price;
+TRUNCATE TABLE g5_1_bom_customer;
+TRUNCATE TABLE g5_1_customer_member;
+TRUNCATE TABLE g5_1_production;
+TRUNCATE TABLE g5_1_production_item;
+TRUNCATE TABLE g5_1_production_main;
+TRUNCATE TABLE g5_1_item;
+TRUNCATE TABLE g5_1_material;
+--------------------------------------
+TRUNCATE TABLE g5_1_production;
+TRUNCATE TABLE g5_1_production_item;
+TRUNCATE TABLE g5_1_production_main;
+TRUNCATE TABLE g5_1_item;
+TRUNCATE TABLE g5_1_material;
+
+89A41-P6000RXG
 
 
 SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.* 
@@ -3707,4 +3727,77 @@ WHERE prd_start_date = '2024-03-04' AND pri.com_idx = '13'
 ORDER BY pri_idx DESC LIMIT 0, 200
 
 
-Warning: count(): Parameter must be an array or an object that implements Countable in /home/daechang/daechang_test/adm/v10/item_worker_today_list_update.php on line 15
+// 대시보드 주간통계
+SELECT (CASE WHEN n='1' THEN ymd_date ELSE 'total' END) AS item_name 
+    , SUM(output_total) AS output_total 
+    , MAX(output_total) AS output_max 
+    , SUM(output_good) AS output_good 
+    , SUM(output_defect) AS output_defect
+FROM
+( 
+    SELECT 
+        ymd_date 
+        , SUM(output_total) AS output_total , SUM(output_good) AS output_good , SUM(output_defect) AS output_defect 
+        FROM ( 
+            ( 
+            SELECT CAST(ymd_date AS CHAR) AS ymd_date , 0 AS output_total , 0 AS output_good , 0 AS output_defect
+            FROM g5_5_ymd AS ymd 
+            WHERE ymd_date BETWEEN '2024-03-08' AND '2024-03-15' ORDER BY ymd_date 
+            ) 
+            UNION ALL 
+            ( SELECT itm_date AS ymd_date , COUNT(itm_idx) AS output_total , SUM( CASE WHEN itm_status IN ('finish','delivery','check') THEN 1 ELSE 0 END ) AS output_good , SUM( CASE WHEN itm_defect_type = 'defect' THEN 1 ELSE 0 END ) AS output_defect 
+            FROM g5_1_item WHERE itm_date >= '2024-03-08' AND itm_date <= '2024-03-15' GROUP BY ymd_date ORDER BY ymd_date ) ) AS db_table GROUP BY ymd_date ) AS db2, g5_5_tally AS db_no WHERE n <= 2 GROUP BY item_name ORDER BY n DESC, item_name
+
+
+SELECT (CASE WHEN n='1' THEN ymd_date ELSE 'total' END) AS item_name
+    , SUM(output_total) AS output_total
+    , MAX(output_total) AS output_max
+    , SUM(output_good) AS output_good
+    , SUM(output_defect) AS output_defect
+FROM
+(
+
+    SELECT 
+        ymd_date
+        , SUM(output_total) AS output_total
+        , SUM(output_good) AS output_good
+        , SUM(output_defect) AS output_defect
+    FROM
+    (
+        (
+        SELECT 
+            CAST(ymd_date AS CHAR) AS ymd_date
+            , 0 AS output_total
+            , 0 AS output_good
+            , 0 AS output_defect
+        FROM g5_5_ymd AS ymd
+        WHERE ymd_date BETWEEN '2024-01-23' AND '2024-01-30'
+        ORDER BY ymd_date
+        )
+        UNION ALL
+        (
+        SELECT 
+            itm_date AS ymd_date
+            , COUNT(itm_idx) AS output_total
+            , SUM( CASE WHEN itm_status IN ('finish','delivery','check') THEN 1 ELSE 0 END ) AS output_good
+            , SUM( CASE WHEN itm_defect_type = 'defect' THEN 1 ELSE 0 END ) AS output_defect
+        FROM g5_1_item
+        WHERE itm_date >= '2024-03-08' AND itm_date <= '2024-03-15'
+        GROUP BY ymd_date
+        ORDER BY ymd_date
+        )
+    ) AS db_table
+    GROUP BY ymd_date
+
+) AS db2, g5_5_tally AS db_no
+WHERE n <= 2
+GROUP BY item_name
+ORDER BY n DESC, item_name
+
+
+SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.* 
+FROM g5_1_production_item AS pri 
+    LEFT JOIN g5_1_production AS prd USING(prd_idx) 
+    LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+WHERE prd_start_date = '2024-03-15' AND pri.com_idx = '13' AND bom.bom_type = 'product' 
+ORDER BY pri_idx DESC LIMIT 0, 200

@@ -199,6 +199,7 @@ for ($i = 1; $i <= sizeof($sheetData); $i++) {
             }
 
             // 생산계획 완제품그룹 등록
+            print_r3($d[$k]);
             insert_production_item($prd_idx, $prm_idx, $boc_idx, $bom_idx, $d[$k], $v, 'confirm');
 
             $idx++;
@@ -219,7 +220,22 @@ for ($i = 1; $i <= sizeof($sheetData); $i++) {
     } //--if(preg_match($pattern_num,trim($sheetData[$i]['A'])) ||
 } //--for($i=1;$i<=sizeof($sheetData);$i++)
 
+// 관리자 디버깅 메시지
+if( is_array($g5['debug_msg']) ) {
+    for($i=0;$i<sizeof($g5['debug_msg']);$i++) {
+        echo '<div class="debug_msg">'.$g5['debug_msg'][$i].'</div>';
+    }
 ?>
+    <script>
+    $(function(){
+        $("#container").prepend( $('.debug_msg') );
+    });
+    </script>
+<?php
+}
+?>
+
+
 <script>
     var err_boms = <?= json_encode($err_boms) ?>;
     cont.innerHTML += "<br><br>총 <?php echo number_format($idx) ?>건 완료<br><br><font color=crimson><b>[끝]</b></font><br><br>";

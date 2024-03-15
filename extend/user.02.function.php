@@ -1400,7 +1400,7 @@ function upload_common_file($srcfile, $destfile, $dir)
     @chmod($dir.'/'.$full_name, G5_FILE_PERMISSION);
 
 	$size = @getimagesize($dir.'/'.$full_name);
-	$file_size = filesize($dir.'/'.$destfile);
+	$file_size = @filesize($dir.'/'.$destfile);
 
     return array($full_name,$size[0],$size[1],$file_size);
 }
