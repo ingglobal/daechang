@@ -23,6 +23,7 @@ $stat_date = $st_date ?: statics_date(G5_TIME_YMDHIS);
 $sql_common = " FROM {$g5['production_item_table']} AS pri
                 LEFT JOIN {$g5['production_table']} AS prd USING(prd_idx)
                 LEFT JOIN {$g5['bom_table']} AS bom ON bom.bom_idx = pri.bom_idx
+                LEFT JOIN {$g5['bom_customer_table']} AS boc ON boc.boc_idx = pri.boc_idx 
 ";
 
 $where = array();
@@ -49,7 +50,7 @@ if ($stx && $sfl) {
 
 // 고객사
 if ($ser_cst_idx_customer) {
-    $where[] = " cst_idx_customer = '".$ser_cst_idx_customer."' ";
+    $where[] = " boc.cst_idx = '".$ser_cst_idx_customer."' ";
 }
 
 // 작업자
@@ -67,15 +68,14 @@ if (!$page) $page = 1; // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
 $sql = " SELECT pri_idx, pri.bom_idx AS pri_bom_idx, prd_start_date, bom.bom_idx, bom.bom_part_no, bom.bom_name, bom_type, bct_idx,
-            cst_idx_customer,
+            pri.boc_idx, boc.cst_idx AS cst_idx_customer,
             SUM(pri_value) AS pri_value_sum,
             GROUP_CONCAT(pri_idx) AS pri_idxs,
             GROUP_CONCAT(pri_value) AS pri_values
 		{$sql_common}
 		{$sql_search}
-        GROUP BY cst_idx_customer, pri_bom_idx
-        ORDER BY cst_idx_customer ASC, pri_bom_idx
-		LIMIT {$from_record}, {$rows}
+        GROUP BY pri.boc_idx, pri_bom_idx
+        ORDER BY pri.boc_idx ASC, pri_bom_idx
 ";
 // echo $sql.BR;
 $result = sql_query($sql,1);
@@ -85,12 +85,13 @@ $sql = " SELECT COUNT(*) as cnt {$sql_common} {$sql_search} ";
 $row = sql_fetch($sql);
 $total_count = $row['cnt'];
 $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
+// echo $total_count.BR;
 
 
 // 고객사 select list 추출
-$sql1 = " SELECT cst_idx_customer {$sql_common} 
+$sql1 = "   SELECT pri.boc_idx, pri.bom_idx, boc.cst_idx AS cst_idx_customer {$sql_common} 
             WHERE prd_start_date = '".statics_date(G5_TIME_YMDHIS)."' AND pri.com_idx = '".$_SESSION['ss_com_idx']."'
-            GROUP BY cst_idx_customer
+            GROUP BY boc.cst_idx
 ";
 // echo $sql1.BR;
 $rs = sql_query($sql1,1);
@@ -125,7 +126,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get" style="width:100%;">
 <label for="sfl" class="sound_only">검색대상</label>
 <input type="text" name="ser_st_date" value="<?= $st_date ?>" id="st_date" class="frm_input" autocomplete="off" style="width:90px;">
-<select name="cst_idx_customer" id="cst_idx_customer">
+<select name="ser_cst_idx_customer" id="ser_cst_idx_customer">
     <option value="">고객사전체</option>
     <?php
     for ($i=0; $i<sizeof($cst_selects); $i++) {
@@ -133,7 +134,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
     }
     ?>
 </select>
-<script>$('#cst_idx_customer').val('<?=$cst_idx_customer?>');</script>
+<script>$('#ser_cst_idx_customer').val('<?=$ser_cst_idx_customer?>');</script>
 <select name="sfl" id="sfl">
     <option value="">검색항목</option>
     <option value="bom_part_no" <?=get_selected($sfl, 'bom_part_no')?>>품번</option>
@@ -248,7 +249,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
 
 </form>
 
-<?php echo get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, '?'.$qstr.'&amp;page='); ?>
+<?php // echo get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, '?'.$qstr.'&amp;page='); ?>
 
 <script>
 var posY;

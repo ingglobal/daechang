@@ -9,12 +9,16 @@ include_once('./_top_menu_bom.php');
 include_once('./_head.php');
 echo $g5['container_sub_title'];
 
-
+// 업체 연동 부분이 cross 테이블로 분리되어서 조인으로 해결 불가
 $sql_common = " FROM {$g5['bom_table']} AS bom
                     LEFT JOIN {$g5['bom_category_table']} AS bct ON bct.bct_idx = bom.bct_idx
                         AND bct.com_idx = '".$_SESSION['ss_com_idx']."'
-                    LEFT JOIN {$g5['customer_table']} AS cst ON cst.cst_idx = bom.cst_idx_provider
 "; 
+// $sql_common = " FROM {$g5['bom_table']} AS bom
+//                     LEFT JOIN {$g5['bom_category_table']} AS bct ON bct.bct_idx = bom.bct_idx
+//                         AND bct.com_idx = '".$_SESSION['ss_com_idx']."'
+//                     LEFT JOIN {$g5['customer_table']} AS cst ON cst.cst_idx = bom.cst_idx_provider
+// "; 
 
 $where = array();
 $where[] = " bom_status NOT IN ('delete','trash') AND bom.com_idx = '".$_SESSION['ss_com_idx']."' ";   // 디폴트 검색조건

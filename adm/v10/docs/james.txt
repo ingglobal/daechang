@@ -3801,3 +3801,56 @@ FROM g5_1_production_item AS pri
     LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
 WHERE prd_start_date = '2024-03-15' AND pri.com_idx = '13' AND bom.bom_type = 'product' 
 ORDER BY pri_idx DESC LIMIT 0, 200
+
+
+SELECT pri_idx, pri.bom_idx AS pri_bom_idx, prd_start_date, bom.bom_idx, bom.bom_part_no, bom.bom_name, bom_type, bct_idx,
+    cst_idx_customer,
+    SUM(pri_value) AS pri_value_sum,
+    GROUP_CONCAT(pri_idx) AS pri_idxs,
+    GROUP_CONCAT(pri_value) AS pri_values
+FROM g5_1_production_item AS pri 
+LEFT JOIN g5_1_production AS prd USING(prd_idx) 
+LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+WHERE prd_start_date = '2024-03-18' AND pri.com_idx = '13' 
+GROUP BY cst_idx_customer, pri_bom_idx 
+ORDER BY cst_idx_customer ASC, pri_bom_idx
+LIMIT 0, 200
+....
+SELECT pri_idx, pri.bom_idx AS pri_bom_idx, prd_start_date, bom.bom_idx, bom.bom_part_no, bom.bom_name, bom_type, bct_idx,
+    prd.boc_idx,
+    SUM(pri_value) AS pri_value_sum,
+    GROUP_CONCAT(pri_idx) AS pri_idxs,
+    GROUP_CONCAT(pri_value) AS pri_values
+FROM g5_1_production_item AS pri 
+    LEFT JOIN g5_1_production AS prd USING(prd_idx) 
+    LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+WHERE prd_start_date = '2024-03-18' AND pri.com_idx = '13' 
+GROUP BY cst_idx_customer, pri_bom_idx 
+ORDER BY cst_idx_customer ASC, pri_bom_idx
+LIMIT 0, 200
+....
+SELECT pri_idx, pri.bom_idx AS pri_bom_idx, prd_start_date, bom.bom_idx, bom.bom_part_no, bom.bom_name, bom_type, bct_idx, 
+    pri.boc_idx, boc.cst_idx AS cst_idx_customer
+    , SUM(pri_value) AS pri_value_sum, GROUP_CONCAT(pri_idx) AS pri_idxs, GROUP_CONCAT(pri_value) AS pri_values 
+FROM g5_1_production_item AS pri 
+    LEFT JOIN g5_1_production AS prd USING(prd_idx) 
+    LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+    LEFT JOIN g5_1_bom_customer AS boc ON boc.boc_idx = pri.boc_idx 
+WHERE prd_start_date = '2024-03-18' AND pri.com_idx = '13'
+    AND boc.cst_idx = 121
+GROUP BY pri.boc_idx, pri_bom_idx
+ORDER BY pri.boc_idx ASC, pri_bom_idx
+....
+
+
+// 고객사 select box
+SELECT pri.boc_idx, pri.bom_idx, boc.cst_idx AS cst_idx_customer
+FROM g5_1_production_item AS pri 
+    LEFT JOIN g5_1_production AS prd USING(prd_idx) 
+    LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+    LEFT JOIN g5_1_bom_customer AS boc ON boc.boc_idx = pri.boc_idx 
+WHERE prd_start_date = '2024-03-18' AND pri.com_idx = '13' 
+GROUP BY pri.boc_idx
+
+
+
