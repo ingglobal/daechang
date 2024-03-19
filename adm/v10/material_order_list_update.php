@@ -84,7 +84,7 @@ if($mtyp == 'moi'){
 
                 for($i=0;$i<$moi_count[$moi_idx_v];$i++){
                     $mtr_sql .= ($i==0) ? '':',';
-                    $mtr_sql .= "('{$_SESSION['ss_com_idx']}','{$bom['cst_idx_provider']}','{$bom['cst_idx_customer']}','{$bom['bom_idx']}', '{$moi_idx_v}','{$bom['bom_name']}','{$bom['bom_part_no']}','{$bom['bom_price']}','1','".G5_TIME_YMD."','material','ok','".G5_TIME_YMDHIS."','".G5_TIME_YMDHIS."','".G5_TIME_YMDHIS."')";
+                    $mtr_sql .= "('{$_SESSION['ss_com_idx']}','{$bom['cst_idx_provider']}','{$bom['cst_idx_customer']}','{$bom['bom_idx']}', '{$moi_idx_v}','".addslashes($bom['bom_name'])."','{$bom['bom_part_no']}','{$bom['bom_price']}','1','".G5_TIME_YMD."','material','ok','".G5_TIME_YMDHIS."','".G5_TIME_YMDHIS."','".G5_TIME_YMDHIS."')";
                 }
                 sql_query($mtr_sql,1);
             } else {
