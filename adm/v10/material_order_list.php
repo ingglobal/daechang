@@ -270,10 +270,10 @@ add_javascript('<script src="'.G5_USER_ADMIN_JS_URL.'/qrcode/qrcode.js"></script
         // print_r2($row);
         if($mtyp == 'moi'){
             $mtr = sql_fetch(" SELECT SUM(mtr_value) AS input_sum 
-                        FROM {$g5['material_table']} mtr 
+                        FROM {$g5['material_table']} mtr
                         WHERE bom_idx = '{$row['bom_idx']}'
                             AND moi_idx = '{$row['moi_idx']}'
-                            AND moi_status IN('ok','used','delivery','scrap')
+                            AND mtr_status IN('ok','used','delivery','scrap')
                         GROUP BY moi_idx
             ");
             $row['no_input_cnt'] = $row['moi_count'] - $mtr['input_sum'];
@@ -437,7 +437,7 @@ add_javascript('<script src="'.G5_USER_ADMIN_JS_URL.'/qrcode/qrcode.js"></script
     <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02">
     <!-- <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn btn_02"> -->
         <?php if($mtyp == 'moi'){ ?>
-        <a href="./material_order_form.php?mtyp=<?=$mtyp?>" id="order_add" class="btn btn_01">추가하기</a>
+        <a href="./material_order_form.php?mtyp=<?=$mtyp?>" id="order_add" class="btn btn_01" style="display:none;">추가하기</a>
         <?php } ?>
     <?php } else if($provider_member_yn) { ?>
         <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02">

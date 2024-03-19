@@ -88,7 +88,7 @@ $sql = " SELECT bom.bom_idx
         {$sql_common} {$sql_search} {$sql_group} {$sql_order}
         LIMIT {$from_record}, {$rows}
 ";
-// print_r3($sql);//exit;
+// echo $sql.BR;
 $result = sql_query($sql,1);
 
 $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목록</a>';
@@ -168,6 +168,7 @@ $qstr .= '&sca='.$sca.'&prd_start_date='.$prd_start_date.'&prd_done_date='.$prd_
     <tbody>
         <?php
     for ($i=0; $row=sql_fetch_array($result); $i++) {
+        // print_r2($row);
         $bct_cmd = '';
         $bom_cmd = '';
         if($sfl == 'bct.bct_name' && $stx){
@@ -190,7 +191,7 @@ $qstr .= '&sca='.$sca.'&prd_start_date='.$prd_start_date.'&prd_done_date='.$prd_
                     ORDER BY mtr_date DESC
                     LIMIT 3
         ";
-        // echo $old_sql."<br>";
+        // echo $old_sql.BR;
         $old_res = sql_query($old_sql,1);
         $old_sum = 0;
         $old_avg = 0;
@@ -204,7 +205,7 @@ $qstr .= '&sca='.$sca.'&prd_start_date='.$prd_start_date.'&prd_done_date='.$prd_
             WHERE mtr_status IN ('ok','finish','defect')
                 AND bom_idx = '{$row['bom_idx']}'
         ";
-        // echo $cur_sql."<br>";
+        // echo $cur_sql.BR;
         $mtr = sql_fetch($cur_sql);
         $row['bom_stock'] = $mtr['mtr_stock'];
         
@@ -231,7 +232,7 @@ $qstr .= '&sca='.$sca.'&prd_start_date='.$prd_start_date.'&prd_done_date='.$prd_
             <div class="chkdiv_btn" chk_no="<?=$i?>"></div>
         </td>
         <td class="td_bom_idx font_size_7"><?=$row['bom_idx']?></td>
-        <td class="td_bom_name font_size_8">
+        <td class="td_bom_name font_size_8"><!-- 품번/품명 -->
             <input type="hidden" name="cst_idx_provider[<?=$row['bom_idx']?>]" value="<?=$row['cst_idx_provider']?>">
             <input type="hidden" name="bom_idx[<?=$row['prd_idx']?>]" value="<?=$row['bom_idx']?>" id="bom_idx_<?=$i?>" class="bom_idx">
             <input type="hidden" name="pri_idx[<?=$row['prd_idx']?>]" value="<?=$row['pri_idx']?>" id="pri_idx_<?=$i?>" class="pri_idx">
@@ -249,7 +250,7 @@ $qstr .= '&sca='.$sca.'&prd_start_date='.$prd_start_date.'&prd_done_date='.$prd_
             <span style="color:skyblue;"><?=$row['cst_name']?></span>
             <br>
             <?=$row['bom_name']?>
-        </td><!-- 품번/품명 -->
+        </td>
         <td class="td_snp"><?=number_format($row['bom_ship_count'])?></td><!-- SNP(패킹적재량) -->
         <td class="td_safe_stock font_size_7"><?=number_format($row['bom_safe_stock'])?></td><!-- 안전재고량 -->
         <td class="td_current_stock"><?=(($row['bom_stock'])?number_format($row['bom_stock']):'-')?></td><!-- 현재재고량 -->

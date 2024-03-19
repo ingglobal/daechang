@@ -3853,4 +3853,32 @@ WHERE prd_start_date = '2024-03-18' AND pri.com_idx = '13'
 GROUP BY pri.boc_idx
 
 
+// 자재소요량 산출
+SELECT bom.bom_idx , cst_idx_provider , cst_name , cst_idx_customer , bom.bct_idx , bom_bct_json , bom_name , bom_part_no 
+FROM g5_1_bom bom 
+    LEFT JOIN g5_1_bom_category bct ON bom.bct_idx = bct.bct_idx 
+    LEFT JOIN g5_1_customer cst ON bom.cst_idx_provider = cst.cst_idx 
+WHERE bom_status NOT IN ('trash','delete') AND bom.com_idx = '13' AND bom.bom_type NOT IN ('half','product') 
+ORDER BY cst_idx_provider desc , bom_idx desc LIMIT 0, 15
 
+
+// 과거 3일치 평균.
+SELECT SUM(mtr_value) AS sum, mtr_date 
+FROM g5_1_material mtr 
+    INNER JOIN g5_1_bom bom ON mtr.mtr_part_no = bom.bom_part_no 
+    INNER JOIN g5_1_bom_category bct ON bom.bct_idx = bct.bct_idx 
+WHERE mtr_status NOT IN('trash','delivery','defect','error','scrap') AND mtr_part_no = '89306-JI000' 
+GROUP BY mtr_date HAVING mtr_date < '2024-03-19' 
+ORDER BY mtr_date DESC LIMIT 3
+
+// 현재고 추출
+SELECT SUM(mtr_value) AS mtr_stock 
+FROM g5_1_material
+WHERE mtr_status IN ('ok','finish','defect') AND bom_idx = '2096'
+
+
+SELECT SUM(mtr_value) AS input_sum 
+FROM g5_1_material mtr 
+    LEFT JOIN g5_1_material_order_item moi ON moi.moi_idx = mtr.moi_idx 
+WHERE mtr.bom_idx = '304' AND mtr.moi_idx = '83' AND moi_status IN('ok','used','delivery','scrap')
+GROUP BY mtr.moi_idx

@@ -276,6 +276,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
         // bom 생성
         $ar['table']  = 'g5_1_bom';
         $ar['com_idx']  = $_SESSION['ss_com_idx'];
+        $ar['cst_idx_provider'] = $arr['cst_idx_provider']; // 공급사(제조사)는 1:1 관계, 고객사는 1:n 관계일 수 있음
         $ar['bom_part_no'] = $arr['bom_part_no'];
         $ar['bom_name'] = $arr['bom_name'];
         $ar['bct_idx'] = $arr['bct_idx'];
