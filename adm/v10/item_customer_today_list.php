@@ -29,7 +29,8 @@ $sql_common = " FROM {$g5['production_item_table']} AS pri
 $where = array();
 //$where[] = " (1) ";   // 디폴트 검색조건
 // $where[] = " prd_start_date = '".statics_date(G5_TIME_YMDHIS)."' ";    // 오늘 것만
-$where[] = " prd_done_date <= '".$stat_date."' AND pri_date = '".$stat_date."' ";    // 오늘 것만
+// $where[] = " prd_start_date >= '".$stat_date."' AND pri_date = '".$stat_date."' ";    // 오늘 것만
+$where[] = " pri_date = '".$stat_date."' ";    // 오늘 것만
 
 // 해당 업체만
 $where[] = " pri.com_idx = '".$_SESSION['ss_com_idx']."' ";
