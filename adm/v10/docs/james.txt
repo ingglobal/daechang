@@ -3710,6 +3710,7 @@ TRUNCATE TABLE g5_1_production_item_count;
 TRUNCATE TABLE g5_1_production_main;
 TRUNCATE TABLE g5_1_item;
 TRUNCATE TABLE g5_1_material;
+TRUNCATE TABLE g5_1_shipment;
 --------------------------------------
 TRUNCATE TABLE g5_1_production;
 TRUNCATE TABLE g5_1_production_item;
@@ -3717,6 +3718,7 @@ TRUNCATE TABLE g5_1_production_item_count;
 TRUNCATE TABLE g5_1_production_main;
 TRUNCATE TABLE g5_1_item;
 TRUNCATE TABLE g5_1_material;
+TRUNCATE TABLE g5_1_shipment;
 
 89A41-P6000RXG
 
@@ -3885,29 +3887,27 @@ FROM g5_1_material mtr
 WHERE mtr.bom_idx = '304' AND mtr.moi_idx = '83' AND moi_status IN('ok','used','delivery','scrap')
 GROUP BY mtr.moi_idx
 
+// 자재소요량산출
+SELECT bom.bom_idx , cst_idx_provider , cst_name , cst_idx_customer , bom.bct_idx , bom_bct_json , bom_name , bom_part_no 
+FROM g5_1_bom bom 
+    LEFT JOIN g5_1_bom_category bct ON bom.bct_idx = bct.bct_idx 
+    LEFT JOIN g5_1_customer cst ON bom.cst_idx_provider = cst.cst_idx 
+WHERE bom_status NOT IN ('trash','delete') AND bom.com_idx = '13' AND bom.bom_type NOT IN ('half','product') 
+ORDER BY cst_idx_provider desc , bom_idx desc 
+LIMIT 0, 15
 
-SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.* 
-FROM g5_1_production_item AS pri 
-    LEFT JOIN g5_1_production AS prd USING(prd_idx) 
-    LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
-WHERE prd_start_date = '2024-03-18' AND pri_date = '2024-03-18' AND pri.com_idx = '13' AND bom.bom_type = 'product' 
-ORDER BY pri_idx DESC LIMIT 0, 200
+// 현재고가 3일치 평균사용량보다 적은 것들!!
 
 
-SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.* 
-FROM g5_1_production_item AS pri 
-    LEFT JOIN g5_1_production AS prd USING(prd_idx) 
-    LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
-WHERE prd_start_date >= '2024-03-18' AND pri_date = '2024-03-18' AND pri.com_idx = '13' AND bom.bom_type = 'product'
-ORDER BY pri_idx DESC LIMIT 0, 200
+SELECT mb.mb_name , mb.mb_id , cst.cst_name 
+FROM g5_1_customer_member ctm 
+    LEFT JOIN g5_1_customer cst ON ctm.cst_idx = cst.cst_idx 
+    LEFT JOIN g5_member mb ON ctm.mb_id = mb.mb_id 
+WHERE ctm.ctm_status = 'ok' AND cst.cst_status = 'ok' AND ctm.ctm_title = '13'
 ....
-SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.* 
-FROM g5_1_production_item AS pri 
-    LEFT JOIN g5_1_production AS prd USING(prd_idx) 
-    LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
-WHERE pri_date = '2024-03-04' AND pri.com_idx = '13' AND bom.bom_type = 'product'
-ORDER BY pri_idx DESC LIMIT 0, 200
+SELECT mb.mb_name , mb.mb_id , cst.cst_name 
+FROM g5_1_customer_member ctm 
+    LEFT JOIN g5_1_customer cst ON ctm.cst_idx = cst.cst_idx 
+    LEFT JOIN g5_member mb ON ctm.mb_id = mb.mb_id 
+WHERE ctm.ctm_status = 'ok' AND cst.cst_status = 'ok'
 ....
-
-SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.* FROM g5_1_production_item AS pri LEFT JOIN g5_1_production AS prd USING(prd_idx) LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
-WHERE prd_start_date >= '2024-03-04' AND pri_date = '2024-03-04' AND pri.com_idx = '13' AND bom.bom_type = 'product' ORDER BY pri_idx DESC LIMIT 0, 200
