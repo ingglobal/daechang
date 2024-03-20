@@ -86,6 +86,7 @@ if ($_POST['act_button'] == "선택수정") {
             $mb_memo = date('Y-m-d H:i', G5_SERVER_TIME)." 탈퇴처리 by ".$member['mb_name']."\n".$mb['mb_memo'];
 			$sql = "	UPDATE {$g5['member_table']} SET 
 							mb_level = 1
+							, mb_8 = '0'
 							, mb_memo = '".$mb_memo."'
 						WHERE mb_id = '".$mb['mb_id']."' ";
 			sql_query($sql);

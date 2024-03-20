@@ -205,15 +205,16 @@ for ($i = 0; $row = sql_fetch_array($rs); $i++) {
 
 //배송기사 목록
 $dsql = " SELECT mb.mb_name
-            , mb.mb_id
-            , cst.cst_name
-    FROM {$g5['customer_member_table']} ctm 
-    LEFT JOIN {$g5['customer_table']} cst ON ctm.cst_idx = cst.cst_idx 
-    LEFT JOIN {$g5['member_table']} mb ON ctm.mb_id = mb.mb_id
-WHERE ctm.ctm_status = 'ok'
-    AND cst.cst_status = 'ok'
-    AND ctm.ctm_title = '13'
+                        , mb.mb_id
+                        , cst.cst_name
+                FROM {$g5['customer_member_table']} ctm 
+                LEFT JOIN {$g5['customer_table']} cst ON ctm.cst_idx = cst.cst_idx 
+                LEFT JOIN {$g5['member_table']} mb ON ctm.mb_id = mb.mb_id
+            WHERE ctm.ctm_status = 'ok'
+                AND cst.cst_status = 'ok'
+                AND ctm.ctm_title = '13'
 ";
+// echo $dsql.BR;
 $dres = sql_query($dsql,1);
 $dopts = '';
 for($k=0;$drow=sql_fetch_array($dres);$k++){
