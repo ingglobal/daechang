@@ -3706,6 +3706,7 @@ TRUNCATE TABLE g5_1_bom_customer;
 TRUNCATE TABLE g5_1_customer_member;
 TRUNCATE TABLE g5_1_production;
 TRUNCATE TABLE g5_1_production_item;
+TRUNCATE TABLE g5_1_production_item_count;
 TRUNCATE TABLE g5_1_production_main;
 TRUNCATE TABLE g5_1_item;
 TRUNCATE TABLE g5_1_material;
@@ -3713,6 +3714,7 @@ TRUNCATE TABLE g5_1_shipment;
 --------------------------------------
 TRUNCATE TABLE g5_1_production;
 TRUNCATE TABLE g5_1_production_item;
+TRUNCATE TABLE g5_1_production_item_count;
 TRUNCATE TABLE g5_1_production_main;
 TRUNCATE TABLE g5_1_item;
 TRUNCATE TABLE g5_1_material;

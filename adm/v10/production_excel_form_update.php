@@ -199,7 +199,7 @@ for ($i = 1; $i <= sizeof($sheetData); $i++) {
             }
 
             // 생산계획 완제품그룹 등록
-            print_r3($d[$k]);
+            // print_r3($d[$k]);
             insert_production_item($prd_idx, $prm_idx, $boc_idx, $bom_idx, $d[$k], $v, 'confirm');
 
             $idx++;
