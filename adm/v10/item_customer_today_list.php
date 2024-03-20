@@ -29,7 +29,7 @@ $sql_common = " FROM {$g5['production_item_table']} AS pri
 $where = array();
 //$where[] = " (1) ";   // 디폴트 검색조건
 // $where[] = " prd_start_date = '".statics_date(G5_TIME_YMDHIS)."' ";    // 오늘 것만
-$where[] = " prd_start_date = '".$stat_date."' ";    // 오늘 것만
+$where[] = " prd_done_date <= '".$stat_date."' AND pri_date = '".$stat_date."' ";    // 오늘 것만
 
 // 해당 업체만
 $where[] = " pri.com_idx = '".$_SESSION['ss_com_idx']."' ";
@@ -120,7 +120,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
 </div>
 
 <div class="local_desc01 local_desc" style="display:no ne;">
-    <p><?=statics_date(G5_TIME_YMDHIS)?> 각 고객사별 생산 현황입니다.</p>
+    <p><?= $st_date ?> 각 고객사별 생산 현황입니다.</p>
 </div>
 
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get" style="width:100%;">
@@ -188,7 +188,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
 
         // 현재 생산수량 합계
         $sql1 = " SELECT SUM(pic_value) AS pic_sum FROM {$g5['production_item_count_table']} 
-                    WHERE pri_idx in (".$row['pri_idxs'].") AND pic_date = '".statics_date(G5_TIME_YMDHIS)."'
+                    WHERE pri_idx in (".$row['pri_idxs'].") AND pic_date = '".$st_date."'
         ";
         // echo $sql1.BR;
         $row['pic'] = sql_fetch($sql1,1);

@@ -3706,12 +3706,14 @@ TRUNCATE TABLE g5_1_bom_customer;
 TRUNCATE TABLE g5_1_customer_member;
 TRUNCATE TABLE g5_1_production;
 TRUNCATE TABLE g5_1_production_item;
+TRUNCATE TABLE g5_1_production_item_count;
 TRUNCATE TABLE g5_1_production_main;
 TRUNCATE TABLE g5_1_item;
 TRUNCATE TABLE g5_1_material;
 --------------------------------------
 TRUNCATE TABLE g5_1_production;
 TRUNCATE TABLE g5_1_production_item;
+TRUNCATE TABLE g5_1_production_item_count;
 TRUNCATE TABLE g5_1_production_main;
 TRUNCATE TABLE g5_1_item;
 TRUNCATE TABLE g5_1_material;
@@ -3882,3 +3884,11 @@ FROM g5_1_material mtr
     LEFT JOIN g5_1_material_order_item moi ON moi.moi_idx = mtr.moi_idx 
 WHERE mtr.bom_idx = '304' AND mtr.moi_idx = '83' AND moi_status IN('ok','used','delivery','scrap')
 GROUP BY mtr.moi_idx
+
+
+SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.* 
+FROM g5_1_production_item AS pri 
+    LEFT JOIN g5_1_production AS prd USING(prd_idx) 
+    LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+WHERE prd_start_date = '2024-03-04' AND pri_date = '2024-03-04' AND pri.com_idx = '13' AND bom.bom_type = 'product' 
+ORDER BY pri_idx DESC LIMIT 0, 200
