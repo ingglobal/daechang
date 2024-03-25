@@ -75,6 +75,12 @@ add_stylesheet('<link rel="stylesheet" href="'.$g5_monitor_url.'/css/monitor.css
 ?>
 </head>
 <body<?php echo isset($g5['body_script']) ? $g5['body_script'] : ''; ?>>
+<style>
+.container .grid1{
+  grid-row: span 2;
+  grid-column: span 2;
+}
+</style>
 <?php
 if ($is_member) { // 회원이라면 로그인 중이라는 메세지를 출력해준다.
     $sr_admin_msg = '';

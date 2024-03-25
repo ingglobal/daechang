@@ -1,6 +1,6 @@
 <?php
 // http://daechang.epcs.co.kr/adm/v10/dashboard/mms.php?w=1&h=1
-// 47호기 http://daechang.epcs.co.kr/adm/v10/dashboard/mms.php?w=2&h=1&mms_idx=138
+// 47호기 http://daechang.epcs.co.kr/adm/v10/dashboard/mms.php?w=2&h=1&mms_idx=141
 include_once('./_common.php');
 
 $g5['title'] = 'UPH';
@@ -14,11 +14,18 @@ $mms = get_table('mms', 'mms_idx', $mms_idx);
 $sql = "SELECT *
         FROM {$g5['production_item_count_table']}
         WHERE pri_idx IN (  SELECT pri_idx
-                            FROM {$g5['production_item_table']} WHERE mms_idx = '" . $mms['mms_idx'] . "'
-                            AND prd_idx IN ( SELECT prd_idx FROM {$g5['production_table']} WHERE prd_start_date = '" . $st_date . "' )
+                            FROM {$g5['production_item_table']} WHERE mms_idx = '" . $mms['mms_idx'] . "' AND pri_date = '" . $st_date . "'
         ) AND pic_date = '" . $st_date . "'
         ORDER BY pic_idx DESC
 ";
+// $sql = "SELECT *
+//         FROM {$g5['production_item_count_table']}
+//         WHERE pri_idx IN (  SELECT pri_idx
+//                             FROM {$g5['production_item_table']} WHERE mms_idx = '" . $mms['mms_idx'] . "'
+//                             AND prd_idx IN ( SELECT prd_idx FROM {$g5['production_table']} WHERE prd_start_date = '" . $st_date . "' )
+//         ) AND pic_date = '" . $st_date . "'
+//         ORDER BY pic_idx DESC
+// ";
 // echo $sql.BR;
 $rs = sql_query($sql, 1);
 for ($i = 0; $row = sql_fetch_array($rs); $i++) {
@@ -58,9 +65,9 @@ if (is_file(G5_USER_ADMIN_PATH . '/' . $g5['dir_name'] . '/css/' . $g5['file_nam
     </div>
 </div>
 <div class="box_body">
-    <p><?= number_format($total) ?></p>
+    <p><?=$total?number_format($total):'-'?></p>
 </div>
-<div class="box_footer">
+<div class="box_footer" style="display:<?=!$total?'none':''?>;">
     <p>현재: <?= $mb_name ?> (<?= $bom_part_no ?>)</p>
 </div>
 

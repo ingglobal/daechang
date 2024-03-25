@@ -73,8 +73,9 @@ border:1px solid #558ab7 !important;
 .container .grid5{background-color:#ab9df4;}
 .container .grid6{background-color:#90707c;}
 */
-.container .grid3{
+.container .grid1{
   grid-row: span 2;
+  grid-column: span 2;
 }
 
 .container .grid4{
