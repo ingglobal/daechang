@@ -3921,3 +3921,9 @@ FROM g5_1_production_item AS pri
     LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
 WHERE prd_start_date = '2024-03-18' AND bom.bom_type = 'product' AND pri.com_idx = '13' 
 ORDER BY pri_idx DESC LIMIT 0, 15
+
+
+SELECT *, COUNT(itm_idx) AS cnt FROM `g5_1_item` WHERE itm_part_no = '88410-CG620NNB' GROUP BY bom_idx, plt_idx;
+
+UPDATE `g5_1_item` SET plt_idx = 0, itm_status = 'finish' WHERE itm_part_no = '88410-CG620NNB'
+DELETE FROM `g5_1_pallet` WHERE plt_idx NOT IN (SELECT plt_idx FROM `g5_1_item` WHERE itm_part_no = '88410-CG620NNB');
