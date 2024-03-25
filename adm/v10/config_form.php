@@ -830,6 +830,7 @@ yearly,1,10 = 연도별,1년단위,10년치,sum(합계)'); ?>
 				<p style="margin-top:5px;"><input type="text" name="set_item_customer_today_list_page_rows" value="<?php echo $g5['setting']['set_item_customer_today_list_page_rows']; ?>" class="frm_input" style="width:50px;"> 고객사별 현황 페이지 (item_customer_today_list.php)</p>
 				<p style="margin-top:5px;"><input type="text" name="set_uph_page_rows" value="<?php echo $g5['setting']['set_uph_page_rows']; ?>" class="frm_input" style="width:50px;"> 대시보드 UPH 페이지 (uph.php)</p>
 				<p style="margin-top:5px;"><input type="text" name="set_production_today_page_rows" value="<?php echo $g5['setting']['set_production_today_page_rows']; ?>" class="frm_input" style="width:50px;"> 대시보드 생산량 페이지 (production.php)</p>
+				<p style="margin-top:5px;"><input type="text" name="set_pallet_data_list_page_rows" value="<?php echo $g5['setting']['set_pallet_data_list_page_rows']; ?>" class="frm_input" style="width:50px;"> 빠레트데이터관리 (pallet_data_list.php)</p>
 			</td>
 		</tr>
 		<tr>

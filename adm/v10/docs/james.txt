@@ -3911,3 +3911,13 @@ FROM g5_1_customer_member ctm
     LEFT JOIN g5_member mb ON ctm.mb_id = mb.mb_id 
 WHERE ctm.ctm_status = 'ok' AND cst.cst_status = 'ok'
 ....
+
+
+
+// 빠레트데이터관리
+SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, prd_start_date, bom.* 
+FROM g5_1_production_item AS pri 
+    LEFT JOIN g5_1_production AS prd USING(prd_idx) 
+    LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+WHERE prd_start_date = '2024-03-18' AND bom.bom_type = 'product' AND pri.com_idx = '13' 
+ORDER BY pri_idx DESC LIMIT 0, 15
