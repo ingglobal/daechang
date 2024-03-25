@@ -3914,22 +3914,10 @@ WHERE ctm.ctm_status = 'ok' AND cst.cst_status = 'ok'
 
 
 
-// facility 49
-SELECT * 
-FROM g5_1_production_item_count 
-WHERE pri_idx IN ( SELECT pri_idx 
-    FROM g5_1_production_item WHERE mms_idx = '141'
-    AND prd_idx IN ( SELECT prd_idx FROM g5_1_production WHERE prd_start_date = '2024-03-21' ) 
-) AND pic_date = '2024-03-21' 
-ORDER BY pic_idx DESC
-....
-SELECT * 
-FROM g5_1_production_item_count 
-WHERE pri_idx IN ( SELECT pri_idx 
-    FROM g5_1_production_item WHERE mms_idx = '141' AND pri_date = '2024-03-21'
-) AND pic_date = '2024-03-21' 
-ORDER BY pic_idx DESC
-....
-
-
-SELECT prd.prd_idx , prm.prm_date , pri.prm_idx , pri.pri_idx , pri.bom_idx , bom.bct_idx , bom.bom_part_no , bom.bom_name , bom.cst_idx_customer , bom.bom_type , boi.bit_main_yn , boi.bom_idx AS bom_idx_parent , cst.cst_name , pri_value , pri.mms_idx , pri.mb_id , pri_memo , pri_ing , pri_status , pri_reg_dt , pri_update_dt FROM g5_1_production_item pri LEFT JOIN g5_1_production_main prm ON pri.prm_idx = prm.prm_idx LEFT JOIN g5_1_production prd ON pri.prd_idx = prd.prd_idx LEFT JOIN g5_1_bom bom ON pri.bom_idx = bom.bom_idx LEFT JOIN g5_1_bom_item boi ON bom.bom_idx = boi.bom_idx_child LEFT JOIN g5_1_customer cst ON bom.cst_idx_customer = cst.cst_idx LEFT JOIN g5_member mb ON pri.mb_id = mb.mb_id WHERE pri.mb_id = '01000000003' AND pri.mms_idx = '' AND prm.prm_date = '2024-03-22' AND prm.prm_status = 'confirm' AND bom.bom_type IN ('product','half','material')
+// 빠레트데이터관리
+SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, prd_start_date, bom.* 
+FROM g5_1_production_item AS pri 
+    LEFT JOIN g5_1_production AS prd USING(prd_idx) 
+    LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+WHERE prd_start_date = '2024-03-18' AND bom.bom_type = 'product' AND pri.com_idx = '13' 
+ORDER BY pri_idx DESC LIMIT 0, 15

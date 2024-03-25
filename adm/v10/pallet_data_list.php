@@ -114,7 +114,8 @@ $sql_common = " FROM {$g5['production_item_table']} AS pri
 
 $where = array();
 //$where[] = " (1) ";   // 디폴트 검색조건
-$where[] = " prd_start_date = '" . $stat_date . "' ";    // 오늘 것만
+// $where[] = " prd_start_date = '" . $stat_date . "' ";    // 오늘 것만
+$where[] = " pri_date = '".$stat_date."' ";    // 오늘 것만
 $where[] = " bom.bom_type = 'product' ";    // 완제품만
 
 // 해당 업체만
@@ -359,7 +360,10 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
 
                     // 현재 생산수량 합계
                     // $sql1 = " SELECT SUM(pic_value) AS pic_sum FROM {$g5['production_item_count_table']} WHERE pri_idx = '" . $row['pri_idx'] . "' AND pic_date = '" . $stat_date . "' ";
-                    $sql1 = " SELECT COUNT(itm_value) AS pic_sum FROM {$g5['item_table']} WHERE pri_idx = '{$row['pri_idx']}' AND itm_date = '{$stat_date}' AND itm_status IN ('finish','check','delivery')  ";
+                    $sql1 = " SELECT COUNT(itm_value) AS pic_sum FROM {$g5['item_table']}
+                            WHERE pri_idx = '{$row['pri_idx']}'
+                                AND itm_date = '{$stat_date}' AND itm_status IN ('finish','check','delivery')
+                    ";
                     // echo $sql1.BR;
                     $row['pic'] = sql_fetch($sql1, 1);
 
