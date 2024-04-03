@@ -4082,6 +4082,23 @@ WHERE pri_date = '2024-04-03' AND bom.bom_type = 'product' AND pri.com_idx = '13
 ORDER BY pri_idx DESC 
 LIMIT 0, 200
 
+89A41-P7000NNB
+// 완제품 
+SELECT bom.bom_idx , bct_idx , bom_part_no , bom_name , bom_spec , bom_usage , bom_lead_time , bom_price , bom_safe_stock , bom_min_cnt , bom_stock , bom_type , itm.cst_idx_provider , itm.cst_idx_customer 
+FROM g5_1_bom bom 
+LEFT JOIN g5_1_item itm ON bom.bom_idx = itm.bom_idx 
+WHERE bom.bom_status = 'ok' AND bom_type = 'product' AND bom.com_idx = '13' 
+GROUP BY bom.bom_idx 
+ORDER BY bom.bom_idx DESC 
+LIMIT 0, 15
+
+
+
+
+
+
+
+
 
 
 현재고 숫자가 안 줄어든다. (빠레트)

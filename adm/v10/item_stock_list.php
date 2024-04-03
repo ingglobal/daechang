@@ -192,7 +192,7 @@ $('#ser_cats').val('<?=$ser_cats?>');
         // print_r2($row['cst_customer']);
         
         // 재고수량
-        $sql1 = " SELECT COUNT(*) AS cnt FROM g5_1_item AS itm WHERE bom_idx = '".$row['bom_idx']."' ";
+        $sql1 = " SELECT COUNT(*) AS cnt FROM g5_1_item AS itm WHERE bom_idx = '".$row['bom_idx']."' AND itm_status NOT IN ('delivery') ";
         $row['itm'] = sql_fetch($sql1,1);
         // print_r2($row['itm']);
 
