@@ -4093,6 +4093,14 @@ ORDER BY bom.bom_idx DESC
 LIMIT 0, 15
 
 
+SELECT *                FROM g5_1_bom bom LEFT JOIN g5_1_item itm ON bom.bom_idx = itm.bom_idx WHERE bom.bom_status = 'ok' AND bom_type = 'product' AND bom.com_idx = '13' AND (bom_part_no = '89A41-P7000NNB') GROUP BY bom.bom_idx
+SELECT COUNT(*) as cnt FROM g5_1_bom bom LEFT JOIN g5_1_item itm ON bom.bom_idx = itm.bom_idx WHERE bom.bom_status = 'ok' AND bom_type = 'product' AND bom.com_idx = '13' AND (bom_part_no = '89A41-P7000NNB') GROUP BY bom.bom_idx
+SELECT COUNT(cnt) AS cnt FROM (
+    SELECT COUNT(*) as cnt FROM g5_1_bom bom LEFT JOIN g5_1_item itm ON bom.bom_idx = itm.bom_idx WHERE bom.bom_status = 'ok' AND bom_type = 'product' AND bom.com_idx = '13' AND (bom_part_no = '89A41-P7000NNB') GROUP BY bom.bom_idx
+) AS db1
+
+
+
 
 
 

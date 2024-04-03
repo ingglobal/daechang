@@ -102,9 +102,15 @@ $sql = " SELECT bom.bom_idx
 $result = sql_query($sql,1);
 
 // 전체 게시물 수
-$sql = " SELECT COUNT(*) as cnt {$sql_common} {$sql_search} ";
+// $sql = " SELECT COUNT(*) as cnt {$sql_common} {$sql_search} {$sql_group} ";
+$sql = " SELECT COUNT(cnt) AS cnt FROM (
+    SELECT COUNT(*) as cnt {$sql_common} {$sql_search} {$sql_group} 
+) AS db1
+";
+// echo $sql.BR;
 $row = sql_fetch($sql);
 $total_count = $row['cnt'];
+// echo $total_count.BR;
 $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
 
 $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목록</a>';
