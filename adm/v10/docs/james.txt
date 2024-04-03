@@ -3696,7 +3696,7 @@ production_item
 production_main
 ----------------------------
 
-
+// 데이터 초기화
 TRUNCATE TABLE g5_1_bom;
 TRUNCATE TABLE g5_1_bom_item;
 TRUNCATE TABLE g5_1_bom_jig;
@@ -4087,6 +4087,9 @@ LIMIT 0, 200
 현재고 숫자가 안 줄어든다. (빠레트)
 
 발주관리, 등록하는 게 따로 없다.
+
+빠레트 관리 - 생산계획ID
+로 검색할 수 있게!!
 
 
 
