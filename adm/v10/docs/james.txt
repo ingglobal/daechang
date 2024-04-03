@@ -3927,3 +3927,166 @@ SELECT *, COUNT(itm_idx) AS cnt FROM `g5_1_item` WHERE itm_part_no = '88410-CG62
 
 UPDATE `g5_1_item` SET plt_idx = 0, itm_status = 'finish' WHERE itm_part_no = '88410-CG620NNB'
 DELETE FROM `g5_1_pallet` WHERE plt_idx NOT IN (SELECT plt_idx FROM `g5_1_item` WHERE itm_part_no = '88410-CG620NNB');
+
+SELECT mms_idx, mms_name FROM g5_1_mms WHERE mms_name LIKE '%호기';
+SELECT mms_idx, mms_name FROM g5_1_mms WHERE mms_name LIKE '%호기' ORDER BY mms_idx;
+SELECT mms_idx, mms_name FROM g5_1_mms WHERE mms_name LIKE '%호기' ORDER BY mms_name;
+SELECT mms_name, mms_idx FROM g5_1_mms WHERE mms_name LIKE '%호기' ORDER BY CONVERT(mms_name,decimal);
+
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>1호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=170" frameborder="0" scrolling="no"></iframe></div>'},
+
+
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>1호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=170" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>2호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=364" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>3호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=365" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>4호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=366" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>5호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=155" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>6호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=133" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>7호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=113" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>8호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=134" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>9호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=117" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>10호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=152" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>11호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=178" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>12호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=98" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>13호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=367" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>14호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=368" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>15호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=114" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>16호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=115" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>17호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=171" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>18호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=146" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>19호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=147" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>20호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=151" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>21호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=369" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>22호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=101" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>23호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=135" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>24호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=97" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>25호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=94" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>26호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=103" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>27호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=136" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>28호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=110" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>29호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=105" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>30호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=165" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>31호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=89" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>32호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=90" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>33호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=93" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>34호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=370" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>35호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=109" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>36호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=159" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>37호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=132" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>38호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=137" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>39호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=91" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>40호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=96" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>41호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=104" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>42호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=100" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>43호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=116" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>44호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=92" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>45호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=102" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>46호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=381" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>47호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=138" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>48호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=139" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>49호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=141" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>50호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=140" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>51호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=143" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>52호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=144" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>53호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=145" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>54호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=142" frameborder="0" scrolling="no"></iframe></div>'},
+  {w: 2, h: 1, noResize: true, content: '<div class="widget_title"><span>55호기</span></div><div class="widget_content"><iframe id="frame_02" src="<?=G5_USER_ADMIN_URL?>/dashboard/mms.php?w=2&h=1&mms_idx=207" frameborder="0" scrolling="no"></iframe></div>'},
+
+// 자재소요량 산출 리스트
+SELECT bom.bom_idx , cst_idx_provider , cst_name , cst_idx_customer , bom.bct_idx , bom_bct_json , bom_name , bom_part_no 
+FROM g5_1_bom bom 
+    LEFT JOIN g5_1_bom_category bct ON bom.bct_idx = bct.bct_idx 
+    LEFT JOIN g5_1_customer cst ON bom.cst_idx_provider = cst.cst_idx 
+WHERE bom_status NOT IN ('trash','delete') AND bom.com_idx = '13' AND bom.bom_type NOT IN ('half','product') 
+ORDER BY cst_idx_provider desc , bom_idx desc 
+LIMIT 0, 5
+
+// 과거 3일치 추출
+SELECT SUM(mtr_value) AS sum, mtr_date 
+FROM g5_1_material mtr 
+    INNER JOIN g5_1_bom bom ON mtr.mtr_part_no = bom.bom_part_no 
+    INNER JOIN g5_1_bom_category bct ON bom.bct_idx = bct.bct_idx 
+WHERE mtr_status NOT IN('trash','delivery','defect','error','scrap') 
+    AND mtr_part_no = '892P3-S8AA0' 
+GROUP BY mtr_date 
+HAVING mtr_date < '2024-04-02' 
+ORDER BY mtr_date DESC 
+LIMIT 3
+.....
+explain
+SELECT SQL_NO_CACHE SUM(mtr_value) AS sum, mtr_date 
+FROM g5_1_material mtr 
+    INNER JOIN g5_1_bom bom ON mtr.mtr_part_no = bom.bom_part_no 
+    INNER JOIN g5_1_bom_category bct ON bom.bct_idx = bct.bct_idx 
+WHERE mtr_status NOT IN('trash','delivery','defect','error','scrap') 
+    AND mtr_part_no = '89850-S8500WDN' 
+GROUP BY mtr_date 
+HAVING mtr_date < '2024-04-02' 
+ORDER BY mtr_date DESC 
+LIMIT 3
+.....
+explain
+SELECT SQL_NO_CACHE SUM(mtr_value) AS sum, mtr_date 
+FROM g5_1_material mtr 
+    LEFT JOIN g5_1_bom bom ON mtr.bom_idx = bom.bom_idx
+    LEFT JOIN g5_1_bom_category bct ON bom.bct_idx = bct.bct_idx 
+WHERE mtr_status NOT IN('trash','delivery','defect','error','scrap') 
+    AND mtr_part_no = '89850-S8500WDN' 
+GROUP BY mtr_date 
+HAVING mtr_date < '2024-04-02' 
+ORDER BY mtr_date DESC 
+LIMIT 3
+.....
+1000 2024-03-26
+500 2024-03-21
+244 2024-03-20
+............................................................
+3Page... hang..
+explain
+SELECT SUM(mtr_value) AS sum, mtr_date FROM g5_1_material mtr INNER JOIN g5_1_bom bom ON mtr.mtr_part_no = bom.bom_part_no INNER JOIN g5_1_bom_category bct ON bom.bct_idx = bct.bct_idx WHERE mtr_status NOT IN('trash','delivery','defect','error','scrap') AND mtr_part_no = '89850-S8200RBD' GROUP BY mtr_date HAVING mtr_date < '2024-04-02' ORDER BY mtr_date DESC LIMIT 3
+
+SELECT SUM(mtr_value) AS sum, mtr_date FROM g5_1_material mtr INNER JOIN g5_1_bom bom ON mtr.mtr_part_no = bom.bom_part_no INNER JOIN g5_1_bom_category bct ON bom.bct_idx = bct.bct_idx WHERE mtr_status NOT IN('trash','delivery','defect','error','scrap') AND mtr_part_no = '89850-S8200WDN' GROUP BY mtr_date HAVING mtr_date < '2024-04-02' ORDER BY mtr_date DESC LIMIT 3
+
+explain
+SELECT SQL_NO_CACHE SUM(mtr_value) AS sum, mtr_date 
+FROM g5_1_material mtr 
+    LEFT JOIN g5_1_bom bom ON mtr.bom_idx = bom.bom_idx 
+WHERE mtr_status NOT IN('trash','delivery','defect','error','scrap') AND mtr_part_no = '89850-S8200NNB' 
+GROUP BY mtr_date 
+HAVING mtr_date < '2024-04-02' 
+ORDER BY mtr_date DESC 
+LIMIT 3
+....
+explain
+SELECT SQL_NO_CACHE SUM(mtr_value) AS sum, mtr_date 
+FROM g5_1_material mtr 
+    LEFT JOIN g5_1_bom bom ON mtr.bom_idx = bom.bom_idx 
+WHERE mtr_status NOT IN('trash','delivery','defect','error','scrap') AND mtr.bom_idx = '35' 
+GROUP BY mtr_date HAVING mtr_date < '2024-04-03' ORDER BY mtr_date DESC LIMIT 3;
+....
+explain
+SELECT SQL_NO_CACHE SUM(mtr_value) AS sum, mtr_date 
+FROM g5_1_material mtr USE INDEX (idx_bom_idx_status)
+    LEFT JOIN g5_1_bom bom ON mtr.bom_idx = bom.bom_idx 
+WHERE mtr_status NOT IN('trash','delivery','defect','error','scrap') AND mtr.bom_idx = '35' 
+GROUP BY mtr_date HAVING mtr_date < '2024-04-03' ORDER BY mtr_date DESC LIMIT 3;
+....
+
+
+// 빠레트데이터관리
+SELECT SQL_NO_CACHE prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, prd_start_date, bom.* 
+FROM g5_1_production_item AS pri 
+LEFT JOIN g5_1_production AS prd USING(prd_idx) 
+LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+WHERE pri_date = '2024-04-03' AND bom.bom_type = 'product' AND pri.com_idx = '13' 
+ORDER BY pri_idx DESC 
+LIMIT 0, 200
+
+
+
+현재고 숫자가 안 줄어든다. (빠레트)
+
+발주관리, 등록하는 게 따로 없다.
+
+
+

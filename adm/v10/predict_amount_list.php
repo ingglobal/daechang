@@ -72,8 +72,7 @@ $row = sql_fetch($sql);
 $total_count = $row['cnt'];
 
 
-// $rows = $config['cf_page_rows'];
-$rows = 100;
+$rows = $config['cf_page_rows'];
 $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
 if ($page < 1) $page = 1; // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
@@ -182,10 +181,9 @@ $qstr .= '&sca='.$sca.'&prd_start_date='.$prd_start_date.'&prd_done_date='.$prd_
         // 과거 3일치의 생산된 수량의 평균값을 산출하기 위한 코드
         $old_sql = " SELECT SUM(mtr_value) AS sum, mtr_date
                     FROM {$g5['material_table']} mtr
-                            INNER JOIN {$g5['bom_table']} bom ON mtr.mtr_part_no = bom.bom_part_no
-                            INNER JOIN {$g5['bom_category_table']} bct ON bom.bct_idx = bct.bct_idx
+                            LEFT JOIN {$g5['bom_table']} bom ON mtr.bom_idx = bom.bom_idx
                     WHERE mtr_status NOT IN('trash','delivery','defect','error','scrap')
-                        AND mtr_part_no = '{$row['bom_part_no']}'
+                        AND mtr.bom_idx = '{$row['bom_idx']}'
                         {$bct_cmd}
                         {$bom_cmd}
                     GROUP BY mtr_date

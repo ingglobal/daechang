@@ -22,7 +22,7 @@ else{
         array('940130', '설비관리', ''.G5_USER_ADMIN_URL.'/mms_list.php', 'mms_list'),
         array('940135', '작업교대관리', ''.G5_USER_ADMIN_URL.'/shift_list.php', 'shift_list'),
         // array('940150', '데이터조회(RDB)', ''.G5_USER_ADMIN_URL.'/db/rdb_charge_in_list.php', 'rdb_charge_in_list'),
-        // array('940160', '데이터조회', ''.G5_USER_ADMIN_URL.'/db/pg_socket_list.php', 'pg_socket_list.php')
+        array('940160', '데이터조회', ''.G5_USER_ADMIN_URL.'/db/pg_socket_list.php', 'pg_socket_list.php')
     );
 }
 ?>

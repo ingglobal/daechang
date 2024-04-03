@@ -68,7 +68,7 @@ if (is_file(G5_USER_ADMIN_PATH . '/' . $g5['dir_name'] . '/css/' . $g5['file_nam
     <p><?=$total?number_format($total):'-'?></p>
 </div>
 <div class="box_footer" style="display:<?=!$total?'none':''?>;">
-    <p>현재: <?= $mb_name ?> (<?= $bom_part_no ?>)</p>
+    <p><?= $mb_name ?> (<?= $bom_part_no ?>)</p>
 </div>
 
 <script>

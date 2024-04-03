@@ -79,7 +79,7 @@ $colspan = 16;
 <label for="sfl" class="sound_only">검색대상</label>
 <select name="sfl" id="sfl">
     <option value="ppr_name"<?php echo get_selected($_GET['sfl'], "ppr_name"); ?>>태그명</option>
-    <option value="fct_name"<?php echo get_selected($_GET['sfl'], "fct_name"); ?>>설비명</option>
+    <option value="mms_name"<?php echo get_selected($_GET['sfl'], "mms_name"); ?>>설비명</option>
     <option value="ppr.mms_idx"<?php echo get_selected($_GET['sfl'], "ppr.mms_idx"); ?>>설비번호</option>
     <option value="ppr_ip"<?php echo get_selected($_GET['sfl'], "ppr_ip"); ?>>아이피</option>
     <option value="ppr_port"<?php echo get_selected($_GET['sfl'], "ppr_port"); ?>>포트</option>

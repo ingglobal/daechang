@@ -5,53 +5,71 @@ include_once('./_common.php');
 $g5['title'] = 'UPH';
 include_once('./_head.sub.php');
 
+$_SESSION['ss_com_idx'] = 13;
+
 // st_date, en_date
-$st_date = $st_date ?: date("Y-m-d",G5_SERVER_TIME);
+$st_date = $ser_st_date ?: date("Y-m-d", G5_SERVER_TIME);
 $st_time = $st_time ?: '00:00:00';
 $en_time = $en_time ?: '23:59:59';
-$st_datetime = $st_date.' '.$st_time;
-$en_datetime = $st_date.' '.$en_time;
+$st_datetime = $st_date . ' ' . $st_time;
+$en_datetime = $st_date . ' ' . $en_time;
+
+foreach ($_REQUEST as $key => $value) {
+    if (substr($key, 0, 4) == 'ser_') {
+        if (is_array($value)) {
+            foreach ($value as $k2 => $v2) {
+                $qstr .= '&' . $key . '[]=' . $v2;
+                $form_input .= '<input type="hidden" name="' . $key . '[]" value="' . $v2 . '" class="frm_input">' . PHP_EOL;
+            }
+        } else {
+            $qstr .= '&' . $key . '=' . (($key == 'ser_stx') ? urlencode(cut_str($value, 40, '')) : $value);
+            $form_input .= '<input type="hidden" name="' . $key . '" value="' . (($key == 'ser_stx') ? urlencode(cut_str($value, 40, '')) : $value) . '" class="frm_input">' . PHP_EOL;
+        }
+    }
+}
+
 
 // 검색일자
 $stat_date = $st_date ?: statics_date(G5_TIME_YMDHIS);
 // echo $stat_date;
+
 // 계획정지 offwork, 중복 제거가 있어서 불러오는 순서가 중요함
-$ser_mms_idxs = $ser_mms_idx ? $ser_mms_idx.',0' : '0';
+$ser_mms_idxs = $ser_mms_idx ? $ser_mms_idx . ',0' : '0';
 $sql = "SELECT off_idx, mms_idx, off_period_type
         , off_start_time
         , off_end_time
         FROM {$g5['offwork_table']}
-        WHERE com_idx = '".$g5['setting']['set_com_idx']."'
+        WHERE com_idx = '" . $_SESSION['ss_com_idx'] . "'
             AND off_status IN ('ok')
-            AND off_start_dt <= '".$st_datetime."'
-            AND off_end_dt >= '".$en_datetime."'
-            AND mms_idx IN (".$ser_mms_idxs.")
+            AND off_start_dt <= '" . $st_datetime . "'
+            AND off_end_dt >= '" . $en_datetime . "'
+            AND mms_idx IN (" . $ser_mms_idxs . ")
         ORDER BY mms_idx, off_period_type, off_start_time
 ";
 // echo $sql.'<br>';
-$rs = sql_query($sql,1);
-for($i=0;$row=sql_fetch_array($rs);$i++){
+$rs = sql_query($sql, 1);
+for ($i = 0; $row = sql_fetch_array($rs); $i++) {
     // print_r2($row);
     $offwork[$i]['mms_idx'] = $row['mms_idx'];
-    $offwork[$i]['start'] = preg_replace("/:/","",$row['off_start_time']);
-    $offwork[$i]['end'] = preg_replace("/:/","",$row['off_end_time']);
+    $offwork[$i]['start'] = preg_replace("/:/", "", $row['off_start_time']);
+    $offwork[$i]['end'] = preg_replace("/:/", "", $row['off_end_time']);
     // print_r2($offwork[$i]);
     // echo $i.'번째  <br>';
     // 중복 제거 처리 (앞에서 정의했던 것들과 겹치는 시간이 있으면 빼야 함, 중복 계산하지 않도록 한다.)
-    if( is_array($offwork) ) {
+    if (is_array($offwork)) {
         $offworkold = $offwork;
-        for($j=0;$j<sizeof($offworkold);$j++){
+        for ($j = 0; $j < sizeof($offworkold); $j++) {
             // print_r2($offworkold[$j]);
             // 완전 내부 포함인 경우는 중복 제외
-            if( $offwork[$i]['start'] > $offworkold[$j]['start'] && $offwork[$i]['end'] < $offworkold[$j]['end'] ) {
+            if ($offwork[$i]['start'] > $offworkold[$j]['start'] && $offwork[$i]['end'] < $offworkold[$j]['end']) {
                 unset($offwork[$i]);
             }
             // 걸쳐 있는 경우
-            else if( $offwork[$i]['start'] < $offworkold[$j]['end'] && $offwork[$i]['end'] > $offworkold[$j]['start'] ) {
-                if( $offwork[$i]['start'] < $offworkold[$j]['start'] ) {
+            else if ($offwork[$i]['start'] < $offworkold[$j]['end'] && $offwork[$i]['end'] > $offworkold[$j]['start']) {
+                if ($offwork[$i]['start'] < $offworkold[$j]['start']) {
                     $offwork[$i]['end'] = $offworkold[$j]['start'];
                 }
-                if( $offwork[$i]['end'] > $offworkold[$j]['end'] ) {
+                if ($offwork[$i]['end'] > $offworkold[$j]['end']) {
                     $offwork[$i]['start'] = $offworkold[$j]['end'];
                 }
             }
@@ -68,17 +86,17 @@ $sql = "SELECT dta_idx, mms_idx
         , dta_start_dt
         , dta_end_dt
         FROM {$g5['data_downtime_table']}
-        WHERE com_idx = '".$g5['setting']['set_com_idx']."'
-            AND dta_start_dt <= '".$day_arr['end_dt']."' AND dta_end_dt >= '".$day_arr['start_dt']."'
+        WHERE com_idx = '" . $_SESSION['ss_com_idx'] . "'
+            AND dta_start_dt <= '" . $day_arr['end_dt'] . "' AND dta_end_dt >= '" . $day_arr['start_dt'] . "'
         ORDER BY mms_idx, dta_start_dt
 ";
 // echo $sql.'<br>';
-$rs = sql_query($sql,1);
-for($i=0;$row=sql_fetch_array($rs);$i++){
+$rs = sql_query($sql, 1);
+for ($i = 0; $row = sql_fetch_array($rs); $i++) {
     // print_r2($row);
     $downtime[$i]['mms_idx'] = $row['mms_idx'];
-    $downtime[$i]['start'] = preg_replace("/:/","",substr($row['dta_start_dt'],11));
-    $downtime[$i]['end'] = preg_replace("/:/","",substr($row['dta_end_dt'],11));
+    $downtime[$i]['start'] = preg_replace("/:/", "", substr($row['dta_start_dt'], 11));
+    $downtime[$i]['end'] = preg_replace("/:/", "", substr($row['dta_end_dt'], 11));
     // print_r2($downtime[$i]);
 }
 // print_r2($downtime);
@@ -91,20 +109,27 @@ $sql_common = " FROM {$g5['production_item_table']} AS pri
 
 $where = array();
 //$where[] = " (1) ";   // 디폴트 검색조건
-$where[] = " prd_start_date = '".$stat_date."' ";    // 오늘 것만
+// $where[] = " prd_start_date = '".$stat_date."' AND pri_date = '".$stat_date."' ";    // 오늘 것만
+// $where[] = " prd_start_date >= '".$stat_date."' AND pri_date = '".$stat_date."' ";    // 오늘 것만
+$where[] = " pri_date = '".$stat_date."' ";    // 오늘 것만
 
 // 해당 업체만
-$where[] = " pri.com_idx = '".$g5['setting']['set_com_idx']."' ";
+$where[] = " pri.com_idx = '" . $_SESSION['ss_com_idx'] . "' ";
+
+// 설비번호 검색
+if ($ser_mms_idx) {
+    $where[] = " mms_idx = '" . $ser_mms_idx . "' ";
+}
 
 if ($stx && $sfl) {
     switch ($sfl) {
-		case ( $sfl == $pre.'_id' || $sfl == $pre.'_idx' || $sfl == 'mms_idx' ) :
+        case ($sfl == $pre . '_id' || $sfl == $pre . '_idx' || $sfl == 'mms_idx'):
             $where[] = " ({$sfl} = '{$stx}') ";
             break;
-		case ($sfl == $pre.'_hp') :
-            $where[] = " REGEXP_REPLACE(pic_hp,'-','') LIKE '".preg_replace("/-/","",$stx)."' ";
+        case ($sfl == $pre . '_hp'):
+            $where[] = " REGEXP_REPLACE(pic_hp,'-','') LIKE '" . preg_replace("/-/", "", $stx) . "' ";
             break;
-        default :
+        default:
             $where[] = " ({$sfl} LIKE '%{$stx}%') ";
             break;
     }
@@ -112,45 +137,56 @@ if ($stx && $sfl) {
 
 // 고객사
 if ($ser_cst_idx_customer) {
-    $where[] = " mtr.cst_idx_customer = '".$ser_cst_idx_customer."' ";
-    $cst_customer = get_table('customer','cst_idx',$ser_cst_idx_customer);
+    $where[] = " mtr.cst_idx_customer = '" . $ser_cst_idx_customer . "' ";
+    $cst_customer = get_table('customer', 'cst_idx', $ser_cst_idx_customer);
 }
 // 공급사
 if ($ser_cst_idx_provider) {
-    $where[] = " mtr.cst_idx_provider = '".$ser_cst_idx_provider."' ";
-    $cst_provider = get_table('customer','cst_idx',$ser_cst_idx_provider);
+    $where[] = " mtr.cst_idx_provider = '" . $ser_cst_idx_provider . "' ";
+    $cst_provider = get_table('customer', 'cst_idx', $ser_cst_idx_provider);
+}
+
+// 제품구분
+$ser_bom_type = $ser_bom_type ?: 'product';
+if ($ser_bom_type && $ser_bom_type!=='all') {
+    $where[] = " bom.bom_type = '" . trim($ser_bom_type) . "' ";
+}
+
+// 차종
+if ($ser_bct_idx) {
+    $where[] = " bom.bct_idx = '" . trim($ser_bct_idx) . "' ";
 }
 
 // 작업자
 if ($ser_mb_id) {
-    $where[] = " pri.mb_id = '".$ser_mb_id."' ";
-    $mb1 = get_table('member','mb_id',$ser_mb_id,'mb_name');
+    $where[] = " pri.mb_id = '" . $ser_mb_id . "' ";
+    $mb1 = get_table('member', 'mb_id', $ser_mb_id, 'mb_name');
 }
 
 // 최종 WHERE 생성
 if ($where)
-    $sql_search = ' WHERE '.implode(' AND ', $where);
+    $sql_search = ' WHERE ' . implode(' AND ', $where);
 
 
 if (!$sst) {
-	$sst = "pri_idx";
+    $sst = "pri_idx";
     //$sst = "pri_sort, ".$pre."_reg_dt";
     $sod = "DESC";
 }
 $sql_order = " ORDER BY {$sst} {$sod} ";
 
-$rows = $g5['setting']['set_'.$g5['file_name'].'_page_rows'] ? $g5['setting']['set_'.$g5['file_name'].'_page_rows'] : $config['cf_page_rows'];
+$rows = $g5['setting']['set_' . $g5['file_name'] . '_page_rows'] ? $g5['setting']['set_' . $g5['file_name'] . '_page_rows'] : $config['cf_page_rows'];
 if (!$page) $page = 1; // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
-$sql = " SELECT pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, prd_start_date, bom.*
+$sql = " SELECT prd_idx, pri_idx, pri.bom_idx, mms_idx, mb_id, pri_value, pri_ing, prd_start_date, bom.*
 		{$sql_common}
 		{$sql_search}
         {$sql_order}
 		LIMIT {$from_record}, {$rows}
 ";
 // echo $sql.BR;
-$result = sql_query($sql,1);
+$result = sql_query($sql, 1);
 
 // 전체 게시물 수
 $sql = " SELECT COUNT(*) as cnt {$sql_common} {$sql_search} ";
@@ -161,16 +197,16 @@ $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
 
 // 작업자 select list 추출
 $sql1 = " SELECT mb_id {$sql_common} 
-            WHERE prd_start_date = '".$stat_date."' AND pri.com_idx = '".$g5['setting']['set_com_idx']."'
+            WHERE prd_start_date = '" . $stat_date . "' AND pri.com_idx = '" . $_SESSION['ss_com_idx'] . "'
             GROUP BY mb_id
 ";
 // echo $sql1.BR;
-$rs = sql_query($sql1,1);
-for ($i=0; $row=sql_fetch_array($rs); $i++) {
-    $row['mb'] = get_table('member','mb_id',$row['mb_id'],'mb_name');
+$rs = sql_query($sql1, 1);
+for ($i = 0; $row = sql_fetch_array($rs); $i++) {
+    $row['mb'] = get_table('member', 'mb_id', $row['mb_id'], 'mb_name');
     $row['mb_name'] = $row['mb']['mb_name'];
     // print_r2($row);
-    $mb_selects[$i] = array('mb_id'=>$row['mb_id'],'mb_name'=>$row['mb_name']);
+    $mb_selects[$i] = array('mb_id' => $row['mb_id'], 'mb_name' => $row['mb_name']);
 }
 // print_r2($mb_selects);
 
@@ -533,10 +569,6 @@ if(is_file($g5_monitor_path.'/dashboard/css/'.$g5['file_name'].'.css')) {
     ?>
     </tbody>
     </table>
-</div>
-
-<div class="btn_fixed_top" style="display:<?=(!$member['mb_manager_yn'])?'none':''?>;">
-    <a href="<?=G5_USER_URL?>/cron/socket_read.php?sync=1" class="btn btn_02 btn_production_sync">생산현황동기화</a>
 </div>
 
 </form>

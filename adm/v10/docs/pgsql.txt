@@ -124,9 +124,10 @@ postgres=# SELECT pid,state,query_start,query FROM pg_stat_activity ORDER BY que
 
 postgres=#
 // 이제 해당 프로세서(pid) 제거
-postgres=# SELECT pg_cancel_backend(63592);
-postgres=# SELECT pg_cancel_backend(63259);
-postgres=# SELECT pg_cancel_backend(63256);
+SELECT pg_cancel_backend(10212);
+SELECT pg_cancel_backend(10769);
+SELECT pg_cancel_backend(9523);
+SELECT pg_cancel_backend(4659);
 
 
 
