@@ -1,6 +1,7 @@
 <?php
 // 호출페이지들
 // /adm/v10/plc_protocol_form.php
+// /adm/v10/maintain_form.php
 include_once('./_common.php');
 
 if($member['mb_level']<4)
@@ -178,6 +179,12 @@ $('.btn_select').click(function(e){
         $("#cod_name", opener.document).val( cod_name );
         $("input[name=fcg_idx]", opener.document).val( fcg_idx );
         opener.select_set();
+    <?php
+    }
+    else if($file_name=='maintain_form') {
+    ?>
+        $("input[name=mnt_db_idx]", opener.document).val( cod_idx );
+        $("input[name=cod_name]", opener.document).val( cod_name );
     <?php
     }
     ?>

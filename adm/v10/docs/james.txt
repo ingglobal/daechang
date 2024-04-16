@@ -3527,7 +3527,7 @@ FROM
             , SUM( CASE WHEN itm_status IN ('finish','delivery','check') THEN 1 ELSE 0 END ) AS output_good
             , SUM( CASE WHEN itm_defect_type = 'defect' THEN 1 ELSE 0 END ) AS output_defect
         FROM g5_1_item
-        WHERE itm_date >= '".$st_date."' AND itm_date <= '".$en_date."'
+        WHERE itm_date >= '2024-03-01' AND itm_date <= '2024-04-08'
         GROUP BY ymd_date
         ORDER BY ymd_date
         )
@@ -4100,21 +4100,122 @@ SELECT COUNT(cnt) AS cnt FROM (
 ) AS db1
 
 
+89406-JI000SS
+UPDATE g5_1_item SET itm_status = 'trash' , itm_update_dt = '2024-04-03 17:00:33' 
+WHERE itm_idx IN ( 
+    SELECT itm_idx FROM ( SELECT itm_idx FROM g5_1_item WHERE bom_idx = '2080' AND itm_status = 'ok' ORDER BY itm_reg_dt LIMIT 20 ) m 
+)
+
+
+SELECT SQL_CALC_FOUND_ROWS mnt.* , mms.mms_name AS mms_name 
+FROM g5_1_maintain AS mnt
+    LEFT JOIN g5_1_mms AS mms ON mms.mms_idx = mnt.mms_idx 
+WHERE mnt_status NOT IN ('trash','delete') AND mnt.com_idx IN (13) ORDER BY mnt_idx DESC LIMIT 0, 15
 
 
 
+// 빠레트 관리
+SELECT plt_idx , mb_id_delivery , plt_date , plt_reg_dt , plt_update_dt , plt_status , plt_check_yn , plt_reg_dt , plt_update_dt 
+FROM g5_1_pallet WHERE plt_status NOT IN ('trash','delete') 
+ORDER BY plt_idx desc LIMIT 0, 15
+
+// 빠레트데이터관리 속도가 너무 느리다.
+SELECT SQL_NO_CACHE COUNT(itm_value) AS pic_sum
+FROM g5_1_item 
+WHERE pri_idx = '6461' AND itm_date = '2024-04-05' AND itm_status IN ('finish','check','delivery')
+....
+explain
+SELECT SQL_NO_CACHE COUNT(itm_value) AS pic_sum
+FROM g5_1_item 
+WHERE pri_idx = '6461' AND itm_date = '2024-04-05' AND itm_status IN ('finish','check','delivery')
+....
+
+
+DELETE FROM g5_1_alarm WHERE arm_reg_dt < '2024-04-06 02:00:00'
 
 
 
+                                    SELECT
+                                        trm_idx_category AS trm_idx
+                                        , NULL AS name
+                                        , NULL AS depth
+                                        , NULL AS trm_left
+                                        , COUNT(arm_idx) AS arm_count_sum
+                                        , SUM( IF(arm_cod_type IN ('a','p','p2'),1,0) ) AS arm_alarm_sum
+                                        , SUM( IF(arm_cod_type IN ('p','p2'),1,0) ) AS arm_predict_sum
+                                    FROM g5_1_alarm AS arm
+                                        LEFT JOIN g5_1_code AS cod ON cod.cod_idx = arm.cod_idx
+                                    WHERE arm_reg_dt >= '2024-03-01 00:00:00' AND arm_reg_dt <= '2024-04-08 23:59:59'
+                                        AND arm.com_idx='13'
+                                    GROUP BY trm_idx_category
+                                    ORDER BY trm_idx_category
+
+SELECT * FROM g5_1_alarm WHERE arm_idx IN (9797870,9797846);
+DELETE FROM g5_1_alarm WHERE arm_idx NOT IN (9797870,9797846);
+	
+
+CREATE TABLE `g5_1_quality` (
+  `qlt_idx` bigint(20) NOT NULL COMMENT '품질관리idx' AUTO_INCREMENT,
+  `qlt_date` date NOT NULL DEFAULT '0000-00-00' COMMENT '날짜',
+  `qlt_level` varchar(50) DEFAULT '' COMMENT '구분(등급)',
+  `qlt_category` varchar(20) DEFAULT '' COMMENT '차종',
+  `qlt_part_no` varchar(30) DEFAULT '' COMMENT '품번',
+  `qlt_part_name` varchar(100) DEFAULT '' COMMENT '품명',
+  `qlt_location` varchar(50) DEFAULT '' COMMENT '발생공정',
+  `qlt_detect_name` varchar(30) DEFAULT '' COMMENT '발견자',
+  `qlt_confirm_name` varchar(30) DEFAULT '' COMMENT '확인자',
+  `qlt_imputation` varchar(50) DEFAULT '' COMMENT '귀책처',
+  `qlt_problem` varchar(255) DEFAULT '' COMMENT '문제점및원인',
+  `qlt_type` varchar(255) DEFAULT '' COMMENT '불량유형',
+  `qlt_content` text DEFAULT NULL COMMENT '처리방안및대책',
+  `qlt_count_select` int(11) NOT NULL DEFAULT 0 COMMENT '선별불량수',
+  `qlt_count_modify` int(11) NOT NULL DEFAULT 0 COMMENT '수정불량수',
+  `qlt_count_return` int(11) NOT NULL DEFAULT 0 COMMENT '반송/교환수',
+  `qlt_count_scrap` int(11) NOT NULL DEFAULT 0 COMMENT '폐기수',
+  `qlt_nct` varchar(50) DEFAULT '' COMMENT 'NCT',
+  `qlt_plan_yn` varchar(50) DEFAULT 0 COMMENT '대책서유무',
+  `qlt_valid_yn` varchar(50) DEFAULT 0 COMMENT '유효성유무',
+  `qlt_valid_date` date NOT NULL DEFAULT '0000-00-00' COMMENT '유효성검증날짜',
+  `qlt_result` varchar(50) DEFAULT '' COMMENT '결과',
+  `qlt_reg_dt` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '등록일시',
+  `qlt_update_dt` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '수정일시',
+  PRIMARY KEY (`qlt_idx`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+오래곤 삭제 완료
+서울 삭제 완료
+상파울루 삭제 완료
+오사카 삭제 완료 - 계속 비용이 발생하고 있었음
+버지니아 북부 삭제 완료
+
+
+10000000
+10000000 (뒤집으면 되는데)
 
 
 
-현재고 숫자가 안 줄어든다. (빠레트)
+1단계: AWS 계정 루트 사용자 암호를 변경 부탁드립니다. 
+> 변경하였습니다.
 
-발주관리, 등록하는 게 따로 없다.
+2단계: 계정 루트 사용자에서 새 다단계 인증 (MFA) 디바이스를 활성화 부탁드립니다. MFA 활성화에 대한 자세한 내용은 다음 문서를 참조하십시오.
+> 기존것을 제거하고 다시 MFA 설정했습니다.
 
-빠레트 관리 - 생산계획ID
-로 검색할 수 있게!!
+3단계: ****HZL로 끝나는 노출된 AWS 액세스 키를 삭제하신 점을 확인하였습니다. 
+> 모든 액세스 키를 삭제했습니다. 
 
+4단계: 계정 내 승인되지 않은 AWS 서비스 사용이 있는지 확인을 부탁드립니다. 
+1) CloudTrail 로그를 확인하여 승인되지 않은 IAM 사용자 또는 역할, Access Key, 로그인 프로필, 정책 또는 임시 보안 자격 증명 등 승인되지 않은 무단 활동이 있는지 확인 부탁드립니다.
+>  최근에는 의심스러운 기록이 없습니다.
+2) 빌링콘솔에서 사용하지 않는 서비스의 비용청구를 확인 후 회신 부탁드립니다.
+> 이 부분은 저희 대행사인 이테크시스템 정경태 과장님께서 전달주신다고 합니다. 그 쪽에 문의해 보겠습니다.
+3) 비용탐색기(Cost Explorer)에서 무단 사용으로 인한 비용 급증 확인을 부탁드립니다.
+> 이 부분은 저희 대행사 이테크시스템 페이지에서 캡쳐해서 첨부파일로 드리겠습니다.
 
+5단계: IAM 역할 및 정책을 검토하시고, 승인되지 않은 내역이 있는 경우 삭제 후 삭제하신 IAM 역할 및 정책을 본 케이스에 회신 부탁드립니다.
+> 삭제가 안 되는 role이 3개 있습니다. (삭제를 안 해도 괜찮을 걸까요?)
+> 파일 첨부합니다.
+
+관리형 정책:
+> 정책 부분은 전부 삭제했습니다.
 

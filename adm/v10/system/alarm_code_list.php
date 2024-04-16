@@ -131,8 +131,8 @@ $items1 = array(
     // Get all the mms_idx values to make them optionf for selection.
     $sql2 = "SELECT mms_idx, mms_name
             FROM {$g5['mms_table']}
-            WHERE com_idx = '".$_SESSION['ss_com_idx']."'
-            ORDER BY mms_idx       
+            WHERE com_idx = '".$_SESSION['ss_com_idx']."' AND mms_status = 'ok'
+            ORDER BY convert(mms_name, decimal)
     ";
     // echo $sql2.'<br>';
     $result2 = sql_query($sql2,1);
@@ -349,7 +349,7 @@ $items1 = array(
 <div class="btn_fixed_top">
     <?php if($member['mb_manager_yn']) { ?>
         <a href="javascript:" id="btn_excel_upload2" class="btn btn_03" style="margin-right:480px;display:<?=(!$member['mb_manager_yn'])?'none':'none'?>;">최호기</a>
-        <a href="<?=G5_URL?>/device/error/form.php" target="_blank" class="btn btn_03" style="margin-right:400px;display:<?=(!$member['mb_manager_yn'])?'none':''?>;">테스트입력</a>
+        <a href="<?=G5_URL?>/device/error/form.php" target="_blank" class="btn btn_03" style="margin-right:400px;display:none;">테스트입력</a>
         <a href="./<?=$fname?>_excel_down.php?<?=$qstr?>" id="btn_excel_down" class="btn btn_03" style="display:none;">엑셀다운</a>
         <a href="javascript:" id="btn_excel_upload" class="btn btn_03" style="margin-right:20px;display:<?=(!$member['mb_manager_yn'])?'none':'none'?>;">엑셀등록</a>
         <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn_02 btn" style="display:none;">

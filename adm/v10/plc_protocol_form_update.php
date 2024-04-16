@@ -104,7 +104,7 @@ for ($i=0;$i<sizeof($checkbox_array);$i++) {
 // exit;
 
 if ($w == 'u') {
-    $qstr .= '&ser_mms_idx='.$ser_mms_idx; // 추가로 확장해서 넘겨야 할 변수들
+    $qstr .= '&ser_mms_idx='.$ser_mms_idx.'&ser_ppr_ip='.$ser_ppr_ip; // 추가로 확장해서 넘겨야 할 변수들
 }
 
 

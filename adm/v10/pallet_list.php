@@ -38,6 +38,24 @@ if($plt_reg_dt){
     $qstr .= $qstr.'&plt_reg_dt='.$plt_reg_dt;
 }
 
+// 생산계획ID (pri_idx) 추출
+if($ser_pri_idx) {
+    $sql1 = " SELECT plt_idx FROM {$g5['item_table']} 
+            WHERE pri_idx = '".$ser_pri_idx."'
+    ";
+    // echo $sql1.'<br>';
+    $rs1 = sql_query($sql1,1);
+    for($k=0;$row1=sql_fetch_array($rs1);$k++) {
+        $plt_idx_array[] = $row1['plt_idx'];
+    }
+    // print_r2(array_unique($plt_idx_array));
+    if($plt_idx_array[0])
+        $where[] = " plt_idx IN (".implode(",",array_unique($plt_idx_array)).") ";
+    else
+        $where[] = " (0) ";
+}
+
+
 // 최종 WHERE 생성
 if ($where)
     $sql_search = ' WHERE '.implode(' AND ', $where);
@@ -69,7 +87,8 @@ $sql = " SELECT plt_idx
         {$sql_common} {$sql_search} {$sql_order}
         LIMIT {$from_record}, {$rows}
 ";
-// print_r3($sql);//exit;
+// echo $sql.BR;
+//exit;
 $result = sql_query($sql,1);
 
 $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목록</a>';
@@ -111,6 +130,7 @@ $qstr .= '&sca='.$sca.'&ser_cod_type='.$ser_cod_type; // 추가로 확장해서 
     <label for="sfl" class="sound_only">검색대상</label>
     <input type="hidden" name="sfl" value="plt_idx">
     <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
+    <input type="text" name="ser_pri_idx" value="<?php echo $ser_pri_idx ?>" placeholder="생산계획ID" id="ser_prd_idx" class="frm_input" style="width:100px;">
     <input type="text" name="stx" value="<?php echo $stx ?>" placeholder="파레트ID" id="stx" class="frm_input">
     <label for="plt_status" class="sch_label">
         <select name="plt_status" id="plt_status">
@@ -162,6 +182,7 @@ $qstr .= '&sca='.$sca.'&ser_cod_type='.$ser_cod_type; // 추가로 확장해서 
         $row['mb_name'] = $mb['mb_name'];
         $row['itm_total'] = 0;
         $chk_yn = false;
+        // 관련 제품(item) 추출
         $itm_sql = " SELECT itm.bom_idx
                         , itm_name
                         , itm_part_no

@@ -6,7 +6,7 @@ $g5['title'] = '주간생산그래프';
 include_once('./_head.sub.php');
 
 // st_date, en_date
-// 한달 전
+// 일주일
 $sql = " SELECT DATE_ADD(now(), INTERVAL -1 WEEK) AS month_ago ";
 // echo $sql.BR;
 $one = sql_fetch($sql,1);
@@ -160,18 +160,26 @@ Highcharts.chart('chart_day', {
         column: {
             stacking: 'normal',
             dataLabels: {
-                enabled: true
+                enabled: false
             }
         }
     },
     series: [
         {
-            name: 'OK',
+            name: 'Target',
             // data: [30, 50, 10, 130]
-            data: [<?=implode(",",$series_ok)?>]
+            data: [<?=implode(",",$series_ok)?>],
+            stack: 'target',
+            pointWidth: 5
         }, {
+            name: 'OK',
+            data: [<?=implode(",",$series_ok)?>],
+            stack: 'production'
+        }
+        , {
             name: 'NG',
-            data: [<?=implode(",",$series_ng)?>]
+            data: [<?=implode(",",$series_ng)?>],
+            stack: 'production'
         }
     ]
 });

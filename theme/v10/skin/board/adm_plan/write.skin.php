@@ -240,7 +240,7 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style2.css">', 
 
 
 <script>
-$("#wr_3").datepicker({ changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd", showButtonPanel: true, yearRange: "c-99:c+99", minDate: "+0d" });
+$("#wr_3").datepicker({ changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd", showButtonPanel: true, yearRange: "c-99:c+99" });
 
 function chk_Number(object){
     $(object).keyup(function(){

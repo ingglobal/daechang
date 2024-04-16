@@ -44,7 +44,7 @@ foreach ($_POST['chk'] as $bom_idx_v) {
                         FROM (
                             SELECT itm_idx FROM {$g5['item_table']}
                                 WHERE bom_idx = '{$bom_idx_v}'
-                                    AND itm_status = 'ok'
+                                    AND itm_status IN ('ok','finish')
                                 ORDER BY itm_reg_dt
                                 LIMIT {$input_cnt[$bom_idx_v]}
                         ) m
@@ -77,4 +77,5 @@ foreach($_REQUEST as $key => $value ) {
     }
 }
 
+// exit;
 goto_url('./item_stock_list.php?'.$qstr);

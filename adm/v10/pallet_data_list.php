@@ -368,8 +368,10 @@ $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체�
                     $row['pic'] = sql_fetch($sql1, 1);
 
                     // 현재 파렛트 갯수
-                    $sqlp = " SELECT COUNT(DISTINCT plt_idx) AS cnt FROM {$g5['item_table']} WHERE pri_idx = '{$row['pri_idx']}' AND plt_idx != '0' AND itm_status NOT IN ('defect','scrap','trash')
+                    $sqlp = " SELECT COUNT(DISTINCT plt_idx) AS cnt FROM {$g5['item_table']} 
+                            WHERE pri_idx = '{$row['pri_idx']}' AND plt_idx != '0' AND itm_status NOT IN ('defect','scrap','trash')
                     ";
+                    // echo $sqlp.BR;
                     $resp = sql_fetch($sqlp);
                     $row['plt_stock'] = $resp['cnt'];
                     $plt_stock_total += $row['plt_stock'];

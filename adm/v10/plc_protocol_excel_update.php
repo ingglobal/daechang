@@ -140,6 +140,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
     // if(is_numeric($arr['unit_no'])) {
     //     print_r3($arr);
     // }
+    // print_r3($arr);
 
     $arr['word_no2'] = $arr['word_no2'] ?: $arr['word_no']; // 엑셀 뒷부분 없을 수도 있음
     $arr['word_no2'] = $arr['word_no2'] ?: $word_no_old; // 그래도 없으면 이전값
@@ -220,7 +221,7 @@ for($i=0;$i<=sizeof($allData[0]);$i++) {
             // print_r3($sql);
         }
         
-    // plc_protocol 입력 정보
+        // plc_protocol 입력 정보
         $ar['ppr_decimal'] = 0;
         $ar['ppr_set_time'] = 0;
     }

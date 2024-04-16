@@ -31,6 +31,11 @@ if ($stx != "") {
     }
 }
 
+// 아이피
+if($ser_ppr_ip) {
+    $where[] = " ppr_ip = '".$ser_ppr_ip."' ";
+}
+
 
 // 최종 WHERE 생성
 if ($where)
@@ -66,6 +71,7 @@ $sql = " SELECT * {$sql_common} {$sql_search} {$sql_order} LIMIT {$from_record},
 // print_r3($sql);
 $result = sql_query($sql);
 
+$qstr .= '&ser_ppr_ip='.$ser_ppr_ip; // 추가로 확장해서 넘겨야 할 변수들
 $colspan = 16;
 ?>
 
@@ -77,11 +83,11 @@ $colspan = 16;
 <form id="fsearch" name="fsearch" class="local_sch01 local_sch" method="get">
 
 <label for="sfl" class="sound_only">검색대상</label>
+<input type="text" name="ser_ppr_ip" value="<?php echo $ser_ppr_ip ?>" id="ser_ppr_ip" required class="required frm_input" placeholder="아이피">
 <select name="sfl" id="sfl">
     <option value="ppr_name"<?php echo get_selected($_GET['sfl'], "ppr_name"); ?>>태그명</option>
     <option value="mms_name"<?php echo get_selected($_GET['sfl'], "mms_name"); ?>>설비명</option>
     <option value="ppr.mms_idx"<?php echo get_selected($_GET['sfl'], "ppr.mms_idx"); ?>>설비번호</option>
-    <option value="ppr_ip"<?php echo get_selected($_GET['sfl'], "ppr_ip"); ?>>아이피</option>
     <option value="ppr_port"<?php echo get_selected($_GET['sfl'], "ppr_port"); ?>>포트</option>
     <option value="ppr_no"<?php echo get_selected($_GET['sfl'], "ppr_no"); ?>>배열번호</option>
     <option value="ppr_bit"<?php echo get_selected($_GET['sfl'], "ppr_bit"); ?>>bit</option>
@@ -150,7 +156,7 @@ $colspan = 16;
         <td class="td_mms_name"><?php echo get_text($row['mms_name']); ?></td>
         <td class="td_ppr_data_type"><?=$row['ppr_data_type']?></td>
         <td class="td_ppr_name"><?=$row['ppr_name']?></td>
-        <td class="td_ppr_ip"><a href="?sfl=ppr_ip&stx=<?=$row['ppr_ip']?>"><?=$row['ppr_ip']?></a></td>
+        <td class="td_ppr_ip"><a href="?ser_ppr_ip=<?=$row['ppr_ip']?>"><?=$row['ppr_ip']?></a></td>
         <td class="td_ppr_port"><a href="?sfl=ppr_port&stx=<?=$row['ppr_port_no']?>"><?=$row['ppr_port_no']?></a></td>
         <td class="td_ppr_no"><?=$row['ppr_no']?></td>
         <td class="td_ppr_bit"><?=$row['ppr_bit']?></td>

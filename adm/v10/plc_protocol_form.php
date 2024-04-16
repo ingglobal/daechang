@@ -69,6 +69,7 @@ include_once ('./_head.php');
 <input type="hidden" name="<?=$pre?>_idx" value="<?php echo ${$pre."_idx"} ?>">
 <input type="hidden" name="com_idx" value="<?=$_SESSION['ss_com_idx']?>">
 <input type="hidden" name="ser_mms_idx" value="<?php echo $ser_mms_idx ?>">
+<input type="hidden" name="ser_ppr_ip" value="<?php echo $ser_ppr_ip ?>">
 
 <div class="local_desc01 local_desc" style="display:none;">
     <p>각종 고유번호(업체번호, IMP번호..)들은 내부적으로 다른 데이타베이스 연동을 통해서 정보를 가지고 오게 됩니다.</p>

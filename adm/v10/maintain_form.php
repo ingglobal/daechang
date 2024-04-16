@@ -47,8 +47,10 @@ else if ($w == 'u') {
 	$com = get_table_meta('company','com_idx',${$pre}['com_idx']);
     $imp = get_table_meta('imp','imp_idx',${$pre}['imp_idx']);
     $mms = get_table_meta('mms','mms_idx',${$pre}['mms_idx']);
+    $cod = get_table_meta('code','cod_idx',${$pre}['mnt_db_idx']);
     // print_r3(${$pre});
     // print_r3($imp);
+    // print_r3($cod);
     // 시간 분리
     ${$pre}['mnt_time_hhmm'] = second_to_hhmm(${$pre}['mnt_minute']);
     ${$pre}['mnt_time_hhmm_array'] = explode(":",${$pre}['mnt_time_hhmm']);
@@ -157,8 +159,8 @@ include_once ('./_head.php');
                             // Get all the mms_idx values to make them optionf for selection.
                             $sql2 = "SELECT mms_idx, mms_name
                                     FROM {$g5['mms_table']}
-                                    WHERE com_idx = '".$_SESSION['ss_com_idx']."'
-                                    ORDER BY mms_idx       
+                                    WHERE com_idx = '".$_SESSION['ss_com_idx']."' AND mms_status = 'ok'
+                                    ORDER BY convert(mms_name, decimal)
                             ";
                             // echo $sql2.'<br>';
                             $result2 = sql_query($sql2,1);
@@ -178,105 +180,10 @@ include_once ('./_head.php');
                 <tr>
                     <th scope="row">알람선택</th>
                     <td colspan="3">
-                        <i class="fa fa-spinner fa-spin fa-fw" style="display:none;" id="mnt_db_idx_spinner"></i>
-                        <!-- 설비선택에 따른 알람select change -->
-                        <input type="hidden" name="<?=$pre?>_db_table" value="code">
-                        <!-- 일단은 코드별에서만..(태그별도 해야 됨) -->
-                        <select name="mnt_db_idx" id="mnt_db_idx" mnt_db_idx="<?=${$pre}['mnt_db_idx']?>" style="margin-bottom:5px;">
-                            <option value="">관련 알람을 선택하세요.</option>
-                        </select>
-                        <br>
-                        <a href="javascript:" class="btn btn_02 btn_period" period="">전체</a>
-                        <a href="javascript:" class="btn btn_02 btn_period" period="month">한달</a>
-                        <a href="javascript:" class="btn btn_02 btn_period" period="week">1주일</a>
-                        <a href="javascript:" class="btn btn_02 btn_period" period="today">오늘</a>
-
-                    </td>
-                    <script>
-                        // 설비 선택 시 관련알람 추출
-                        $(document).on('change', '#mms_idx', function (e) {
-                            mmt_db_idx_select($(this).val(),'');
-                        });
-                        // 기간 선택 시 관련알람 추출
-                        $(document).on('click', '.btn_period', function (e) {
-                            var mms_idx = $('#mms_idx').val();
-                            var ser_period = $(this).attr('period');
-                            mmt_db_idx_select(mms_idx,ser_period);
-                        });
-                        // 설비 선택 시 관련알람 추출 함수
-                        function mmt_db_idx_select(mms_idx, ser_period) {
-                            if (mms_idx) {
-
-                                // 진행중 표시 아이콘
-                                $('#mnt_db_idx_spinner').show();
-                                $('#mnt_db_idx').hide();
-
-                                var mnt_db_idx = $('#mnt_db_idx').attr('mnt_db_idx');
-                                $.ajax({
-                                    url:'<?=G5_USER_ADMIN_AJAX_URL?>/mms_alarm_select.php',
-                                    data:{'mms_idx': mms_idx, 'ser_period': ser_period},
-                                    dataType:'json', timeout:10000, beforeSend:function(){}, success:function(res){
-                                        // console.log(res);
-                                        //var prop1; for(prop1 in res.rows) { console.log( prop1 +': '+ res.rows[prop1] ); }
-                                        $('#mnt_db_idx').children('option:not(:first)').remove(); // 항목 초기화
-                                        $.each(res.rows, function (i, v) {
-                                            // console.log(i+':'+v);
-                                            $('#mnt_db_idx').append(
-                                                "<option value='" + v['cod_idx'] + "' cod_name='"+v['cod_name']+"' cod_trm_name='"+v['cod_trm_name']+"' cod_memo='"+v['cod_memo']+"'>" + v['cod_name'] +" (발생횟수 "+ v['cnt'] + ")</option>"
-                                                // "<option value='" + v['cod_idx'] + "' cod_name='"+v['cod_name']+"' cod_memo='"+v['cod_memo']+"'>" + v['cod_name'] +' - '+ v['cod_trm_name'] +" (발생횟수 "+ v['cnt'] + ")</option>"
-                                                // "<option value='" + v['cod_idx'] + "' cod_name='"+v['cod_name']+"'>" + v['cod_name'] +")</option>"
-                                            );
-                                        });
-                                        $('#mnt_db_idx').append(
-                                            "<option value='0'>기타</option>"
-                                        );
-                                        // 기존값이 있었다면 선택상태로 설정
-                                        if( $('#mnt_db_idx').attr('mnt_db_idx') !='' ) {
-                                            $('#mnt_db_idx').val( $('#mnt_db_idx').attr('mnt_db_idx') );
-                                            $('#code_trm_name').text( $('#mnt_db_idx option:selected').attr('cod_trm_name') );
-                                        }
-
-                                        // 진행중 표시 아이콘 숨김
-                                        $('#mnt_db_idx_spinner').hide();
-                                        $('#mnt_db_idx').show();
-
-                                    },
-                                    error:function(xmlRequest) {
-                                        alert('Status: ' + xmlRequest.status + ' \n\rstatusText: ' + xmlRequest.statusText 
-                                            + ' \n\rresponseText: ' + xmlRequest.responseText);
-                                    } 
-                                }); 
-                            }
-                            else {
-                                $('#mnt_db_idx').children('option:not(:first)').remove(); // 항목 초기화
-                            }
-                        };
-                        <?php
-                        // 설비선택이 있는 경우 함수 호출
-                        if($mnt['mms_idx']) {
-                            echo "mmt_db_idx_select(".$mnt['mms_idx'].",'');";
-                        }
-                        ?>
-
-                        // 알람 선택 시 제목수정
-                        $(document).on('change', '#mnt_db_idx', function (e) {
-                            // console.log( $('#mnt_db_idx option:selected').attr('cod_name') );
-                            if( $('#mnt_db_idx option:selected').attr('cod_name') != 'null' ) {
-                                $('#mnt_subject').val( $('#mnt_db_idx option:selected').attr('cod_name') );
-                            }
-                            if( $('#mnt_db_idx option:selected').attr('cod_trm_name') != '' ) {
-                                $('#code_trm_name').text( $('#mnt_db_idx option:selected').attr('cod_trm_name') );
-                            }
-                            if( $('input[name=w]').val() == '' ) {
-                                $('#mnt_content').text( decodeURIComponent($('#mnt_db_idx option:selected').attr('cod_memo').replace(/\+/g, '%20')) );
-                            }
-                        });
-                    </script>
-                </tr>
-                <tr>
-                    <th scope="row">알람분류</th>
-                    <td colspan="3">
-                        <span id="code_trm_name"></span>
+                        <input type="hidden" name="mnt_db_table" value="code">
+                        <input type="hidden" name="mnt_db_idx" value="<?=${$pre}['mnt_db_idx']?>" id="mnt_db_idx" class="frm_input">
+                        <input type="text" name="cod_name" value="<?=$cod['cod_name']?>" id="cod_name" class="frm_input" style="width:300px;">
+                        <a href="./alarm_code_select.php?file_name=<?=$g5['file_name']?>" class="btn btn_02" id="btn_alarm_code">찾기</a>
                     </td>
                 </tr>
                 <tr>
@@ -374,6 +281,14 @@ include_once ('./_head.php');
 
 <script>
 $(function () {
+    // 알람찾기
+    $(document).on('click','#btn_alarm_code',function(e){
+        e.preventDefault();
+        var href = $(this).attr('href');
+        winAlarmCode = window.open(href,"winAlarmCode","left=100,top=100,width=520,height=600,scrollbars=1");
+        winAlarmCode.focus();
+    });
+
     // 회원검색
     $(document).on('click','#btn_member',function(e){
         e.preventDefault();
