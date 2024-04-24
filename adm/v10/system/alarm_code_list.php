@@ -115,6 +115,7 @@ $items1 = array(
 }
 #modal01 table ol {padding-right: 20px;text-indent: -12px;padding-left: 12px;}
 #modal01 form {overflow:hidden;}
+.td_adm {width:60px;}
 </style>
 
 <div class="local_ov01 local_ov">
@@ -170,6 +171,7 @@ $items1 = array(
     <!-- <option value="mms_name" <?=get_selected($sfl, "mms_name")?>>설비명</option>
     <option value="cod.mms_idx" <?=get_selected($sfl, "cod.mms_idx")?>>설비번호</option> -->
     <?php if($member['mb_level']>=9) { ?>
+    <option value="cod_idx" <?=get_selected($sfl, "cod_idx")?>>알람코드번호</option>
     <option value="cod.com_idx" <?=get_selected($sfl, "cod.com_idx")?>>업체번호</option>
     <?php } ?>
 </select>
@@ -336,7 +338,7 @@ $items1 = array(
                 echo '<td class="td_'.$k1.'" '.$row['colspan'].' '.$row['rowspan'].'>'.$list[$k1].'</td>';
             }
         }
-        echo '<td class="td_admin">'.$s_view.' '.$s_mod.'</td>'.PHP_EOL;
+        echo '<td class="td_adm">'.$s_mod.'</td>'.PHP_EOL;
         echo '</tr>'.PHP_EOL;	
 	}
 	if ($i == 0)

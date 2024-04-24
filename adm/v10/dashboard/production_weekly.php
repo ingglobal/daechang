@@ -14,6 +14,43 @@ $st_date = $st_date ?: substr($one['month_ago'],0,10);
 $en_date = $en_date ?: G5_TIME_YMD;
 // echo $st_date.'~'.$en_date.BR;
 
+// 목표량 추출
+$sql = "SELECT 
+        ymd_date
+        , SUM(output_total) AS total
+        FROM
+        (
+            (
+                SELECT 
+                    CAST(ymd_date AS CHAR) AS ymd_date
+                    , 0 AS output_total
+                FROM g5_5_ymd AS ymd
+                WHERE ymd_date BETWEEN '".$st_date."' AND '".$en_date."'
+                ORDER BY ymd_date
+                )
+                UNION ALL
+                (
+                SELECT 
+                    pri_date AS ymd_date
+                    , SUM(pri_value) AS output_total
+                FROM g5_1_production_item AS pri 
+                LEFT JOIN g5_1_bom AS bom ON bom.bom_idx = pri.bom_idx 
+                WHERE pri_date BETWEEN '".$st_date."' AND '".$en_date."' AND pri.com_idx = '13' AND bom.bom_type = 'product' 
+                GROUP BY ymd_date
+                ORDER BY ymd_date
+            )
+        ) AS db_table
+        GROUP BY ymd_date
+";
+// echo $sql.BR;
+$result = sql_query($sql,1);
+for ($i=0; $row=sql_fetch_array($result); $i++) {
+    //print_r2($row);
+    $series_target[] = $row['total'];
+}
+
+
+// 생상량 추출
 $sql = "SELECT (CASE WHEN n='1' THEN ymd_date ELSE 'total' END) AS item_name
             , SUM(output_total) AS output_total
             , MAX(output_total) AS output_max
@@ -168,7 +205,7 @@ Highcharts.chart('chart_day', {
         {
             name: 'Target',
             // data: [30, 50, 10, 130]
-            data: [<?=implode(",",$series_ok)?>],
+            data: [<?=implode(",",$series_target)?>],
             stack: 'target',
             pointWidth: 5
         }, {

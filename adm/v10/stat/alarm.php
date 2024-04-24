@@ -91,7 +91,7 @@ include_once('./_top_search.php');
                                     FROM g5_1_alarm AS arm
                                         LEFT JOIN g5_1_code AS cod ON cod.cod_idx = arm.cod_idx
                                     WHERE arm_reg_dt >= '".$st_date." 00:00:00' AND arm_reg_dt <= '".$en_date." 23:59:59'
-                                        AND arm.com_idx='".$com_idx."'
+                                        AND arm.com_idx='".$com_idx."' AND arm_status = 'ok'
                                         {$sql_mmses1}
                                     GROUP BY trm_idx_category
                                     ORDER BY trm_idx_category
@@ -203,7 +203,7 @@ include_once('./_top_search.php');
                                     , SUM( IF(arm_cod_type IN ('p','p2'),1,0) ) AS arm_predict_sum
                                 FROM g5_1_alarm
                                 WHERE arm_reg_dt >= '".$st_date." 00:00:00' AND arm_reg_dt <= '".$en_date." 23:59:59'
-                                    AND com_idx='".$com_idx."'
+                                    AND com_idx='".$com_idx."' AND arm_status = 'ok'
                                     {$sql_mmses}
                                 GROUP BY mms_idx
                                 ORDER BY mms_idx
@@ -321,7 +321,7 @@ include_once('./_top_search.php');
                                 FROM g5_1_alarm AS arm
                                     LEFT JOIN g5_1_code AS cod ON cod.cod_code = arm.arm_cod_code AND cod.mms_idx = arm.mms_idx
                                 WHERE arm_reg_dt >= '".$st_date." 00:00:00' AND arm_reg_dt <= '".$en_date." 23:59:59'
-                                    AND arm.com_idx='".$com_idx."'
+                                    AND arm.com_idx='".$com_idx."' AND arm_status = 'ok'
                                     AND arm_cod_type IN ('a')
                                         {$sql_mmses1}
                                 GROUP BY arm.mms_idx, arm_cod_code
@@ -457,7 +457,7 @@ include_once('./_top_search.php');
                                         , SUM( IF(arm_cod_type IN ('p','p2'),1,0) ) AS arm_predict_sum
                                     FROM g5_1_alarm
                                     WHERE arm_reg_dt >= '".$st_date." 00:00:00' AND arm_reg_dt <= '".$en_date." 23:59:59'
-                                        AND com_idx='".$com_idx."'
+                                        AND com_idx='".$com_idx."' AND arm_status = 'ok'
                                             {$sql_mmses}
                                     GROUP BY ymd_date
                                     ORDER BY ymd_date
@@ -589,7 +589,7 @@ include_once('./_top_search.php');
                                         , SUM( IF(arm_cod_type IN ('p','p2'),1,0) ) AS arm_predict_sum
                                     FROM g5_1_alarm
                                     WHERE arm_reg_dt >= '".$st_date." 00:00:00' AND arm_reg_dt <= '".$en_date." 23:59:59'
-                                        AND com_idx='".$com_idx."'
+                                        AND com_idx='".$com_idx."' AND arm_status = 'ok'
                                             {$sql_mmses}
                                     GROUP BY ymd_week
                                     ORDER BY ymd_week
@@ -723,7 +723,7 @@ include_once('./_top_search.php');
                                         , SUM( IF(arm_cod_type IN ('p','p2'),1,0) ) AS arm_predict_sum
                                     FROM g5_1_alarm
                                     WHERE arm_reg_dt >= '".$st_date." 00:00:00' AND arm_reg_dt <= '".$en_date." 23:59:59'
-                                        AND com_idx='".$com_idx."'
+                                        AND com_idx='".$com_idx."' AND arm_status = 'ok'
                                         {$sql_mmses}
                                     GROUP BY ymd_month
                                     ORDER BY ymd_month

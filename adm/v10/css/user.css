@@ -47,7 +47,7 @@ label[for^=set_] input[type=radio] {margin-right:2px;}
 .color_blue {color:deepskyblue !important;}
 .display_inline_block {display:inline-block;}
 .display_block {display:block;}
-.display_none {display:none;}
+.display_none {display:none !important;}
 .visibility_unset {visibility:unset !important;}
 .visibility_inherit {visibility:inherit !important;}
 .ui-tooltip {
